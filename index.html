@@ -1296,7 +1296,7 @@ const CM = {
   balanco: {
     label: 'Jul/26',
     bem: [
-      {ico:'🎯', title:'115% da Meta de Clientes (23/20)',   sub:'23 reuniões iniciais realizadas em Jul/26 · melhor mês do ano em volume de reuniões'},
+      {ico:'🎯', title:'120% da Meta de Clientes (24/20)',   sub:'24 reuniões iniciais realizadas em Jul/26 · melhor mês do ano em volume de reuniões (ArtHaus lançada com atraso em 03/Ago)'},
       {ico:'🤝', title:'5 Parceiros Fechados em Jul/26',     sub:'Paulo Roberto · Grupo Harp · CIFRA · Gilberto Lenzi · Cordier Investimentos'},
       {ico:'✅', title:'Rudnik FECHADO — 1º cliente de 2026', sub:'Fechado Ganho em 14/Jul/26 · R$6M · ciclo de 111 dias'},
       {ico:'📈', title:'32 novos deals cadastrados',         sub:'Recorde mensal · R$483,7M em valor · +100% vs Jun/26 (16 deals)'},
@@ -1320,8 +1320,8 @@ const META_CLI = 20;
 const META_PAR = 15;
 
 // Reuniões com CLIENTES por mês (pipeline receita)
-// Jul/26 FINAL: 23 realizadas (fonte: painel "Reunião Inicial Realizadas - Mês", lido 03/08/2026 — +Zanardi Construtora 30/Jul)
-const MTG_CLI = [2, 3, 6, 12, 14, 11, 11, 23, 0];  // Ago/26: 0 até o momento — sobrescrito por _aplicarCM()
+// Jul/26 FINAL: 24 realizadas (painel "Reunião Inicial Realizadas - Mês" mostrava 23 em 03/08; +ArtHaus lançada com atraso, reunião real em 31/Jul)
+const MTG_CLI = [2, 3, 6, 12, 14, 11, 11, 24, 0];  // Ago/26: 0 até o momento — sobrescrito por _aplicarCM()
 // Reuniões com PARCEIROS por mês
 // FONTE OFICIAL: painel "04. Parceiros" → "Reunião Realizadas Novos Parceiros - Mês"
 // métrica: Date entered "Reunião realizada (Aquisição de Parceiros)" · lido em 03/08/2026
@@ -1358,18 +1358,18 @@ const MTG_CLI_ORIGINS = {
   '7d': {total:1, parCnt:0, outCnt:1,  // 28/Jul–03/Ago (janela real de 7 dias)
     parNames:[],
     outNames:['Zanardi Construtora (30/Jul)']},
-  mes_ant: {total:23, parCnt:19, outCnt:4,  // Jul/26 FINAL (03/08/2026)
-    parNames:['Transbyshop (via EQI · 02/Jul)','Manatex (via Paulo Roberto Dubiella Cantoli · 03/Jul)','We Inc - Loteadora (via Erika Godoy · 06/Jul)','JG EMPREITEIRA (via Erika Godoy · 06/Jul)','Loteadora Piauí (via Erika Godoy · 10/Jul)','Bom Jesus (via Erika Godoy · 13/Jul)','Grupo Riviera - CRI (via Patrick Valle · 14/Jul)','Primaz - CRI (via Natan Ramos · 16/Jul)','Selbetti Tecnologia (via Arcus Gestão · 16/Jul)','Daico (via EQI · 16/Jul)','TEX Engenharia (via Erika Godoy · 22/Jul)','BA HONG LUNG (via Erika Godoy · 22/Jul)','Steel Loop (via Erika Godoy · 22/Jul)','JG EMPREITEIRA (via Erika Godoy · 22/Jul)','We Inc (via Erika Godoy · 22/Jul)','Madesa (via parceria não identificada · 24/Jul)','BA HONG LUNG (via Erika Godoy · 24/Jul)','Steel Loop - Barracão Logístico (via Erika Godoy · 24/Jul)','Grupo Energia (via Erika Godoy · 24/Jul)'],
+  mes_ant: {total:24, parCnt:20, outCnt:4,  // Jul/26 FINAL (+ArtHaus lançada com atraso em 03/08, reunião real 31/Jul)
+    parNames:['Transbyshop (via EQI · 02/Jul)','Manatex (via Paulo Roberto Dubiella Cantoli · 03/Jul)','We Inc - Loteadora (via Erika Godoy · 06/Jul)','JG EMPREITEIRA (via Erika Godoy · 06/Jul)','Loteadora Piauí (via Erika Godoy · 10/Jul)','Bom Jesus (via Erika Godoy · 13/Jul)','Grupo Riviera - CRI (via Patrick Valle · 14/Jul)','Primaz - CRI (via Natan Ramos · 16/Jul)','Selbetti Tecnologia (via Arcus Gestão · 16/Jul)','Daico (via EQI · 16/Jul)','TEX Engenharia (via Erika Godoy · 22/Jul)','BA HONG LUNG (via Erika Godoy · 22/Jul)','Steel Loop (via Erika Godoy · 22/Jul)','JG EMPREITEIRA (via Erika Godoy · 22/Jul)','We Inc (via Erika Godoy · 22/Jul)','Madesa (via parceria não identificada · 24/Jul)','BA HONG LUNG (via Erika Godoy · 24/Jul)','Steel Loop - Barracão Logístico (via Erika Godoy · 24/Jul)','Grupo Energia (via Erika Godoy · 24/Jul)','ArtHaus (via parceria não identificada · 31/Jul)'],
     outNames:['Tonolher Empreendimento (10/Jul)','GIGA4 URBANISMO (10/Jul)','AVVA Empreendimentos (14/Jul)','Zanardi Construtora (30/Jul)'],
     note:''},
-  tri: {total:23, parCnt:19, outCnt:4,  // Q3/26: Jul/26 (final) + Ago/26 (0 até agora) — espelha "mes_ant"
+  tri: {total:24, parCnt:20, outCnt:4,  // Q3/26: Jul/26 (final) + Ago/26 (0 até agora) — espelha "mes_ant"
     parNames:['Transbyshop (via EQI · 02/Jul)','JG EMPREITEIRA (via Erika Godoy · 06/Jul)'],
     outNames:['Zanardi Construtora (30/Jul)']},
-  ano: {total:63, parCnt:53, outCnt:8,
-    parNames:['53 reuniões via parceiros (Jan–Ago/26 aprox.)'], outNames:['8 outbound · 1 evento'],
+  ano: {total:64, parCnt:54, outCnt:8,
+    parNames:['54 reuniões via parceiros (Jan–Ago/26 aprox.)'], outNames:['8 outbound · 1 evento'],
     note:'Dados agregados — detalhe em "Mês" ou "Mês anterior"'},
-  tudo:{total:79, parCnt:66, outCnt:11,
-    parNames:['66 reuniões via parceiros (todo histórico)'], outNames:['10 outbound · 1 evento · 1 LinkedIn'],
+  tudo:{total:80, parCnt:67, outCnt:11,
+    parNames:['67 reuniões via parceiros (todo histórico)'], outNames:['10 outbound · 1 evento · 1 LinkedIn'],
     note:'Dados históricos agregados'},
 };
 
@@ -1413,8 +1413,8 @@ const ORIG_PAR_COLORS = ['rgba(244,67,54,.55)','#0077b5','#00bcd4','#2196f3','#9
 // Fonte: HubSpot 03/08/2026 · pipeline 43349147 (live query)
 const REV = [
   {l:'Entrada',               cnt:57, amt:820.0,  prob:10,  col:'#1255a8'},
-  {l:'Reunião Ini. Agend.',   cnt:4,  amt:60.0,   prob:20,  col:'#1258b5'},
-  {l:'Reunião Inicial Conc.', cnt:31, amt:526.1,  prob:30,  col:'#1565c0'},
+  {l:'Reunião Ini. Agend.',   cnt:3,  amt:45.0,   prob:20,  col:'#1258b5'},  // ArtHaus movida para Reunião Inicial Conc. (registrado 03/08, reunião real 31/Jul)
+  {l:'Reunião Inicial Conc.', cnt:32, amt:541.1,  prob:30,  col:'#1565c0'},
   {l:'Reun. Planej. Agend.',  cnt:3,  amt:114.0,  prob:60,  col:'#0288d1'},  // = Reunião Jurídica Agendada: BA HONG LUNG+Steel Loop-Barracão+Grupo Energia
   {l:'Reun. Planej. Conc.',   cnt:7,  amt:89.5,   prob:60,  col:'#0097a7'},
   {l:'Proposta Enviada',      cnt:5,  amt:86.0,   prob:70,  col:'#00796b'},  // = Elaboração de Proposta: Transben+Beckhauser+TRANSJOI+Zimmerman+ADS Drones
@@ -1439,11 +1439,11 @@ const REV_PERIODS = {
     {l:'Contrato Enviado',      cnt:0, amt:0,   prob:90,  col:'#558b2f'},
     {l:'Fechado Ganho',         cnt:0, amt:0,   prob:100, col:'#00c853'},
   ],
-  // 7 dias (28/Jul–03/Ago): 9 novos deals criados — Catarinaço+FITAS DE AÇO MCM(28/Jul) + ArtHaus+Rede M7+Lixas Tatu+Feldmann+Agro Michalach+Fluair+TOPSUN(29–30/Jul)
+  // 7 dias (28/Jul–03/Ago): 9 novos deals criados — Catarinaço+FITAS DE AÇO MCM(28/Jul) + ArtHaus+Rede M7+Lixas Tatu+Feldmann+Agro Michalach+Fluair+TOPSUN(29–30/Jul); ArtHaus avançou p/ Reunião Inicial Conc. (registrado 03/08, reunião real 31/Jul)
   '7d': [
     {l:'Entrada',               cnt:6, amt:55, prob:10,  col:'#1255a8'},  // FITAS DE AÇO MCM+Rede M7+Feldmann+Agro Michalach+Fluair+TOPSUN
-    {l:'Reunião Ini. Agend.',   cnt:3, amt:45, prob:20,  col:'#1258b5'},  // Catarinaço+ArtHaus+Lixas Tatu
-    {l:'Reunião Inicial Conc.', cnt:0, amt:0,  prob:30,  col:'#1565c0'},
+    {l:'Reunião Ini. Agend.',   cnt:2, amt:30, prob:20,  col:'#1258b5'},  // Catarinaço+Lixas Tatu
+    {l:'Reunião Inicial Conc.', cnt:1, amt:15, prob:30,  col:'#1565c0'},  // ArtHaus
     {l:'Reun. Planej. Agend.',  cnt:0, amt:0,   prob:60,  col:'#0288d1'},
     {l:'Reun. Planej. Conc.',   cnt:0, amt:0,   prob:60,  col:'#0097a7'},
     {l:'Proposta Enviada',      cnt:0, amt:0,   prob:70,  col:'#00796b'},
@@ -1463,11 +1463,11 @@ const REV_PERIODS = {
     {l:'Contrato Enviado',      cnt:0, amt:0, prob:90,  col:'#558b2f'},
     {l:'Fechado Ganho',         cnt:0, amt:0, prob:100, col:'#00c853'},
   ],
-  // Mês anterior jul/26 FINAL: 32 deals criados · current stage as of 03/08 · HubSpot query direta
+  // Mês anterior jul/26 FINAL: 32 deals criados · current stage as of 03/08 · HubSpot query direta (ArtHaus movida p/ Reunião Inicial Conc.)
   mes_ant: [
     {l:'Entrada',               cnt:8,  amt:85,   prob:10,  col:'#1255a8'},
-    {l:'Reunião Ini. Agend.',   cnt:3,  amt:45,   prob:20,  col:'#1258b5'},
-    {l:'Reunião Inicial Conc.', cnt:11, amt:165,  prob:30,  col:'#1565c0'},
+    {l:'Reunião Ini. Agend.',   cnt:2,  amt:30,   prob:20,  col:'#1258b5'},
+    {l:'Reunião Inicial Conc.', cnt:12, amt:180,  prob:30,  col:'#1565c0'},
     {l:'Reun. Planej. Agend.',  cnt:3,  amt:114,  prob:60,  col:'#0288d1'},
     {l:'Reun. Planej. Conc.',   cnt:6,  amt:74.5, prob:60,  col:'#0097a7'},
     {l:'Proposta Enviada',      cnt:0,  amt:0,    prob:70,  col:'#00796b'},
@@ -1478,8 +1478,8 @@ const REV_PERIODS = {
   // Trimestre atual Q3/26: Jul/26 (final) + Ago/26 (0 até agora) — espelha mes_ant
   tri: [
     {l:'Entrada',               cnt:8,  amt:85,   prob:10,  col:'#1255a8'},
-    {l:'Reunião Ini. Agend.',   cnt:3,  amt:45,   prob:20,  col:'#1258b5'},
-    {l:'Reunião Inicial Conc.', cnt:11, amt:165,  prob:30,  col:'#1565c0'},
+    {l:'Reunião Ini. Agend.',   cnt:2,  amt:30,   prob:20,  col:'#1258b5'},
+    {l:'Reunião Inicial Conc.', cnt:12, amt:180,  prob:30,  col:'#1565c0'},
     {l:'Reun. Planej. Agend.',  cnt:3,  amt:114,  prob:60,  col:'#0288d1'},
     {l:'Reun. Planej. Conc.',   cnt:6,  amt:74.5, prob:60,  col:'#0097a7'},
     {l:'Proposta Enviada',      cnt:0,  amt:0,    prob:70,  col:'#00796b'},
@@ -1490,8 +1490,8 @@ const REV_PERIODS = {
   // Ano 2026 (jan–ago/26): 106 deals · current stage as of 03/08 · HubSpot query direta
   ano: [
     {l:'Entrada',               cnt:53, amt:760,    prob:10,  col:'#1255a8'},
-    {l:'Reunião Ini. Agend.',   cnt:4,  amt:60,     prob:20,  col:'#1258b5'},
-    {l:'Reunião Inicial Conc.', cnt:30, amt:511.1,  prob:30,  col:'#1565c0'},
+    {l:'Reunião Ini. Agend.',   cnt:3,  amt:45,     prob:20,  col:'#1258b5'},
+    {l:'Reunião Inicial Conc.', cnt:31, amt:526.1,  prob:30,  col:'#1565c0'},
     {l:'Reun. Planej. Agend.',  cnt:3,  amt:114,    prob:60,  col:'#0288d1'},
     {l:'Reun. Planej. Conc.',   cnt:7,  amt:89.5,   prob:60,  col:'#0097a7'},
     {l:'Proposta Enviada',      cnt:5,  amt:86,     prob:70,  col:'#00796b'},
@@ -1502,8 +1502,8 @@ const REV_PERIODS = {
   // Todo período: snapshot atual do pipeline (114 deals, excl. Perdido) · HubSpot 03/08/2026
   tudo: [
     {l:'Entrada',               cnt:57, amt:820,    prob:10,  col:'#1255a8'},
-    {l:'Reunião Ini. Agend.',   cnt:4,  amt:60,     prob:20,  col:'#1258b5'},
-    {l:'Reunião Inicial Conc.', cnt:31, amt:526.1,  prob:30,  col:'#1565c0'},
+    {l:'Reunião Ini. Agend.',   cnt:3,  amt:45,     prob:20,  col:'#1258b5'},
+    {l:'Reunião Inicial Conc.', cnt:32, amt:541.1,  prob:30,  col:'#1565c0'},
     {l:'Reun. Planej. Agend.',  cnt:3,  amt:114,    prob:60,  col:'#0288d1'},
     {l:'Reun. Planej. Conc.',   cnt:7,  amt:89.5,   prob:60,  col:'#0097a7'},
     {l:'Proposta Enviada',      cnt:5,  amt:86,     prob:70,  col:'#00796b'},
@@ -1622,10 +1622,10 @@ const FD = {
   hoje:    {cli:0,  par:0,  pfx:0, cfx:0, nd:0},    // 03/Ago: nada ainda hoje
   '7d':    {cli:0,  par:0,  pfx:0, cfx:0, nd:0},    // espelha "mes" (lógica existente do dashboard) — Ago/26 zerado
   mes:     {cli:0,  par:0,  pfx:0, cfx:0, nd:0},    // Ago/26 (Dia 3): zerado até o momento
-  mes_ant: {cli:23, par:13, pfx:5, cfx:1, nd:32},   // Jul/26 FINAL confirmado via HubSpot
+  mes_ant: {cli:24, par:13, pfx:5, cfx:1, nd:32},   // Jul/26 FINAL confirmado via HubSpot (+ArtHaus lançada 03/08, reunião real em 31/Jul)
   tri:     {cli:0,  par:0,  pfx:0, cfx:0, nd:0},    // Q3/26 (início do trimestre = Ago/26)
-  ano:     {cli:73, par:80, pfx:26, cfx:1, nd:216}, // Jan–Ago/26 · par via painel 04.Parceiros
-  tudo:    {cli:89, par:94, pfx:31, cfx:4, nd:314}, // todo período · par via painel 04.Parceiros (Out/25–Ago/26)
+  ano:     {cli:74, par:80, pfx:26, cfx:1, nd:216}, // Jan–Ago/26 · par via painel 04.Parceiros
+  tudo:    {cli:90, par:94, pfx:31, cfx:4, nd:314}, // todo período · par via painel 04.Parceiros (Out/25–Ago/26)
 };
 
 // ════════════════════════════════════════
@@ -2444,16 +2444,16 @@ const NAMES_REV_PERIODS = {
     '90834558': [], '1230967392': [], '90738744': [],
     '1161571368': [], '90834559': [], '90738746': [], '90834560': [], '90834561': [], '90834562': [],
   },
-  '7d': {  // 28/Jul–03/Ago: 9 novos deals
+  '7d': {  // 28/Jul–03/Ago: 9 novos deals (ArtHaus avançou p/ Reunião Inicial Conc., registrado 03/08)
     '90834558': ['FITAS DE AÇO MCM · R$15M','Rede M7 Postos - Captação · R$15M','Feldmann Pescados · R$6M','Agro Michalach · R$15M','Fluair Componentes Pneumáticos · R$2M','TOPSUN Energia Solar · R$2M'],
-    '1230967392': ['Catarinaço · R$15M','ArtHaus · R$15M','Lixas Tatu · R$15M'],
-    '90738744': [],
+    '1230967392': ['Catarinaço · R$15M','Lixas Tatu · R$15M'],
+    '90738744': ['ArtHaus · R$15M'],
     '1161571368': [], '90834559': [], '90738746': [], '90834560': [], '90834561': [], '90834562': [],
   },
-  mes_ant: {  // Jul/26 FINAL: 32 deals criados em julho
+  mes_ant: {  // Jul/26 FINAL: 32 deals criados em julho (ArtHaus avançou p/ Reunião Inicial Conc., registrado 03/08)
     '90834558': ['FITAS DE AÇO MCM · R$15M','Lojas Queiroz · R$15M','Regional Telhas · R$15M','Rede M7 Postos - Captação · R$15M','Feldmann Pescados · R$6M','Agro Michalach · R$15M','Fluair Componentes Pneumáticos · R$2M','TOPSUN Energia Solar · R$2M'],
-    '1230967392': ['Catarinaço · R$15M','ArtHaus · R$15M','Lixas Tatu · R$15M'],
-    '90738744': ['Zanardi Construtora · R$15M','Primaz - CRI · R$15M','AVVA Empreendimentos · R$15M','Loteadora Piauí · R$15M','Grupo Riviera - CRI · R$15M','GIGA4 URBANISMO · R$15M','Tonolher Empreendimento · R$15M','Selbetti Tecnologia · R$15M','Daico · R$15M','Manatex · R$15M','Madesa · R$15M'],
+    '1230967392': ['Catarinaço · R$15M','Lixas Tatu · R$15M'],
+    '90738744': ['Zanardi Construtora · R$15M','Primaz - CRI · R$15M','AVVA Empreendimentos · R$15M','Loteadora Piauí · R$15M','Grupo Riviera - CRI · R$15M','GIGA4 URBANISMO · R$15M','Tonolher Empreendimento · R$15M','Selbetti Tecnologia · R$15M','Daico · R$15M','Manatex · R$15M','Madesa · R$15M','ArtHaus · R$15M'],
     '1161571368': [],
     '90834559': ['We Inc · R$15M','JG EMPREITEIRA E CONSTRUCOES · R$1M','Steel Loop · R$15M','BA HONG LUNG · R$1,5M','TEX Engenharia · R$2M','Bom Jesus · R$40M'],
     '90738746': [],
@@ -2498,7 +2498,7 @@ const MTG_CLI_NAMES = {
   hoje:    [],  // 03/Ago: sem reuniões com clientes hoje
   mes:     [],  // Ago/26: sobrescrito por _aplicarCM()
   '7d':    [],
-  mes_ant: ['Transbyshop (02/Jul)','Manatex (03/Jul)','We Inc - Loteadora (06/Jul)','JG EMPREITEIRA (06/Jul)','Tonolher Empreendimento (10/Jul)','GIGA4 URBANISMO (10/Jul)','Loteadora Piauí (10/Jul)','Bom Jesus (13/Jul)','AVVA Empreendimentos (14/Jul)','Grupo Riviera - CRI (14/Jul)','Primaz - CRI (16/Jul)','Selbetti Tecnologia (16/Jul)','Daico (16/Jul)','TEX Engenharia (22/Jul)','BA HONG LUNG (22/Jul)','Steel Loop (22/Jul)','JG EMPREITEIRA (22/Jul)','We Inc (22/Jul)','Madesa (24/Jul)','BA HONG LUNG (24/Jul)','Steel Loop - Barracão Logístico (24/Jul)','Grupo Energia (24/Jul)','Zanardi Construtora (30/Jul)'],  // Jul/26 FINAL: 23 realizadas
+  mes_ant: ['Transbyshop (02/Jul)','Manatex (03/Jul)','We Inc - Loteadora (06/Jul)','JG EMPREITEIRA (06/Jul)','Tonolher Empreendimento (10/Jul)','GIGA4 URBANISMO (10/Jul)','Loteadora Piauí (10/Jul)','Bom Jesus (13/Jul)','AVVA Empreendimentos (14/Jul)','Grupo Riviera - CRI (14/Jul)','Primaz - CRI (16/Jul)','Selbetti Tecnologia (16/Jul)','Daico (16/Jul)','TEX Engenharia (22/Jul)','BA HONG LUNG (22/Jul)','Steel Loop (22/Jul)','JG EMPREITEIRA (22/Jul)','We Inc (22/Jul)','Madesa (24/Jul)','BA HONG LUNG (24/Jul)','Steel Loop - Barracão Logístico (24/Jul)','Grupo Energia (24/Jul)','Zanardi Construtora (30/Jul)','ArtHaus (31/Jul — lançada com atraso em 03/Ago)'],  // Jul/26 FINAL: 24 realizadas
 };
 const MTG_PAR_NAMES = {
   hoje:    [],  // 03/Ago: sem reuniões com parceiros hoje
