@@ -27,6 +27,10 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,-ap
 .fb{padding:5px 11px;background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:6px;cursor:pointer;font-size:11px;font-family:inherit;transition:all .15s;white-space:nowrap}
 .fb:hover{border-color:var(--blue);color:var(--blue)}
 .fb.on{background:var(--blue);border-color:var(--blue);color:#fff;font-weight:700}
+.fb-prod{padding:5px 11px;background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:6px;cursor:pointer;font-size:11px;font-family:inherit;transition:all .15s;white-space:nowrap}
+.fb-prod:hover{border-color:var(--cyan);color:var(--cyan)}
+.fb-prod.on{background:var(--cyan);border-color:var(--cyan);color:#07101e;font-weight:700}
+.prod-note-par{display:none;font-size:9px;color:var(--muted);font-style:italic;margin-top:4px}
 
 /* ── LAYOUT ── */
 .main{padding:16px 24px;display:flex;flex-direction:column;gap:14px}
@@ -303,6 +307,13 @@ canvas{display:block}
       </div>
     </div>
   </div>
+  <div class="fbars" id="fbarProduct" style="margin-top:6px">
+    <span style="font-size:10px;color:var(--muted);align-self:center;margin-right:2px">Produto:</span>
+    <button class="fb-prod on" onclick="setProduct(this,'todos')">Todos</button>
+    <button class="fb-prod" onclick="setProduct(this,'tax_shield')">Tax Shield</button>
+    <button class="fb-prod" onclick="setProduct(this,'cap_captacao')">CAP - Captação</button>
+    <button class="fb-prod" onclick="setProduct(this,'cri_imobiliario')">CRI Imobiliário</button>
+  </div>
 </div>
 
 <div class="main">
@@ -333,6 +344,7 @@ canvas{display:block}
       <div class="exec-lbl">🤝 Parceiros Fechados</div>
       <div class="exec-val" id="exec-pfx">1</div>
       <div class="exec-sub" id="exec-pfx-sub">no período · meta 3/mês</div>
+      <div class="prod-note-par">Produto não se aplica a Parceiros</div>
     </div>
     <div class="exec-kpi te">
       <div class="exec-lbl">📊 Novos Deals · Pipeline</div>
@@ -410,6 +422,7 @@ canvas{display:block}
       <div class="mtg-header">
         <div>
           <div class="mtg-label">Reuniões com Novos Parceiros · Pipeline Parceiros</div>
+          <div class="prod-note-par">Produto não se aplica a Parceiros</div>
           <div class="mtg-big close" id="mv-par">13</div>
           <div class="mtg-goal" id="mgoal-par">de <strong id="mg-par">15</strong> reuniões / mês</div>
         </div>
@@ -659,7 +672,7 @@ canvas{display:block}
         <div class="card-t">Parceiros · Reunião Inicial Concluída com Clientes</div>
         <div class="rank-tabs">
           <button id="rankTabPeriod" class="rank-tab on" data-tab="mes" onclick="switchRankTab('mes')">🗓 Mês atual (0)</button>
-          <button class="rank-tab" data-tab="geral" onclick="switchRankTab('geral')">🏆 Todo período (13)</button>
+          <button id="rankTabGeral" class="rank-tab" data-tab="geral" onclick="switchRankTab('geral')">🏆 Todo período (13)</button>
         </div>
       </div>
       <div class="rank-list" id="rankList"></div>
@@ -1021,7 +1034,7 @@ canvas{display:block}
     <div class="card">
       <div class="card-hd">
         <div class="card-t">Funil de Conversão · Clientes</div>
-        <span class="chip">Pipeline atual</span>
+        <span class="chip" id="convFunnelChip">Pipeline atual</span>
       </div>
       <div style="display:flex;flex-direction:column;gap:6px;margin-top:4px">
         <div style="display:flex;align-items:center;gap:8px">
@@ -1091,7 +1104,10 @@ canvas{display:block}
     </div>
     <div class="card">
       <div class="card-hd">
-        <div class="card-t">Funil de Parceiros</div>
+        <div>
+          <div class="card-t">Funil de Parceiros</div>
+          <div class="prod-note-par">Produto não se aplica a Parceiros</div>
+        </div>
         <span class="chip">51 ativos · 47 perdidos · 26 fechados · 124 total</span>
       </div>
       <div class="fn-hd pr">
@@ -1164,7 +1180,10 @@ canvas{display:block}
     </div>
     <div class="card">
       <div class="card-hd">
-        <div class="card-t">Performance Individual</div>
+        <div>
+          <div class="card-t">Performance Individual</div>
+          <div class="prod-note-par">Produto não se aplica a Parceiros (coluna Reun. Parceiros)</div>
+        </div>
         <div class="rank-tabs">
           <button class="rank-tab on" id="perfTabMes" onclick="switchPerfTab('mes')">🗓 Jul/26</button>
           <button class="rank-tab" id="perfTabGeral" onclick="switchPerfTab('geral')">🏆 Todo período</button>
@@ -1350,7 +1369,12 @@ const ORIG_CLI_COLORS = ['#2196f3','#00bcd4','#9c27b0','#0077b5'];
 // parNames/outNames = nomes dos clientes que tiveram ReunIniConc no período
 // Fonte: HubSpot campo origem_de_negocios + empresa_parceira · 10/07/2026
 // ════════════════════════════════════════
-const MTG_CLI_ORIGINS = {
+// Ao rolar o mes (CM.cli) durante um refresh futuro, tambem e necessario re-rodar
+// compute-produto-periodos.js com dados atualizados do HubSpot para manter as chaves
+// por produto (tax_shield/cap_captacao/cri_imobiliario) sincronizadas -- o _aplicarCM()
+// so cascateia automaticamente a chave 'todos'.
+const MTG_CLI_ORIGINS_BY_PRODUTO = {
+  todos: {
   hoje: {total:0, parCnt:0, outCnt:0,  // 03/Ago: nenhuma reunião de cliente ainda hoje
     parNames:[], outNames:[]},
   mes:  {total:0, parCnt:0, outCnt:0,  // Ago/26 · 03/08/2026 — sobrescrito por _aplicarCM()
@@ -1371,11 +1395,17 @@ const MTG_CLI_ORIGINS = {
   tudo:{total:80, parCnt:67, outCnt:11,
     parNames:['67 reuniões via parceiros (todo histórico)'], outNames:['10 outbound · 1 evento · 1 LinkedIn'],
     note:'Dados históricos agregados'},
+},
+  tax_shield: {"hoje": {"total": 0, "parCnt": 0, "outCnt": 0, "parNames": [], "outNames": [], "note": ""}, "7d": {"total": 0, "parCnt": 0, "outCnt": 0, "parNames": [], "outNames": [], "note": ""}, "mes": {"total": 0, "parCnt": 0, "outCnt": 0, "parNames": [], "outNames": [], "note": ""}, "mes_ant": {"total": 5, "parCnt": 5, "outCnt": 0, "parNames": ["Transbyshop (via EQI · 02/Jul)", "Manatex (via Paulo Roberto Dubiella Cantoli · 03/Jul)", "Selbetti Tecnologia S.A. - 83.483.230/0001-86 (via ARCUS GESTAO E PARTICIPACOES · 16/Jul)", "Daico (via EQI · 16/Jul)", "Madesa (via parceria não identificada · 24/Jul)"], "outNames": [], "note": ""}, "tri": {"total": 5, "parCnt": 5, "outCnt": 0, "parNames": ["Transbyshop (via EQI · 02/Jul)", "Manatex (via Paulo Roberto Dubiella Cantoli · 03/Jul)", "Selbetti Tecnologia S.A. - 83.483.230/0001-86 (via ARCUS GESTAO E PARTICIPACOES · 16/Jul)", "Daico (via EQI · 16/Jul)", "Madesa (via parceria não identificada · 24/Jul)"], "outNames": [], "note": ""}, "ano": {"total": 61, "parCnt": 54, "outCnt": 7, "parNames": ["Skylink (via ADEMAR DE OLIVEIRA · 22/Jan)", "Netbrokers (via JOSEF RUBIN · 23/Jan)", "Zen S/A (via ANDRÉ VENICIUS TREZUP · 04/Fev)", "Digital Sat (via SILVA & SILVA ADVOGADOS ASSOCIADOS · 09/Fev)", "Heli Brasil (via ANDRÉ VENICIUS TREZUP · 11/Fev)", "Grupo Riviera (via PATRICK VALLE · 12/Fev)", "TRANSJOI (via RENAN DEDA TISSE REPRESENTACOES · 24/Fev)", "SCP PORTO BELO PESCADOS RS (via PATRICK VALLE · 09/Mar)", "Vetor Automotivos (via SILVA & SILVA ADVOGADOS ASSOCIADOS · 11/Mar)", "Always Fit (via EQI · 19/Mar)", "Frigo King (via EQI · 24/Mar)", "Bia Enxovais (via EQI · 24/Mar)", "Croques (via PATRICK VALLE · 24/Mar)", "Rudnik Soluções e Tecnologia (via EQI · 30/Mar)", "ZM (via SILVA & SILVA ADVOGADOS ASSOCIADOS · 30/Mar)", "P&P Móveis e Madeira (via EQI · 02/Abr)", "Grupo Pietrobon (via SILVA & SILVA ADVOGADOS ASSOCIADOS · 06/Abr)", "Dynamis Importadora (via ANDRÉ VENICIUS TREZUP · 06/Abr)", "Mondiana Industria de Plasticos LTDA (via SILVA & SILVA ADVOGADOS ASSOCIADOS · 09/Abr)", "Meias Loa (via SUDDEN SERVICOS FINANCEIROS E CORRETORA DE SEGUROS LTDA · 10/Abr)", "Brasmaq Portuária (via SILVA & SILVA ADVOGADOS ASSOCIADOS · 13/Abr)", "Postos Zimmerman (via SUDDEN SERVICOS FINANCEIROS E CORRETORA DE SEGUROS LTDA · 14/Abr)", "Linda Casa (via EQI · 14/Abr)", "Guabifios (via SUDDEN SERVICOS FINANCEIROS E CORRETORA DE SEGUROS LTDA · 16/Abr)", "Timptrade (via SUDDEN SERVICOS FINANCEIROS E CORRETORA DE SEGUROS LTDA · 23/Abr)", "Portonave (via SUDDEN SERVICOS FINANCEIROS E CORRETORA DE SEGUROS LTDA · 23/Abr)", "HUBLOG (via BRAVO, MEDINA & ADVOGADOS · 29/Abr)", "Ceramfix (via SUDDEN SERVICOS FINANCEIROS E CORRETORA DE SEGUROS LTDA · 29/Abr)", "Mereo Tech S.A. (via NATAN RAMOS SOCIEDADE INDIVIDUAL DE ADVOCACIA · 30/Abr)", "Hidra (via SILVA & SILVA ADVOGADOS ASSOCIADOS · 06/Mai)", "Ativos Capital (via EQI · 07/Mai)", "Inoven Comércio Internacional Ltda (via SILVA & SILVA ADVOGADOS ASSOCIADOS · 12/Mai)", "Ambiensys (via WIT INVEST · 13/Mai)", "H Bremer & Filhos Ltda. (via SILVA & SILVA ADVOGADOS ASSOCIADOS · 13/Mai)", "Tropheus (via JOSEF RUBIN · 14/Mai)", "Roma Fertilizantes (via ADEMAR DE OLIVEIRA · 15/Mai)", "Zigma (via NATAN RAMOS SOCIEDADE INDIVIDUAL DE ADVOCACIA · 18/Mai)", "Transben (via SUDDEN SERVICOS FINANCEIROS E CORRETORA DE SEGUROS LTDA · 18/Mai)", "Bourbon Hospitalidade (via RENAN DEDA TISSE REPRESENTACOES · 19/Mai)", "Baux Group (via INVESTIM, INTERMEDIACAO DE NEGOCIOS LTDA · 27/Mai)", "Beckhauser Malhas (via INVESTIM, INTERMEDIACAO DE NEGOCIOS LTDA · 03/Jun)", "Tripla (via NATAN RAMOS SOCIEDADE INDIVIDUAL DE ADVOCACIA · 12/Jun)", "Primaz (via NATAN RAMOS SOCIEDADE INDIVIDUAL DE ADVOCACIA · 15/Jun)", "Rede M7 (via Karen Costa da Silva · 16/Jun)", "Banana Brasil (via SUDDEN SERVICOS FINANCEIROS E CORRETORA DE SEGUROS LTDA · 23/Jun)", "Grupo Plasnox (via SUDDEN SERVICOS FINANCEIROS E CORRETORA DE SEGUROS LTDA · 24/Jun)", "Círculo (via SUDDEN SERVICOS FINANCEIROS E CORRETORA DE SEGUROS LTDA · 24/Jun)", "Baterias ERBS (via SILVA & SILVA ADVOGADOS ASSOCIADOS · 24/Jun)", "Rede de Postos Luca - Neto (via Karen Costa da Silva · 30/Jun)", "Transbyshop (via EQI · 02/Jul)", "Manatex (via Paulo Roberto Dubiella Cantoli · 03/Jul)", "Selbetti Tecnologia S.A. - 83.483.230/0001-86 (via ARCUS GESTAO E PARTICIPACOES · 16/Jul)", "Daico (via EQI · 16/Jul)", "Madesa (via parceria não identificada · 24/Jul)"], "outNames": ["Procfit (30/Jan)", "Grupo Machado (03/Fev)", "Saintsteel (11/Mai)", "Arrazantty (14/Mai)", "Arius Sistemas (02/Jun)", "ADS Drones Operação 3 (08/Jun)", "Fibramerica Global (24/Jun)"], "note": ""}, "tudo": {"total": 108, "parCnt": 73, "outCnt": 35, "parNames": ["Quality Frotas (via EQI · 22/Set)", "Construtora e Incorporadora Greenwood (via parceria não identificada · 02/Out)", "Cauzzo Mais (via EQI · 04/Out)", "Secret (via L V LEAL CONSULTORIA EM TECNOLOGIA DA INFORMACAO LTDA · 10/Out)", "Dromos Infraestrutura (via L V LEAL CONSULTORIA EM TECNOLOGIA DA INFORMACAO LTDA · 14/Out)", "Dall'Oglio (via L V LEAL CONSULTORIA EM TECNOLOGIA DA INFORMACAO LTDA · 15/Out)", "Alfama Alimentos (via L V LEAL CONSULTORIA EM TECNOLOGIA DA INFORMACAO LTDA · 21/Out)", "Transpetrol (via parceria não identificada · 29/Out)", "Agex (via parceria não identificada · 29/Out)", "Carraro Logistica (via parceria não identificada · 29/Out)", "Uni Logistica (via parceria não identificada · 29/Out)", "BBM Logistica (via parceria não identificada · 29/Out)", "Borges Madeiras (via EQI · 30/Out)", "Transportadora Taborda (via parceria não identificada · 30/Out)", "Gratt (via INVESTIM, INTERMEDIACAO DE NEGOCIOS LTDA · 13/Nov)", "Incomum (via INVESTIM, INTERMEDIACAO DE NEGOCIOS LTDA · 13/Nov)", "Grupo catarinense pharma (via INVESTIM, INTERMEDIACAO DE NEGOCIOS LTDA · 27/Nov)", "Cecil (via INVESTIM, INTERMEDIACAO DE NEGOCIOS LTDA · 27/Nov)", "Anadem (via Daniel Bambam  · 17/Dez)", "Skylink (via ADEMAR DE OLIVEIRA · 22/Jan)", "Netbrokers (via JOSEF RUBIN · 23/Jan)", "Zen S/A (via ANDRÉ VENICIUS TREZUP · 04/Fev)", "Digital Sat (via SILVA & SILVA ADVOGADOS ASSOCIADOS · 09/Fev)", "Heli Brasil (via ANDRÉ VENICIUS TREZUP · 11/Fev)", "Grupo Riviera (via PATRICK VALLE · 12/Fev)", "TRANSJOI (via RENAN DEDA TISSE REPRESENTACOES · 24/Fev)", "SCP PORTO BELO PESCADOS RS (via PATRICK VALLE · 09/Mar)", "Vetor Automotivos (via SILVA & SILVA ADVOGADOS ASSOCIADOS · 11/Mar)", "Always Fit (via EQI · 19/Mar)", "Frigo King (via EQI · 24/Mar)", "Bia Enxovais (via EQI · 24/Mar)", "Croques (via PATRICK VALLE · 24/Mar)", "Rudnik Soluções e Tecnologia (via EQI · 30/Mar)", "ZM (via SILVA & SILVA ADVOGADOS ASSOCIADOS · 30/Mar)", "P&P Móveis e Madeira (via EQI · 02/Abr)", "Grupo Pietrobon (via SILVA & SILVA ADVOGADOS ASSOCIADOS · 06/Abr)", "Dynamis Importadora (via ANDRÉ VENICIUS TREZUP · 06/Abr)", "Mondiana Industria de Plasticos LTDA (via SILVA & SILVA ADVOGADOS ASSOCIADOS · 09/Abr)", "Meias Loa (via SUDDEN SERVICOS FINANCEIROS E CORRETORA DE SEGUROS LTDA · 10/Abr)", "Brasmaq Portuária (via SILVA & SILVA ADVOGADOS ASSOCIADOS · 13/Abr)", "Postos Zimmerman (via SUDDEN SERVICOS FINANCEIROS E CORRETORA DE SEGUROS LTDA · 14/Abr)", "Linda Casa (via EQI · 14/Abr)", "Guabifios (via SUDDEN SERVICOS FINANCEIROS E CORRETORA DE SEGUROS LTDA · 16/Abr)", "Timptrade (via SUDDEN SERVICOS FINANCEIROS E CORRETORA DE SEGUROS LTDA · 23/Abr)", "Portonave (via SUDDEN SERVICOS FINANCEIROS E CORRETORA DE SEGUROS LTDA · 23/Abr)", "HUBLOG (via BRAVO, MEDINA & ADVOGADOS · 29/Abr)", "Ceramfix (via SUDDEN SERVICOS FINANCEIROS E CORRETORA DE SEGUROS LTDA · 29/Abr)", "Mereo Tech S.A. (via NATAN RAMOS SOCIEDADE INDIVIDUAL DE ADVOCACIA · 30/Abr)", "Hidra (via SILVA & SILVA ADVOGADOS ASSOCIADOS · 06/Mai)", "Ativos Capital (via EQI · 07/Mai)", "Inoven Comércio Internacional Ltda (via SILVA & SILVA ADVOGADOS ASSOCIADOS · 12/Mai)", "Ambiensys (via WIT INVEST · 13/Mai)", "H Bremer & Filhos Ltda. (via SILVA & SILVA ADVOGADOS ASSOCIADOS · 13/Mai)", "Tropheus (via JOSEF RUBIN · 14/Mai)", "Roma Fertilizantes (via ADEMAR DE OLIVEIRA · 15/Mai)", "Zigma (via NATAN RAMOS SOCIEDADE INDIVIDUAL DE ADVOCACIA · 18/Mai)", "Transben (via SUDDEN SERVICOS FINANCEIROS E CORRETORA DE SEGUROS LTDA · 18/Mai)", "Bourbon Hospitalidade (via RENAN DEDA TISSE REPRESENTACOES · 19/Mai)", "Baux Group (via INVESTIM, INTERMEDIACAO DE NEGOCIOS LTDA · 27/Mai)", "Beckhauser Malhas (via INVESTIM, INTERMEDIACAO DE NEGOCIOS LTDA · 03/Jun)", "Tripla (via NATAN RAMOS SOCIEDADE INDIVIDUAL DE ADVOCACIA · 12/Jun)", "Primaz (via NATAN RAMOS SOCIEDADE INDIVIDUAL DE ADVOCACIA · 15/Jun)", "Rede M7 (via Karen Costa da Silva · 16/Jun)", "Banana Brasil (via SUDDEN SERVICOS FINANCEIROS E CORRETORA DE SEGUROS LTDA · 23/Jun)", "Grupo Plasnox (via SUDDEN SERVICOS FINANCEIROS E CORRETORA DE SEGUROS LTDA · 24/Jun)", "Círculo (via SUDDEN SERVICOS FINANCEIROS E CORRETORA DE SEGUROS LTDA · 24/Jun)", "Baterias ERBS (via SILVA & SILVA ADVOGADOS ASSOCIADOS · 24/Jun)", "Rede de Postos Luca - Neto (via Karen Costa da Silva · 30/Jun)", "Transbyshop (via EQI · 02/Jul)", "Manatex (via Paulo Roberto Dubiella Cantoli · 03/Jul)", "Selbetti Tecnologia S.A. - 83.483.230/0001-86 (via ARCUS GESTAO E PARTICIPACOES · 16/Jul)", "Daico (via EQI · 16/Jul)", "Madesa (via parceria não identificada · 24/Jul)"], "outNames": ["Almeida Mercados (21/Set)", "ADS Drones (21/Set)", "Kraft Logística (21/Set)", "Postos Gralha Azul (22/Set)", "Grupo Fcamara (22/Set)", "Grupo Opus (22/Set)", "BWT Operadora (22/Set)", "Torriton Beauty & Hair (22/Set)", "Bender Group (22/Set)", "Gela Boca (22/Set)", "Saggezza (22/Set)", "Ritmo Logística (22/Set)", "Carcereri Saneamento Básico (22/Set)", "Tintas Verginia (22/Set)", "Dalpar Supermercados (25/Set)", "Transbochnia Transportes (26/Set)", "Cromo Transfer (29/Set)", "Serra Verde Express (04/Out)", "Rede Multishow Supermercados Associados (04/Out)", "Madalosso (21/Out)", "PãodeQueijoTradição - Novo negócio (29/Out)", "Beckhauser (29/Out)", "Vólus (30/Out)", "MaxxiCase (03/Nov)", "C&S Vigilância e Segurança Patrimonial Ltda. (03/Nov)", "Supermercado Loyola (SP) (06/Nov)", "JB Supermercados (10/Nov)", "AGROSEPAC (17/Dez)", "Procfit (30/Jan)", "Grupo Machado (03/Fev)", "Saintsteel (11/Mai)", "Arrazantty (14/Mai)", "Arius Sistemas (02/Jun)", "ADS Drones Operação 3 (08/Jun)", "Fibramerica Global (24/Jun)"], "note": ""}},
+  cap_captacao: {"hoje": {"total": 0, "parCnt": 0, "outCnt": 0, "parNames": [], "outNames": [], "note": ""}, "7d": {"total": 0, "parCnt": 0, "outCnt": 0, "parNames": [], "outNames": [], "note": ""}, "mes": {"total": 0, "parCnt": 0, "outCnt": 0, "parNames": [], "outNames": [], "note": ""}, "mes_ant": {"total": 9, "parCnt": 9, "outCnt": 0, "parNames": ["Bom Jesus (via ERIKA GODOY · 13/Jul)", "We Inc (via ERIKA GODOY · 22/Jul)", "JG EMPREITEIRA E CONSTRUCOES (via ERIKA GODOY · 22/Jul)", "Steel Loop (via ERIKA GODOY · 22/Jul)", "BA HONG LUNG (via ERIKA GODOY · 22/Jul)", "TEX Engenharia (via ERIKA GODOY · 22/Jul)", "Grupo Energia (via ERIKA GODOY · 24/Jul)", "Steel Loop - Barracão Logistico (via ERIKA GODOY · 24/Jul)", "BA HONG LUNG (via ERIKA GODOY · 24/Jul)"], "outNames": [], "note": ""}, "tri": {"total": 9, "parCnt": 9, "outCnt": 0, "parNames": ["Bom Jesus (via ERIKA GODOY · 13/Jul)", "We Inc (via ERIKA GODOY · 22/Jul)", "JG EMPREITEIRA E CONSTRUCOES (via ERIKA GODOY · 22/Jul)", "Steel Loop (via ERIKA GODOY · 22/Jul)", "BA HONG LUNG (via ERIKA GODOY · 22/Jul)", "TEX Engenharia (via ERIKA GODOY · 22/Jul)", "Grupo Energia (via ERIKA GODOY · 24/Jul)", "Steel Loop - Barracão Logistico (via ERIKA GODOY · 24/Jul)", "BA HONG LUNG (via ERIKA GODOY · 24/Jul)"], "outNames": [], "note": ""}, "ano": {"total": 9, "parCnt": 9, "outCnt": 0, "parNames": ["Bom Jesus (via ERIKA GODOY · 13/Jul)", "We Inc (via ERIKA GODOY · 22/Jul)", "JG EMPREITEIRA E CONSTRUCOES (via ERIKA GODOY · 22/Jul)", "Steel Loop (via ERIKA GODOY · 22/Jul)", "BA HONG LUNG (via ERIKA GODOY · 22/Jul)", "TEX Engenharia (via ERIKA GODOY · 22/Jul)", "Grupo Energia (via ERIKA GODOY · 24/Jul)", "Steel Loop - Barracão Logistico (via ERIKA GODOY · 24/Jul)", "BA HONG LUNG (via ERIKA GODOY · 24/Jul)"], "outNames": [], "note": ""}, "tudo": {"total": 9, "parCnt": 9, "outCnt": 0, "parNames": ["Bom Jesus (via ERIKA GODOY · 13/Jul)", "We Inc (via ERIKA GODOY · 22/Jul)", "JG EMPREITEIRA E CONSTRUCOES (via ERIKA GODOY · 22/Jul)", "Steel Loop (via ERIKA GODOY · 22/Jul)", "BA HONG LUNG (via ERIKA GODOY · 22/Jul)", "TEX Engenharia (via ERIKA GODOY · 22/Jul)", "Grupo Energia (via ERIKA GODOY · 24/Jul)", "Steel Loop - Barracão Logistico (via ERIKA GODOY · 24/Jul)", "BA HONG LUNG (via ERIKA GODOY · 24/Jul)"], "outNames": [], "note": ""}},
+  cri_imobiliario: {"hoje": {"total": 0, "parCnt": 0, "outCnt": 0, "parNames": [], "outNames": [], "note": ""}, "7d": {"total": 2, "parCnt": 1, "outCnt": 1, "parNames": ["ArtHaus (via Mathues Degen - EQI · 31/Jul)"], "outNames": ["Zanardi Construtora (30/Jul)"], "note": ""}, "mes": {"total": 0, "parCnt": 0, "outCnt": 0, "parNames": [], "outNames": [], "note": ""}, "mes_ant": {"total": 10, "parCnt": 6, "outCnt": 4, "parNames": ["JG EMPREITEIRA E CONSTRUCOES (via ERIKA GODOY · 06/Jul)", "We Inc - Loteadora (via ERIKA GODOY · 06/Jul)", "Loteadora Piauí (via ERIKA GODOY · 10/Jul)", "Grupo Riviera - CRI (via PATRICK VALLE · 14/Jul)", "Primaz - CRI (via NATAN RAMOS SOCIEDADE INDIVIDUAL DE ADVOCACIA · 16/Jul)", "ArtHaus (via Mathues Degen - EQI · 31/Jul)"], "outNames": ["GIGA4 URBANISMO (10/Jul)", "Tonolher Empreendimento (10/Jul)", "AVVA Empreendimentos (14/Jul)", "Zanardi Construtora (30/Jul)"], "note": ""}, "tri": {"total": 10, "parCnt": 6, "outCnt": 4, "parNames": ["JG EMPREITEIRA E CONSTRUCOES (via ERIKA GODOY · 06/Jul)", "We Inc - Loteadora (via ERIKA GODOY · 06/Jul)", "Loteadora Piauí (via ERIKA GODOY · 10/Jul)", "Grupo Riviera - CRI (via PATRICK VALLE · 14/Jul)", "Primaz - CRI (via NATAN RAMOS SOCIEDADE INDIVIDUAL DE ADVOCACIA · 16/Jul)", "ArtHaus (via Mathues Degen - EQI · 31/Jul)"], "outNames": ["GIGA4 URBANISMO (10/Jul)", "Tonolher Empreendimento (10/Jul)", "AVVA Empreendimentos (14/Jul)", "Zanardi Construtora (30/Jul)"], "note": ""}, "ano": {"total": 12, "parCnt": 7, "outCnt": 5, "parNames": ["Mondeo Construtora (via Clodoaldo Mordegan · 17/Jun)", "JG EMPREITEIRA E CONSTRUCOES (via ERIKA GODOY · 06/Jul)", "We Inc - Loteadora (via ERIKA GODOY · 06/Jul)", "Loteadora Piauí (via ERIKA GODOY · 10/Jul)", "Grupo Riviera - CRI (via PATRICK VALLE · 14/Jul)", "Primaz - CRI (via NATAN RAMOS SOCIEDADE INDIVIDUAL DE ADVOCACIA · 16/Jul)", "ArtHaus (via Mathues Degen - EQI · 31/Jul)"], "outNames": ["GL7 Incorporadora (23/Jun)", "GIGA4 URBANISMO (10/Jul)", "Tonolher Empreendimento (10/Jul)", "AVVA Empreendimentos (14/Jul)", "Zanardi Construtora (30/Jul)"], "note": ""}, "tudo": {"total": 12, "parCnt": 7, "outCnt": 5, "parNames": ["Mondeo Construtora (via Clodoaldo Mordegan · 17/Jun)", "JG EMPREITEIRA E CONSTRUCOES (via ERIKA GODOY · 06/Jul)", "We Inc - Loteadora (via ERIKA GODOY · 06/Jul)", "Loteadora Piauí (via ERIKA GODOY · 10/Jul)", "Grupo Riviera - CRI (via PATRICK VALLE · 14/Jul)", "Primaz - CRI (via NATAN RAMOS SOCIEDADE INDIVIDUAL DE ADVOCACIA · 16/Jul)", "ArtHaus (via Mathues Degen - EQI · 31/Jul)"], "outNames": ["GL7 Incorporadora (23/Jun)", "GIGA4 URBANISMO (10/Jul)", "Tonolher Empreendimento (10/Jul)", "AVVA Empreendimentos (14/Jul)", "Zanardi Construtora (30/Jul)"], "note": ""}},
 };
+let MTG_CLI_ORIGINS = MTG_CLI_ORIGINS_BY_PRODUTO.todos;
 
 // Origem dos NOVOS DEALS CRIADOS por período (d:[par, out, evt, li])
 // Fonte: HubSpot · pipeline receita · excl. Fechado Perdido · 06/07/2026
-const ORIG_CLI_NEW_DEALS = {
+const ORIG_CLI_NEW_DEALS_BY_PRODUTO = {
+  todos: {
   hoje:    {total:0,   d:[0,0,0,0]},   // 03/Ago: nenhum deal novo ainda hoje
   mes:     {total:0,   d:[0,0,0,0]},   // Ago/26 · sobrescrito por _aplicarCM()
   '7d':    {total:9,   d:[9,0,0,0]},   // 28/Jul–03/Ago: Catarinaço, FITAS DE AÇO MCM, ArtHaus, Rede M7 Postos-Captação, Lixas Tatu, Feldmann Pescados, Agro Michalach, Fluair, TOPSUN — todos Parcerias
@@ -1383,11 +1413,17 @@ const ORIG_CLI_NEW_DEALS = {
   tri:     {total:32,  d:[27,3,0,2]},   // Q3/26: Jul/26 (final) + Ago/26 (0 até agora)
   ano:     {total:99,  d:[78,17,1,3]},
   tudo:    {total:126, d:[96,21,6,3]},
+},
+  tax_shield: {"hoje": {"total": 0, "d": [0, 0, 0, 0]}, "7d": {"total": 2, "d": [2, 0, 0, 0]}, "mes": {"total": 0, "d": [0, 0, 0, 0]}, "mes_ant": {"total": 8, "d": [8, 0, 0, 0]}, "tri": {"total": 8, "d": [8, 0, 0, 0]}, "ano": {"total": 74, "d": [56, 11, 4, 0]}, "tudo": {"total": 82, "d": [58, 17, 4, 0]}},
+  cap_captacao: {"hoje": {"total": 1, "d": [1, 0, 0, 0]}, "7d": {"total": 6, "d": [6, 0, 0, 0]}, "mes": {"total": 1, "d": [1, 0, 0, 0]}, "mes_ant": {"total": 14, "d": [14, 0, 0, 0]}, "tri": {"total": 15, "d": [15, 0, 0, 0]}, "ano": {"total": 15, "d": [15, 0, 0, 0]}, "tudo": {"total": 15, "d": [15, 0, 0, 0]}},
+  cri_imobiliario: {"hoje": {"total": 0, "d": [0, 0, 0, 0]}, "7d": {"total": 1, "d": [1, 0, 0, 0]}, "mes": {"total": 0, "d": [0, 0, 0, 0]}, "mes_ant": {"total": 9, "d": [5, 4, 0, 0]}, "tri": {"total": 9, "d": [5, 4, 0, 0]}, "ano": {"total": 17, "d": [6, 10, 0, 0]}, "tudo": {"total": 17, "d": [6, 10, 0, 0]}},
 };
+let ORIG_CLI_NEW_DEALS = ORIG_CLI_NEW_DEALS_BY_PRODUTO.todos;
 
 // Ranking por período — parceiros que geraram reuniões com clientes (ReunIniConc)
 // Fonte: HubSpot empresa_parceira · origem_de_negocios=Parcerias · 06/07/2026
-const RANK_PERIODS = {
+const RANK_PERIODS_BY_PRODUTO = {
+  todos: {
   hoje:    [],  // 03/Ago: nenhuma reunião de cliente ainda hoje
   mes:     [],  // Ago/26 — sobrescrito por _aplicarCM()
   '7d':    [],  // 28/Jul–03/Ago: única reunião do período (Zanardi Construtora) foi Outbound, sem parceiro
@@ -1402,7 +1438,12 @@ const RANK_PERIODS = {
   ],
   ano:  null,  // usa RANK_GERAL
   tudo: null,  // usa RANK_GERAL
+},
+  tax_shield: {"hoje": [], "7d": [], "mes": [], "mes_ant": [{"n": "EQI", "seg": "", "leads": ["Daico (16/Jul)", "Transbyshop (02/Jul)"], "cnt": 2}, {"n": "Parceria não identificada", "seg": "", "leads": ["Madesa (24/Jul)"], "cnt": 1}, {"n": "ARCUS GESTAO E PARTICIPACOES", "seg": "", "leads": ["Selbetti Tecnologia S.A. - 83.483.230/0001-86 (16/Jul)"], "cnt": 1}, {"n": "Paulo Roberto Dubiella Cantoli", "seg": "", "leads": ["Manatex (03/Jul)"], "cnt": 1}], "tri": [{"n": "EQI", "seg": "", "leads": ["Daico (16/Jul)", "Transbyshop (02/Jul)"], "cnt": 2}, {"n": "Parceria não identificada", "seg": "", "leads": ["Madesa (24/Jul)"], "cnt": 1}, {"n": "ARCUS GESTAO E PARTICIPACOES", "seg": "", "leads": ["Selbetti Tecnologia S.A. - 83.483.230/0001-86 (16/Jul)"], "cnt": 1}, {"n": "Paulo Roberto Dubiella Cantoli", "seg": "", "leads": ["Manatex (03/Jul)"], "cnt": 1}], "ano": [{"n": "SUDDEN SERVICOS FINANCEIROS E CORRETORA DE SEGUROS LTDA", "seg": "", "leads": ["Grupo Plasnox (24/Jun)", "Círculo (24/Jun)", "Banana Brasil (23/Jun)", "Transben (18/Mai)", "Ceramfix (29/Abr)", "Timptrade (23/Abr)", "Portonave (23/Abr)", "Postos Zimmerman (14/Abr)", "Guabifios (16/Abr)", "Meias Loa (10/Abr)"], "cnt": 10}, {"n": "SILVA & SILVA ADVOGADOS ASSOCIADOS", "seg": "", "leads": ["Baterias ERBS (24/Jun)", "H Bremer & Filhos Ltda. (13/Mai)", "Hidra (06/Mai)", "Inoven Comércio Internacional Ltda (12/Mai)", "Brasmaq Portuária (13/Abr)", "Mondiana Industria de Plasticos LTDA (09/Abr)", "Grupo Pietrobon (06/Abr)", "ZM (30/Mar)", "Vetor Automotivos (11/Mar)", "Digital Sat (09/Fev)"], "cnt": 10}, {"n": "EQI", "seg": "", "leads": ["Daico (16/Jul)", "Transbyshop (02/Jul)", "Linda Casa (14/Abr)", "Rudnik Soluções e Tecnologia (30/Mar)", "P&P Móveis e Madeira (02/Abr)", "Frigo King (24/Mar)", "Bia Enxovais (24/Mar)", "Always Fit (19/Mar)", "Ativos Capital (07/Mai)"], "cnt": 9}, {"n": "NATAN RAMOS SOCIEDADE INDIVIDUAL DE ADVOCACIA", "seg": "", "leads": ["Zigma (18/Mai)", "Mereo Tech S.A. (30/Abr)", "Primaz (15/Jun)", "Tripla (12/Jun)"], "cnt": 4}, {"n": "PATRICK VALLE", "seg": "", "leads": ["Croques (24/Mar)", "SCP PORTO BELO PESCADOS RS (09/Mar)", "Grupo Riviera (12/Fev)"], "cnt": 3}, {"n": "ANDRÉ VENICIUS TREZUP", "seg": "", "leads": ["Zen S/A (04/Fev)", "Heli Brasil (11/Fev)", "Dynamis Importadora (06/Abr)"], "cnt": 3}, {"n": "Karen Costa da Silva", "seg": "", "leads": ["Rede de Postos Luca - Neto (30/Jun)", "Rede M7 (16/Jun)"], "cnt": 2}, {"n": "INVESTIM, INTERMEDIACAO DE NEGOCIOS LTDA", "seg": "", "leads": ["Beckhauser Malhas (03/Jun)", "Baux Group (27/Mai)"], "cnt": 2}, {"n": "ADEMAR DE OLIVEIRA", "seg": "", "leads": ["Roma Fertilizantes (15/Mai)", "Skylink (22/Jan)"], "cnt": 2}, {"n": "JOSEF RUBIN", "seg": "", "leads": ["Tropheus (14/Mai)", "Netbrokers (23/Jan)"], "cnt": 2}, {"n": "RENAN DEDA TISSE REPRESENTACOES", "seg": "", "leads": ["Bourbon Hospitalidade (19/Mai)", "TRANSJOI (24/Fev)"], "cnt": 2}, {"n": "Parceria não identificada", "seg": "", "leads": ["Madesa (24/Jul)"], "cnt": 1}, {"n": "ARCUS GESTAO E PARTICIPACOES", "seg": "", "leads": ["Selbetti Tecnologia S.A. - 83.483.230/0001-86 (16/Jul)"], "cnt": 1}, {"n": "Paulo Roberto Dubiella Cantoli", "seg": "", "leads": ["Manatex (03/Jul)"], "cnt": 1}, {"n": "WIT INVEST", "seg": "", "leads": ["Ambiensys (13/Mai)"], "cnt": 1}, {"n": "BRAVO, MEDINA & ADVOGADOS", "seg": "", "leads": ["HUBLOG (29/Abr)"], "cnt": 1}], "tudo": [{"n": "EQI", "seg": "", "leads": ["Daico (16/Jul)", "Transbyshop (02/Jul)", "Linda Casa (14/Abr)", "Rudnik Soluções e Tecnologia (30/Mar)", "P&P Móveis e Madeira (02/Abr)", "Frigo King (24/Mar)", "Bia Enxovais (24/Mar)", "Always Fit (19/Mar)", "Ativos Capital (07/Mai)", "Borges Madeiras (30/Out)", "Cauzzo Mais (04/Out)", "Quality Frotas (22/Set)"], "cnt": 12}, {"n": "SUDDEN SERVICOS FINANCEIROS E CORRETORA DE SEGUROS LTDA", "seg": "", "leads": ["Grupo Plasnox (24/Jun)", "Círculo (24/Jun)", "Banana Brasil (23/Jun)", "Transben (18/Mai)", "Ceramfix (29/Abr)", "Timptrade (23/Abr)", "Portonave (23/Abr)", "Postos Zimmerman (14/Abr)", "Guabifios (16/Abr)", "Meias Loa (10/Abr)"], "cnt": 10}, {"n": "SILVA & SILVA ADVOGADOS ASSOCIADOS", "seg": "", "leads": ["Baterias ERBS (24/Jun)", "H Bremer & Filhos Ltda. (13/Mai)", "Hidra (06/Mai)", "Inoven Comércio Internacional Ltda (12/Mai)", "Brasmaq Portuária (13/Abr)", "Mondiana Industria de Plasticos LTDA (09/Abr)", "Grupo Pietrobon (06/Abr)", "ZM (30/Mar)", "Vetor Automotivos (11/Mar)", "Digital Sat (09/Fev)"], "cnt": 10}, {"n": "Parceria não identificada", "seg": "", "leads": ["Madesa (24/Jul)", "Transpetrol (29/Out)", "Agex (29/Out)", "Carraro Logistica (29/Out)", "Uni Logistica (29/Out)", "BBM Logistica (29/Out)", "Transportadora Taborda (30/Out)", "Construtora e Incorporadora Greenwood (02/Out)"], "cnt": 8}, {"n": "INVESTIM, INTERMEDIACAO DE NEGOCIOS LTDA", "seg": "", "leads": ["Beckhauser Malhas (03/Jun)", "Baux Group (27/Mai)", "Grupo catarinense pharma (27/Nov)", "Cecil (27/Nov)", "Gratt (13/Nov)", "Incomum (13/Nov)"], "cnt": 6}, {"n": "NATAN RAMOS SOCIEDADE INDIVIDUAL DE ADVOCACIA", "seg": "", "leads": ["Zigma (18/Mai)", "Mereo Tech S.A. (30/Abr)", "Primaz (15/Jun)", "Tripla (12/Jun)"], "cnt": 4}, {"n": "L V LEAL CONSULTORIA EM TECNOLOGIA DA INFORMACAO LTDA", "seg": "", "leads": ["Alfama Alimentos (21/Out)", "Dall'Oglio (15/Out)", "Dromos Infraestrutura (14/Out)", "Secret (10/Out)"], "cnt": 4}, {"n": "PATRICK VALLE", "seg": "", "leads": ["Croques (24/Mar)", "SCP PORTO BELO PESCADOS RS (09/Mar)", "Grupo Riviera (12/Fev)"], "cnt": 3}, {"n": "ANDRÉ VENICIUS TREZUP", "seg": "", "leads": ["Zen S/A (04/Fev)", "Heli Brasil (11/Fev)", "Dynamis Importadora (06/Abr)"], "cnt": 3}, {"n": "Karen Costa da Silva", "seg": "", "leads": ["Rede de Postos Luca - Neto (30/Jun)", "Rede M7 (16/Jun)"], "cnt": 2}, {"n": "ADEMAR DE OLIVEIRA", "seg": "", "leads": ["Roma Fertilizantes (15/Mai)", "Skylink (22/Jan)"], "cnt": 2}, {"n": "JOSEF RUBIN", "seg": "", "leads": ["Tropheus (14/Mai)", "Netbrokers (23/Jan)"], "cnt": 2}, {"n": "RENAN DEDA TISSE REPRESENTACOES", "seg": "", "leads": ["Bourbon Hospitalidade (19/Mai)", "TRANSJOI (24/Fev)"], "cnt": 2}, {"n": "ARCUS GESTAO E PARTICIPACOES", "seg": "", "leads": ["Selbetti Tecnologia S.A. - 83.483.230/0001-86 (16/Jul)"], "cnt": 1}, {"n": "Paulo Roberto Dubiella Cantoli", "seg": "", "leads": ["Manatex (03/Jul)"], "cnt": 1}, {"n": "WIT INVEST", "seg": "", "leads": ["Ambiensys (13/Mai)"], "cnt": 1}, {"n": "BRAVO, MEDINA & ADVOGADOS", "seg": "", "leads": ["HUBLOG (29/Abr)"], "cnt": 1}, {"n": "Daniel Bambam ", "seg": "", "leads": ["Anadem (17/Dez)"], "cnt": 1}]},
+  cap_captacao: {"hoje": [], "7d": [], "mes": [], "mes_ant": [{"n": "ERIKA GODOY", "seg": "", "leads": ["Grupo Energia (24/Jul)", "Steel Loop - Barracão Logistico (24/Jul)", "BA HONG LUNG (24/Jul)", "We Inc (22/Jul)", "JG EMPREITEIRA E CONSTRUCOES (22/Jul)", "Steel Loop (22/Jul)", "BA HONG LUNG (22/Jul)", "TEX Engenharia (22/Jul)", "Bom Jesus (13/Jul)"], "cnt": 9}], "tri": [{"n": "ERIKA GODOY", "seg": "", "leads": ["Grupo Energia (24/Jul)", "Steel Loop - Barracão Logistico (24/Jul)", "BA HONG LUNG (24/Jul)", "We Inc (22/Jul)", "JG EMPREITEIRA E CONSTRUCOES (22/Jul)", "Steel Loop (22/Jul)", "BA HONG LUNG (22/Jul)", "TEX Engenharia (22/Jul)", "Bom Jesus (13/Jul)"], "cnt": 9}], "ano": [{"n": "ERIKA GODOY", "seg": "", "leads": ["Grupo Energia (24/Jul)", "Steel Loop - Barracão Logistico (24/Jul)", "BA HONG LUNG (24/Jul)", "We Inc (22/Jul)", "JG EMPREITEIRA E CONSTRUCOES (22/Jul)", "Steel Loop (22/Jul)", "BA HONG LUNG (22/Jul)", "TEX Engenharia (22/Jul)", "Bom Jesus (13/Jul)"], "cnt": 9}], "tudo": [{"n": "ERIKA GODOY", "seg": "", "leads": ["Grupo Energia (24/Jul)", "Steel Loop - Barracão Logistico (24/Jul)", "BA HONG LUNG (24/Jul)", "We Inc (22/Jul)", "JG EMPREITEIRA E CONSTRUCOES (22/Jul)", "Steel Loop (22/Jul)", "BA HONG LUNG (22/Jul)", "TEX Engenharia (22/Jul)", "Bom Jesus (13/Jul)"], "cnt": 9}]},
+  cri_imobiliario: {"hoje": [], "7d": [{"n": "Mathues Degen - EQI", "seg": "", "leads": ["ArtHaus (31/Jul)"], "cnt": 1}], "mes": [], "mes_ant": [{"n": "ERIKA GODOY", "seg": "", "leads": ["Loteadora Piauí (10/Jul)", "JG EMPREITEIRA E CONSTRUCOES (06/Jul)", "We Inc - Loteadora (06/Jul)"], "cnt": 3}, {"n": "Mathues Degen - EQI", "seg": "", "leads": ["ArtHaus (31/Jul)"], "cnt": 1}, {"n": "NATAN RAMOS SOCIEDADE INDIVIDUAL DE ADVOCACIA", "seg": "", "leads": ["Primaz - CRI (16/Jul)"], "cnt": 1}, {"n": "PATRICK VALLE", "seg": "", "leads": ["Grupo Riviera - CRI (14/Jul)"], "cnt": 1}], "tri": [{"n": "ERIKA GODOY", "seg": "", "leads": ["Loteadora Piauí (10/Jul)", "JG EMPREITEIRA E CONSTRUCOES (06/Jul)", "We Inc - Loteadora (06/Jul)"], "cnt": 3}, {"n": "Mathues Degen - EQI", "seg": "", "leads": ["ArtHaus (31/Jul)"], "cnt": 1}, {"n": "NATAN RAMOS SOCIEDADE INDIVIDUAL DE ADVOCACIA", "seg": "", "leads": ["Primaz - CRI (16/Jul)"], "cnt": 1}, {"n": "PATRICK VALLE", "seg": "", "leads": ["Grupo Riviera - CRI (14/Jul)"], "cnt": 1}], "ano": [{"n": "ERIKA GODOY", "seg": "", "leads": ["Loteadora Piauí (10/Jul)", "JG EMPREITEIRA E CONSTRUCOES (06/Jul)", "We Inc - Loteadora (06/Jul)"], "cnt": 3}, {"n": "Mathues Degen - EQI", "seg": "", "leads": ["ArtHaus (31/Jul)"], "cnt": 1}, {"n": "NATAN RAMOS SOCIEDADE INDIVIDUAL DE ADVOCACIA", "seg": "", "leads": ["Primaz - CRI (16/Jul)"], "cnt": 1}, {"n": "PATRICK VALLE", "seg": "", "leads": ["Grupo Riviera - CRI (14/Jul)"], "cnt": 1}, {"n": "Clodoaldo Mordegan", "seg": "", "leads": ["Mondeo Construtora (17/Jun)"], "cnt": 1}], "tudo": [{"n": "ERIKA GODOY", "seg": "", "leads": ["Loteadora Piauí (10/Jul)", "JG EMPREITEIRA E CONSTRUCOES (06/Jul)", "We Inc - Loteadora (06/Jul)"], "cnt": 3}, {"n": "Mathues Degen - EQI", "seg": "", "leads": ["ArtHaus (31/Jul)"], "cnt": 1}, {"n": "NATAN RAMOS SOCIEDADE INDIVIDUAL DE ADVOCACIA", "seg": "", "leads": ["Primaz - CRI (16/Jul)"], "cnt": 1}, {"n": "PATRICK VALLE", "seg": "", "leads": ["Grupo Riviera - CRI (14/Jul)"], "cnt": 1}, {"n": "Clodoaldo Mordegan", "seg": "", "leads": ["Mondeo Construtora (17/Jun)"], "cnt": 1}]},
 };
+let RANK_PERIODS = RANK_PERIODS_BY_PRODUTO.todos;
 
 // Origens — Parceiros
 const ORIG_PAR_LABELS = ['Não informado','LinkedIn','Outbound','Parcerias','Eventos'];
@@ -1411,7 +1452,8 @@ const ORIG_PAR_COLORS = ['rgba(244,67,54,.55)','#0077b5','#00bcd4','#2196f3','#9
 
 // Funil Receita — snapshot atual do pipeline
 // Fonte: HubSpot 03/08/2026 · pipeline 43349147 (live query)
-const REV = [
+const REV_BY_PRODUTO = {
+  todos: [
   {l:'Entrada',               cnt:57, amt:820.0,  prob:10,  col:'#1255a8'},
   {l:'Reunião Ini. Agend.',   cnt:3,  amt:45.0,   prob:20,  col:'#1258b5'},  // ArtHaus movida para Reunião Inicial Conc. (registrado 03/08, reunião real 31/Jul)
   {l:'Reunião Inicial Conc.', cnt:32, amt:541.1,  prob:30,  col:'#1565c0'},
@@ -1421,12 +1463,18 @@ const REV = [
   {l:'Elaboração da Proposta',cnt:3,  amt:20.2,   prob:80,  col:'#388e3c'},  // = Elaboração do Contrato: Ambiensys+Croques+JG Empreiteira
   {l:'Contrato Enviado',      cnt:0,  amt:0,      prob:90,  col:'#558b2f'},
   {l:'Fechado Ganho',         cnt:4,  amt:61.0,   prob:100, col:'#00c853'},  // Cauzzo15+Kraft15+ADS25+Rudnik6
-];
+],
+  tax_shield: [{"l": "Entrada", "cnt": 45, "amt": 675, "prob": 10, "col": "#1255a8"}, {"l": "Reunião Ini. Agend.", "cnt": 3, "amt": 45, "prob": 20, "col": "#1258b5"}, {"l": "Reunião Inicial Conc.", "cnt": 22, "amt": 406, "prob": 30, "col": "#1565c0"}, {"l": "Reun. Planej. Agend.", "cnt": 0, "amt": 0, "prob": 60, "col": "#0288d1"}, {"l": "Reun. Planej. Conc.", "cnt": 1, "amt": 15, "prob": 60, "col": "#0097a7"}, {"l": "Proposta Enviada", "cnt": 5, "amt": 86, "prob": 70, "col": "#00796b"}, {"l": "Elaboração da Proposta", "cnt": 2, "amt": 20, "prob": 80, "col": "#388e3c"}, {"l": "Contrato Enviado", "cnt": 0, "amt": 0, "prob": 90, "col": "#558b2f"}, {"l": "Fechado Ganho", "cnt": 4, "amt": 61, "prob": 100, "col": "#00c853"}],
+  cap_captacao: [{"l": "Entrada", "cnt": 4, "amt": 25, "prob": 10, "col": "#1255a8"}, {"l": "Reunião Ini. Agend.", "cnt": 2, "amt": 30, "prob": 20, "col": "#1258b5"}, {"l": "Reunião Inicial Conc.", "cnt": 0, "amt": 0, "prob": 30, "col": "#1565c0"}, {"l": "Reun. Planej. Agend.", "cnt": 3, "amt": 114, "prob": 60, "col": "#0288d1"}, {"l": "Reun. Planej. Conc.", "cnt": 6, "amt": 74.5, "prob": 60, "col": "#0097a7"}, {"l": "Proposta Enviada", "cnt": 0, "amt": 0, "prob": 70, "col": "#00796b"}, {"l": "Elaboração da Proposta", "cnt": 0, "amt": 0, "prob": 80, "col": "#388e3c"}, {"l": "Contrato Enviado", "cnt": 0, "amt": 0, "prob": 90, "col": "#558b2f"}, {"l": "Fechado Ganho", "cnt": 0, "amt": 0, "prob": 100, "col": "#00c853"}],
+  cri_imobiliario: [{"l": "Entrada", "cnt": 6, "amt": 90, "prob": 10, "col": "#1255a8"}, {"l": "Reunião Ini. Agend.", "cnt": 0, "amt": 0, "prob": 20, "col": "#1258b5"}, {"l": "Reunião Inicial Conc.", "cnt": 10, "amt": 135.1, "prob": 30, "col": "#1565c0"}, {"l": "Reun. Planej. Agend.", "cnt": 0, "amt": 0, "prob": 60, "col": "#0288d1"}, {"l": "Reun. Planej. Conc.", "cnt": 0, "amt": 0, "prob": 60, "col": "#0097a7"}, {"l": "Proposta Enviada", "cnt": 0, "amt": 0, "prob": 70, "col": "#00796b"}, {"l": "Elaboração da Proposta", "cnt": 1, "amt": 0.2, "prob": 80, "col": "#388e3c"}, {"l": "Contrato Enviado", "cnt": 0, "amt": 0, "prob": 90, "col": "#558b2f"}, {"l": "Fechado Ganho", "cnt": 0, "amt": 0, "prob": 100, "col": "#00c853"}],
+};
+let REV = REV_BY_PRODUTO.todos;
 // ════════════════════════════════════════
 // FUNIL RECEITA POR PERÍODO — deals criados no período · etapa atual
 // Fonte: HubSpot 11/06/2026 · pipeline 43349147 · excl. Fechado Perdido (90834563)
 // ════════════════════════════════════════
-const REV_PERIODS = {
+const REV_PERIODS_BY_PRODUTO = {
+  todos: {
   // hoje (03/08/2026): sem novos deals de receita hoje
   hoje: [
     {l:'Entrada',               cnt:0, amt:0,   prob:10,  col:'#1255a8'},
@@ -1511,10 +1559,16 @@ const REV_PERIODS = {
     {l:'Contrato Enviado',      cnt:0,  amt:0,      prob:90,  col:'#558b2f'},
     {l:'Fechado Ganho',         cnt:4,  amt:61,     prob:100, col:'#00c853'},
   ],
+},
+  tax_shield: {"hoje": [{"l": "Entrada", "cnt": 0, "amt": 0, "prob": 10, "col": "#1255a8"}, {"l": "Reunião Ini. Agend.", "cnt": 0, "amt": 0, "prob": 20, "col": "#1258b5"}, {"l": "Reunião Inicial Conc.", "cnt": 0, "amt": 0, "prob": 30, "col": "#1565c0"}, {"l": "Reun. Planej. Agend.", "cnt": 0, "amt": 0, "prob": 60, "col": "#0288d1"}, {"l": "Reun. Planej. Conc.", "cnt": 0, "amt": 0, "prob": 60, "col": "#0097a7"}, {"l": "Proposta Enviada", "cnt": 0, "amt": 0, "prob": 70, "col": "#00796b"}, {"l": "Elaboração da Proposta", "cnt": 0, "amt": 0, "prob": 80, "col": "#388e3c"}, {"l": "Contrato Enviado", "cnt": 0, "amt": 0, "prob": 90, "col": "#558b2f"}, {"l": "Fechado Ganho", "cnt": 0, "amt": 0, "prob": 100, "col": "#00c853"}], "7d": [{"l": "Entrada", "cnt": 0, "amt": 0, "prob": 10, "col": "#1255a8"}, {"l": "Reunião Ini. Agend.", "cnt": 2, "amt": 30, "prob": 20, "col": "#1258b5"}, {"l": "Reunião Inicial Conc.", "cnt": 0, "amt": 0, "prob": 30, "col": "#1565c0"}, {"l": "Reun. Planej. Agend.", "cnt": 0, "amt": 0, "prob": 60, "col": "#0288d1"}, {"l": "Reun. Planej. Conc.", "cnt": 0, "amt": 0, "prob": 60, "col": "#0097a7"}, {"l": "Proposta Enviada", "cnt": 0, "amt": 0, "prob": 70, "col": "#00796b"}, {"l": "Elaboração da Proposta", "cnt": 0, "amt": 0, "prob": 80, "col": "#388e3c"}, {"l": "Contrato Enviado", "cnt": 0, "amt": 0, "prob": 90, "col": "#558b2f"}, {"l": "Fechado Ganho", "cnt": 0, "amt": 0, "prob": 100, "col": "#00c853"}], "mes": [{"l": "Entrada", "cnt": 0, "amt": 0, "prob": 10, "col": "#1255a8"}, {"l": "Reunião Ini. Agend.", "cnt": 0, "amt": 0, "prob": 20, "col": "#1258b5"}, {"l": "Reunião Inicial Conc.", "cnt": 0, "amt": 0, "prob": 30, "col": "#1565c0"}, {"l": "Reun. Planej. Agend.", "cnt": 0, "amt": 0, "prob": 60, "col": "#0288d1"}, {"l": "Reun. Planej. Conc.", "cnt": 0, "amt": 0, "prob": 60, "col": "#0097a7"}, {"l": "Proposta Enviada", "cnt": 0, "amt": 0, "prob": 70, "col": "#00796b"}, {"l": "Elaboração da Proposta", "cnt": 0, "amt": 0, "prob": 80, "col": "#388e3c"}, {"l": "Contrato Enviado", "cnt": 0, "amt": 0, "prob": 90, "col": "#558b2f"}, {"l": "Fechado Ganho", "cnt": 0, "amt": 0, "prob": 100, "col": "#00c853"}], "mes_ant": [{"l": "Entrada", "cnt": 2, "amt": 30, "prob": 10, "col": "#1255a8"}, {"l": "Reunião Ini. Agend.", "cnt": 2, "amt": 30, "prob": 20, "col": "#1258b5"}, {"l": "Reunião Inicial Conc.", "cnt": 4, "amt": 60, "prob": 30, "col": "#1565c0"}, {"l": "Reun. Planej. Agend.", "cnt": 0, "amt": 0, "prob": 60, "col": "#0288d1"}, {"l": "Reun. Planej. Conc.", "cnt": 0, "amt": 0, "prob": 60, "col": "#0097a7"}, {"l": "Proposta Enviada", "cnt": 0, "amt": 0, "prob": 70, "col": "#00796b"}, {"l": "Elaboração da Proposta", "cnt": 0, "amt": 0, "prob": 80, "col": "#388e3c"}, {"l": "Contrato Enviado", "cnt": 0, "amt": 0, "prob": 90, "col": "#558b2f"}, {"l": "Fechado Ganho", "cnt": 0, "amt": 0, "prob": 100, "col": "#00c853"}], "tri": [{"l": "Entrada", "cnt": 2, "amt": 30, "prob": 10, "col": "#1255a8"}, {"l": "Reunião Ini. Agend.", "cnt": 2, "amt": 30, "prob": 20, "col": "#1258b5"}, {"l": "Reunião Inicial Conc.", "cnt": 4, "amt": 60, "prob": 30, "col": "#1565c0"}, {"l": "Reun. Planej. Agend.", "cnt": 0, "amt": 0, "prob": 60, "col": "#0288d1"}, {"l": "Reun. Planej. Conc.", "cnt": 0, "amt": 0, "prob": 60, "col": "#0097a7"}, {"l": "Proposta Enviada", "cnt": 0, "amt": 0, "prob": 70, "col": "#00796b"}, {"l": "Elaboração da Proposta", "cnt": 0, "amt": 0, "prob": 80, "col": "#388e3c"}, {"l": "Contrato Enviado", "cnt": 0, "amt": 0, "prob": 90, "col": "#558b2f"}, {"l": "Fechado Ganho", "cnt": 0, "amt": 0, "prob": 100, "col": "#00c853"}], "ano": [{"l": "Entrada", "cnt": 41, "amt": 615, "prob": 10, "col": "#1255a8"}, {"l": "Reunião Ini. Agend.", "cnt": 3, "amt": 45, "prob": 20, "col": "#1258b5"}, {"l": "Reunião Inicial Conc.", "cnt": 21, "amt": 391, "prob": 30, "col": "#1565c0"}, {"l": "Reun. Planej. Agend.", "cnt": 0, "amt": 0, "prob": 60, "col": "#0288d1"}, {"l": "Reun. Planej. Conc.", "cnt": 1, "amt": 15, "prob": 60, "col": "#0097a7"}, {"l": "Proposta Enviada", "cnt": 5, "amt": 86, "prob": 70, "col": "#00796b"}, {"l": "Elaboração da Proposta", "cnt": 2, "amt": 20, "prob": 80, "col": "#388e3c"}, {"l": "Contrato Enviado", "cnt": 0, "amt": 0, "prob": 90, "col": "#558b2f"}, {"l": "Fechado Ganho", "cnt": 1, "amt": 6, "prob": 100, "col": "#00c853"}], "tudo": [{"l": "Entrada", "cnt": 45, "amt": 675, "prob": 10, "col": "#1255a8"}, {"l": "Reunião Ini. Agend.", "cnt": 3, "amt": 45, "prob": 20, "col": "#1258b5"}, {"l": "Reunião Inicial Conc.", "cnt": 22, "amt": 406, "prob": 30, "col": "#1565c0"}, {"l": "Reun. Planej. Agend.", "cnt": 0, "amt": 0, "prob": 60, "col": "#0288d1"}, {"l": "Reun. Planej. Conc.", "cnt": 1, "amt": 15, "prob": 60, "col": "#0097a7"}, {"l": "Proposta Enviada", "cnt": 5, "amt": 86, "prob": 70, "col": "#00796b"}, {"l": "Elaboração da Proposta", "cnt": 2, "amt": 20, "prob": 80, "col": "#388e3c"}, {"l": "Contrato Enviado", "cnt": 0, "amt": 0, "prob": 90, "col": "#558b2f"}, {"l": "Fechado Ganho", "cnt": 4, "amt": 61, "prob": 100, "col": "#00c853"}]},
+  cap_captacao: {"hoje": [{"l": "Entrada", "cnt": 0, "amt": 0, "prob": 10, "col": "#1255a8"}, {"l": "Reunião Ini. Agend.", "cnt": 1, "amt": 15, "prob": 20, "col": "#1258b5"}, {"l": "Reunião Inicial Conc.", "cnt": 0, "amt": 0, "prob": 30, "col": "#1565c0"}, {"l": "Reun. Planej. Agend.", "cnt": 0, "amt": 0, "prob": 60, "col": "#0288d1"}, {"l": "Reun. Planej. Conc.", "cnt": 0, "amt": 0, "prob": 60, "col": "#0097a7"}, {"l": "Proposta Enviada", "cnt": 0, "amt": 0, "prob": 70, "col": "#00796b"}, {"l": "Elaboração da Proposta", "cnt": 0, "amt": 0, "prob": 80, "col": "#388e3c"}, {"l": "Contrato Enviado", "cnt": 0, "amt": 0, "prob": 90, "col": "#558b2f"}, {"l": "Fechado Ganho", "cnt": 0, "amt": 0, "prob": 100, "col": "#00c853"}], "7d": [{"l": "Entrada", "cnt": 4, "amt": 25, "prob": 10, "col": "#1255a8"}, {"l": "Reunião Ini. Agend.", "cnt": 2, "amt": 30, "prob": 20, "col": "#1258b5"}, {"l": "Reunião Inicial Conc.", "cnt": 0, "amt": 0, "prob": 30, "col": "#1565c0"}, {"l": "Reun. Planej. Agend.", "cnt": 0, "amt": 0, "prob": 60, "col": "#0288d1"}, {"l": "Reun. Planej. Conc.", "cnt": 0, "amt": 0, "prob": 60, "col": "#0097a7"}, {"l": "Proposta Enviada", "cnt": 0, "amt": 0, "prob": 70, "col": "#00796b"}, {"l": "Elaboração da Proposta", "cnt": 0, "amt": 0, "prob": 80, "col": "#388e3c"}, {"l": "Contrato Enviado", "cnt": 0, "amt": 0, "prob": 90, "col": "#558b2f"}, {"l": "Fechado Ganho", "cnt": 0, "amt": 0, "prob": 100, "col": "#00c853"}], "mes": [{"l": "Entrada", "cnt": 0, "amt": 0, "prob": 10, "col": "#1255a8"}, {"l": "Reunião Ini. Agend.", "cnt": 1, "amt": 15, "prob": 20, "col": "#1258b5"}, {"l": "Reunião Inicial Conc.", "cnt": 0, "amt": 0, "prob": 30, "col": "#1565c0"}, {"l": "Reun. Planej. Agend.", "cnt": 0, "amt": 0, "prob": 60, "col": "#0288d1"}, {"l": "Reun. Planej. Conc.", "cnt": 0, "amt": 0, "prob": 60, "col": "#0097a7"}, {"l": "Proposta Enviada", "cnt": 0, "amt": 0, "prob": 70, "col": "#00796b"}, {"l": "Elaboração da Proposta", "cnt": 0, "amt": 0, "prob": 80, "col": "#388e3c"}, {"l": "Contrato Enviado", "cnt": 0, "amt": 0, "prob": 90, "col": "#558b2f"}, {"l": "Fechado Ganho", "cnt": 0, "amt": 0, "prob": 100, "col": "#00c853"}], "mes_ant": [{"l": "Entrada", "cnt": 4, "amt": 25, "prob": 10, "col": "#1255a8"}, {"l": "Reunião Ini. Agend.", "cnt": 1, "amt": 15, "prob": 20, "col": "#1258b5"}, {"l": "Reunião Inicial Conc.", "cnt": 0, "amt": 0, "prob": 30, "col": "#1565c0"}, {"l": "Reun. Planej. Agend.", "cnt": 3, "amt": 114, "prob": 60, "col": "#0288d1"}, {"l": "Reun. Planej. Conc.", "cnt": 6, "amt": 74.5, "prob": 60, "col": "#0097a7"}, {"l": "Proposta Enviada", "cnt": 0, "amt": 0, "prob": 70, "col": "#00796b"}, {"l": "Elaboração da Proposta", "cnt": 0, "amt": 0, "prob": 80, "col": "#388e3c"}, {"l": "Contrato Enviado", "cnt": 0, "amt": 0, "prob": 90, "col": "#558b2f"}, {"l": "Fechado Ganho", "cnt": 0, "amt": 0, "prob": 100, "col": "#00c853"}], "tri": [{"l": "Entrada", "cnt": 4, "amt": 25, "prob": 10, "col": "#1255a8"}, {"l": "Reunião Ini. Agend.", "cnt": 2, "amt": 30, "prob": 20, "col": "#1258b5"}, {"l": "Reunião Inicial Conc.", "cnt": 0, "amt": 0, "prob": 30, "col": "#1565c0"}, {"l": "Reun. Planej. Agend.", "cnt": 3, "amt": 114, "prob": 60, "col": "#0288d1"}, {"l": "Reun. Planej. Conc.", "cnt": 6, "amt": 74.5, "prob": 60, "col": "#0097a7"}, {"l": "Proposta Enviada", "cnt": 0, "amt": 0, "prob": 70, "col": "#00796b"}, {"l": "Elaboração da Proposta", "cnt": 0, "amt": 0, "prob": 80, "col": "#388e3c"}, {"l": "Contrato Enviado", "cnt": 0, "amt": 0, "prob": 90, "col": "#558b2f"}, {"l": "Fechado Ganho", "cnt": 0, "amt": 0, "prob": 100, "col": "#00c853"}], "ano": [{"l": "Entrada", "cnt": 4, "amt": 25, "prob": 10, "col": "#1255a8"}, {"l": "Reunião Ini. Agend.", "cnt": 2, "amt": 30, "prob": 20, "col": "#1258b5"}, {"l": "Reunião Inicial Conc.", "cnt": 0, "amt": 0, "prob": 30, "col": "#1565c0"}, {"l": "Reun. Planej. Agend.", "cnt": 3, "amt": 114, "prob": 60, "col": "#0288d1"}, {"l": "Reun. Planej. Conc.", "cnt": 6, "amt": 74.5, "prob": 60, "col": "#0097a7"}, {"l": "Proposta Enviada", "cnt": 0, "amt": 0, "prob": 70, "col": "#00796b"}, {"l": "Elaboração da Proposta", "cnt": 0, "amt": 0, "prob": 80, "col": "#388e3c"}, {"l": "Contrato Enviado", "cnt": 0, "amt": 0, "prob": 90, "col": "#558b2f"}, {"l": "Fechado Ganho", "cnt": 0, "amt": 0, "prob": 100, "col": "#00c853"}], "tudo": [{"l": "Entrada", "cnt": 4, "amt": 25, "prob": 10, "col": "#1255a8"}, {"l": "Reunião Ini. Agend.", "cnt": 2, "amt": 30, "prob": 20, "col": "#1258b5"}, {"l": "Reunião Inicial Conc.", "cnt": 0, "amt": 0, "prob": 30, "col": "#1565c0"}, {"l": "Reun. Planej. Agend.", "cnt": 3, "amt": 114, "prob": 60, "col": "#0288d1"}, {"l": "Reun. Planej. Conc.", "cnt": 6, "amt": 74.5, "prob": 60, "col": "#0097a7"}, {"l": "Proposta Enviada", "cnt": 0, "amt": 0, "prob": 70, "col": "#00796b"}, {"l": "Elaboração da Proposta", "cnt": 0, "amt": 0, "prob": 80, "col": "#388e3c"}, {"l": "Contrato Enviado", "cnt": 0, "amt": 0, "prob": 90, "col": "#558b2f"}, {"l": "Fechado Ganho", "cnt": 0, "amt": 0, "prob": 100, "col": "#00c853"}]},
+  cri_imobiliario: {"hoje": [{"l": "Entrada", "cnt": 0, "amt": 0, "prob": 10, "col": "#1255a8"}, {"l": "Reunião Ini. Agend.", "cnt": 0, "amt": 0, "prob": 20, "col": "#1258b5"}, {"l": "Reunião Inicial Conc.", "cnt": 0, "amt": 0, "prob": 30, "col": "#1565c0"}, {"l": "Reun. Planej. Agend.", "cnt": 0, "amt": 0, "prob": 60, "col": "#0288d1"}, {"l": "Reun. Planej. Conc.", "cnt": 0, "amt": 0, "prob": 60, "col": "#0097a7"}, {"l": "Proposta Enviada", "cnt": 0, "amt": 0, "prob": 70, "col": "#00796b"}, {"l": "Elaboração da Proposta", "cnt": 0, "amt": 0, "prob": 80, "col": "#388e3c"}, {"l": "Contrato Enviado", "cnt": 0, "amt": 0, "prob": 90, "col": "#558b2f"}, {"l": "Fechado Ganho", "cnt": 0, "amt": 0, "prob": 100, "col": "#00c853"}], "7d": [{"l": "Entrada", "cnt": 0, "amt": 0, "prob": 10, "col": "#1255a8"}, {"l": "Reunião Ini. Agend.", "cnt": 0, "amt": 0, "prob": 20, "col": "#1258b5"}, {"l": "Reunião Inicial Conc.", "cnt": 1, "amt": 15, "prob": 30, "col": "#1565c0"}, {"l": "Reun. Planej. Agend.", "cnt": 0, "amt": 0, "prob": 60, "col": "#0288d1"}, {"l": "Reun. Planej. Conc.", "cnt": 0, "amt": 0, "prob": 60, "col": "#0097a7"}, {"l": "Proposta Enviada", "cnt": 0, "amt": 0, "prob": 70, "col": "#00796b"}, {"l": "Elaboração da Proposta", "cnt": 0, "amt": 0, "prob": 80, "col": "#388e3c"}, {"l": "Contrato Enviado", "cnt": 0, "amt": 0, "prob": 90, "col": "#558b2f"}, {"l": "Fechado Ganho", "cnt": 0, "amt": 0, "prob": 100, "col": "#00c853"}], "mes": [{"l": "Entrada", "cnt": 0, "amt": 0, "prob": 10, "col": "#1255a8"}, {"l": "Reunião Ini. Agend.", "cnt": 0, "amt": 0, "prob": 20, "col": "#1258b5"}, {"l": "Reunião Inicial Conc.", "cnt": 0, "amt": 0, "prob": 30, "col": "#1565c0"}, {"l": "Reun. Planej. Agend.", "cnt": 0, "amt": 0, "prob": 60, "col": "#0288d1"}, {"l": "Reun. Planej. Conc.", "cnt": 0, "amt": 0, "prob": 60, "col": "#0097a7"}, {"l": "Proposta Enviada", "cnt": 0, "amt": 0, "prob": 70, "col": "#00796b"}, {"l": "Elaboração da Proposta", "cnt": 0, "amt": 0, "prob": 80, "col": "#388e3c"}, {"l": "Contrato Enviado", "cnt": 0, "amt": 0, "prob": 90, "col": "#558b2f"}, {"l": "Fechado Ganho", "cnt": 0, "amt": 0, "prob": 100, "col": "#00c853"}], "mes_ant": [{"l": "Entrada", "cnt": 0, "amt": 0, "prob": 10, "col": "#1255a8"}, {"l": "Reunião Ini. Agend.", "cnt": 0, "amt": 0, "prob": 20, "col": "#1258b5"}, {"l": "Reunião Inicial Conc.", "cnt": 8, "amt": 120, "prob": 30, "col": "#1565c0"}, {"l": "Reun. Planej. Agend.", "cnt": 0, "amt": 0, "prob": 60, "col": "#0288d1"}, {"l": "Reun. Planej. Conc.", "cnt": 0, "amt": 0, "prob": 60, "col": "#0097a7"}, {"l": "Proposta Enviada", "cnt": 0, "amt": 0, "prob": 70, "col": "#00796b"}, {"l": "Elaboração da Proposta", "cnt": 1, "amt": 0.2, "prob": 80, "col": "#388e3c"}, {"l": "Contrato Enviado", "cnt": 0, "amt": 0, "prob": 90, "col": "#558b2f"}, {"l": "Fechado Ganho", "cnt": 0, "amt": 0, "prob": 100, "col": "#00c853"}], "tri": [{"l": "Entrada", "cnt": 0, "amt": 0, "prob": 10, "col": "#1255a8"}, {"l": "Reunião Ini. Agend.", "cnt": 0, "amt": 0, "prob": 20, "col": "#1258b5"}, {"l": "Reunião Inicial Conc.", "cnt": 8, "amt": 120, "prob": 30, "col": "#1565c0"}, {"l": "Reun. Planej. Agend.", "cnt": 0, "amt": 0, "prob": 60, "col": "#0288d1"}, {"l": "Reun. Planej. Conc.", "cnt": 0, "amt": 0, "prob": 60, "col": "#0097a7"}, {"l": "Proposta Enviada", "cnt": 0, "amt": 0, "prob": 70, "col": "#00796b"}, {"l": "Elaboração da Proposta", "cnt": 1, "amt": 0.2, "prob": 80, "col": "#388e3c"}, {"l": "Contrato Enviado", "cnt": 0, "amt": 0, "prob": 90, "col": "#558b2f"}, {"l": "Fechado Ganho", "cnt": 0, "amt": 0, "prob": 100, "col": "#00c853"}], "ano": [{"l": "Entrada", "cnt": 6, "amt": 90, "prob": 10, "col": "#1255a8"}, {"l": "Reunião Ini. Agend.", "cnt": 0, "amt": 0, "prob": 20, "col": "#1258b5"}, {"l": "Reunião Inicial Conc.", "cnt": 10, "amt": 135.1, "prob": 30, "col": "#1565c0"}, {"l": "Reun. Planej. Agend.", "cnt": 0, "amt": 0, "prob": 60, "col": "#0288d1"}, {"l": "Reun. Planej. Conc.", "cnt": 0, "amt": 0, "prob": 60, "col": "#0097a7"}, {"l": "Proposta Enviada", "cnt": 0, "amt": 0, "prob": 70, "col": "#00796b"}, {"l": "Elaboração da Proposta", "cnt": 1, "amt": 0.2, "prob": 80, "col": "#388e3c"}, {"l": "Contrato Enviado", "cnt": 0, "amt": 0, "prob": 90, "col": "#558b2f"}, {"l": "Fechado Ganho", "cnt": 0, "amt": 0, "prob": 100, "col": "#00c853"}], "tudo": [{"l": "Entrada", "cnt": 6, "amt": 90, "prob": 10, "col": "#1255a8"}, {"l": "Reunião Ini. Agend.", "cnt": 0, "amt": 0, "prob": 20, "col": "#1258b5"}, {"l": "Reunião Inicial Conc.", "cnt": 10, "amt": 135.1, "prob": 30, "col": "#1565c0"}, {"l": "Reun. Planej. Agend.", "cnt": 0, "amt": 0, "prob": 60, "col": "#0288d1"}, {"l": "Reun. Planej. Conc.", "cnt": 0, "amt": 0, "prob": 60, "col": "#0097a7"}, {"l": "Proposta Enviada", "cnt": 0, "amt": 0, "prob": 70, "col": "#00796b"}, {"l": "Elaboração da Proposta", "cnt": 1, "amt": 0.2, "prob": 80, "col": "#388e3c"}, {"l": "Contrato Enviado", "cnt": 0, "amt": 0, "prob": 90, "col": "#558b2f"}, {"l": "Fechado Ganho", "cnt": 0, "amt": 0, "prob": 100, "col": "#00c853"}]},
 };
+let REV_PERIODS = REV_PERIODS_BY_PRODUTO.todos;
 
 // Chip info por período (ativos excl. Fechado Ganho · valor total R$M)
-const REV_CHIP = {
+const REV_CHIP_BY_PRODUTO = {
+  todos: {
   hoje:    {n:0,  v:0},    // 03/Ago: nenhum deal novo hoje
   '7d':    {n:9,  v:100},  // 28/Jul–03/Ago: Catarinaço+FITAS+ArtHaus+Rede M7+Lixas Tatu+Feldmann+Agro Michalach+Fluair+TOPSUN
   mes:     {n:0,  v:0},    // Ago/26: nenhum deal novo ainda
@@ -1522,7 +1576,12 @@ const REV_CHIP = {
   tri:     {n:32, v:484},  // Q3/26: Jul/26 (final) + Ago/26 (0 até agora)
   ano:     {n:106,v:1647}, // Jan–Ago/26 · HubSpot 03/08
   tudo:    {n:114,v:1777}, // todo período (excl. Perdido) · HubSpot 03/08/2026
+},
+  tax_shield: {"hoje": {"n": 0, "v": 0}, "7d": {"n": 2, "v": 30}, "mes": {"n": 0, "v": 0}, "mes_ant": {"n": 8, "v": 120}, "tri": {"n": 8, "v": 120}, "ano": {"n": 74, "v": 1178}, "tudo": {"n": 82, "v": 1308}},
+  cap_captacao: {"hoje": {"n": 1, "v": 15}, "7d": {"n": 6, "v": 55}, "mes": {"n": 1, "v": 15}, "mes_ant": {"n": 14, "v": 228.5}, "tri": {"n": 15, "v": 243.5}, "ano": {"n": 15, "v": 243.5}, "tudo": {"n": 15, "v": 243.5}},
+  cri_imobiliario: {"hoje": {"n": 0, "v": 0}, "7d": {"n": 1, "v": 15}, "mes": {"n": 0, "v": 0}, "mes_ant": {"n": 9, "v": 120.2}, "tri": {"n": 9, "v": 120.2}, "ano": {"n": 17, "v": 225.3}, "tudo": {"n": 17, "v": 225.3}},
 };
+let REV_CHIP = REV_CHIP_BY_PRODUTO.todos;
 
 // Funil Parceiros — snapshot 03/08/2026 · pipeline 805183641 · excl. Encerrado (1185687201)
 const PAR = [
@@ -1628,6 +1687,25 @@ const FD = {
   tudo:    {cli:90, par:94, pfx:31, cfx:4, nd:314}, // todo período · par via painel 04.Parceiros (Out/25–Ago/26)
 };
 
+// Overrides de FD.cli / FD.cfx por produto (Parceiros -- .par/.pfx/.nd -- NAO variam por produto)
+const FD_CLI_BY_PRODUTO = {
+  tax_shield: {"hoje": 0, "7d": 0, "mes": 0, "mes_ant": 5, "tri": 5, "ano": 61, "tudo": 108},
+  cap_captacao: {"hoje": 0, "7d": 0, "mes": 0, "mes_ant": 9, "tri": 9, "ano": 9, "tudo": 9},
+  cri_imobiliario: {"hoje": 0, "7d": 2, "mes": 0, "mes_ant": 10, "tri": 10, "ano": 12, "tudo": 12},
+};
+const FD_CFX_BY_PRODUTO = {
+  tax_shield: {"hoje": 0, "7d": 0, "mes": 0, "mes_ant": 1, "tri": 1, "ano": 1, "tudo": 4},
+  cap_captacao: {"hoje": 0, "7d": 0, "mes": 0, "mes_ant": 0, "tri": 0, "ano": 0, "tudo": 0},
+  cri_imobiliario: {"hoje": 0, "7d": 0, "mes": 0, "mes_ant": 0, "tri": 0, "ano": 0, "tudo": 0},
+};
+// Cohort mes_ant: conversao Reuniao Inicial Conc. -> Proposta -> Elab. Contrato -> Fechado Ganho
+const CONVERSAO_BY_PRODUTO = {
+  tax_shield: {"reuniaoInicialConc": 5, "propostaEnviada": 0, "elabContrato": 0, "fechadoGanho": 0},
+  cap_captacao: {"reuniaoInicialConc": 9, "propostaEnviada": 1, "elabContrato": 0, "fechadoGanho": 0},
+  cri_imobiliario: {"reuniaoInicialConc": 10, "propostaEnviada": 1, "elabContrato": 1, "fechadoGanho": 0},
+};
+const CONVERSAO_TODOS = {reuniaoInicialConc:24, propostaEnviada:8, elabContrato:2};
+
 // ════════════════════════════════════════
 // REUNIÕES AGENDADAS por período (pipeline snapshot · 10/07/2026)
 // hoje/7d/mes: snapshot atual · Beckhauser + Banana Brasil + Tripla (cli) · Ethos (par)
@@ -1635,7 +1713,8 @@ const FD = {
 // tri/ano/tudo: agendadas no período (aprox. funnel ReunAgend)
 // ════════════════════════════════════════
 // AGEND_CLI.mes/'7d' são sobrescritos por CM.cli.agendadas via _aplicarCM()
-const AGEND_CLI = {
+const AGEND_CLI_BY_PRODUTO = {
+  todos: {
   hoje:    0,
   '7d':    0,
   mes:     0,
@@ -1643,7 +1722,12 @@ const AGEND_CLI = {
   tri:     0,
   ano:     1,
   tudo:    1,
+},
+  tax_shield: {"hoje": 0, "7d": 1, "mes": 0, "mes_ant": 7, "tri": 7, "ano": 68, "tudo": 138},  // CAVEAT: contagem deal-level via data_reuniao_agendada (ver nota no compute-produto-periodos.js)
+  cap_captacao: {"hoje": 0, "7d": 0, "mes": 0, "mes_ant": 9, "tri": 9, "ano": 9, "tudo": 11},  // CAVEAT: contagem deal-level via data_reuniao_agendada (ver nota no compute-produto-periodos.js)
+  cri_imobiliario: {"hoje": 0, "7d": 2, "mes": 0, "mes_ant": 11, "tri": 11, "ano": 14, "tudo": 14},  // CAVEAT: contagem deal-level via data_reuniao_agendada (ver nota no compute-produto-periodos.js)
 };
+let AGEND_CLI = AGEND_CLI_BY_PRODUTO.todos;
 // ════════════════════════════════════════
 // AGEND_PAR — REUNIÕES AGENDADAS COM PARCEIROS
 // FONTE OFICIAL E ÚNICA: painel HubSpot "04. Parceiros"
@@ -1702,15 +1786,71 @@ function metaLabel(period, metaBase) {
 }
 
 // ════════════════════════════════════════
+// FILTRO DE PRODUTO (Tax Shield / CAP - Captação / CRI Imobiliário)
+// Compõe com o filtro de período — currentProduct reatribui as variáveis
+// `let` abaixo (que apontam para *_BY_PRODUTO[currentProduct]) e então
+// dispara sf() de novo com o período ativo, para re-renderizar tudo.
+// ════════════════════════════════════════
+let currentProduct = 'todos';
+let _lastPeriod = 'mes';
+const PRODUCT_LABEL = {
+  todos: 'Todos os Produtos',
+  tax_shield: 'Tax Shield',
+  cap_captacao: 'CAP - Captação',
+  cri_imobiliario: 'CRI Imobiliário',
+};
+
+function applyProductData() {
+  REV                 = REV_BY_PRODUTO[currentProduct]                 || REV_BY_PRODUTO.todos;
+  REV_PERIODS         = REV_PERIODS_BY_PRODUTO[currentProduct]         || REV_PERIODS_BY_PRODUTO.todos;
+  REV_CHIP            = REV_CHIP_BY_PRODUTO[currentProduct]            || REV_CHIP_BY_PRODUTO.todos;
+  NAMES_REV_PERIODS   = NAMES_REV_PERIODS_BY_PRODUTO[currentProduct]   || NAMES_REV_PERIODS_BY_PRODUTO.todos;
+  AGEND_CLI           = AGEND_CLI_BY_PRODUTO[currentProduct]           || AGEND_CLI_BY_PRODUTO.todos;
+  MTG_CLI_NAMES       = MTG_CLI_NAMES_BY_PRODUTO[currentProduct]       || MTG_CLI_NAMES_BY_PRODUTO.todos;
+  MTG_CLI_ORIGINS     = MTG_CLI_ORIGINS_BY_PRODUTO[currentProduct]     || MTG_CLI_ORIGINS_BY_PRODUTO.todos;
+  ORIG_CLI_NEW_DEALS  = ORIG_CLI_NEW_DEALS_BY_PRODUTO[currentProduct]  || ORIG_CLI_NEW_DEALS_BY_PRODUTO.todos;
+  RANK_PERIODS        = RANK_PERIODS_BY_PRODUTO[currentProduct]        || RANK_PERIODS_BY_PRODUTO.todos;
+  // NAMES_REV (tooltip do snapshot "Funil de Receita") — todos usa a lista original;
+  // por produto reaproveita NAMES_REV_PERIODS[produto].tudo (mesma população que REV, já que
+  // "tudo" = sem limite de data = snapshot atual do pipeline daquele produto).
+  NAMES_REV = currentProduct === 'todos'
+    ? NAMES_REV_BY_PRODUTO.todos
+    : (NAMES_REV_PERIODS_BY_PRODUTO[currentProduct] && NAMES_REV_PERIODS_BY_PRODUTO[currentProduct].tudo) || NAMES_REV_BY_PRODUTO.todos;
+}
+
+function setProduct(btn, product) {
+  currentProduct = product;
+  document.querySelectorAll('.fb-prod').forEach(b=>b.classList.remove('on'));
+  if(btn) btn.classList.add('on');
+  applyProductData();
+  const activePeriodBtn = document.querySelector('#fbar .fb.on');
+  sf(activePeriodBtn, _lastPeriod);
+  updateParceirosNote();
+}
+
+// Nota visual nos cards de Parceiros — o filtro de Produto NÃO se aplica a eles
+// (pipeline de Parceiros 805183641 não tem o campo `produto`)
+function updateParceirosNote() {
+  const show = currentProduct !== 'todos';
+  document.querySelectorAll('.prod-note-par').forEach(el => { el.style.display = show ? 'block' : 'none'; });
+}
+
+// ════════════════════════════════════════
 // FILTER
 // ════════════════════════════════════════
 function sf(btn, period) {
-  document.querySelectorAll('.fb').forEach(b=>b.classList.remove('on'));
+  _lastPeriod = period;
+  document.querySelectorAll('#fbar .fb').forEach(b=>b.classList.remove('on'));
   if(btn) btn.classList.add('on');
   // fecha date picker se aberto
   document.getElementById('dateDrop').classList.remove('open');
 
-  const d = FD[period]||FD['mes'];
+  const fdBase = FD[period]||FD['mes'];
+  const d = currentProduct === 'todos' ? fdBase : {
+    ...fdBase,
+    cli: (FD_CLI_BY_PRODUTO[currentProduct] && FD_CLI_BY_PRODUTO[currentProduct][period]) || 0,
+    cfx: (FD_CFX_BY_PRODUTO[currentProduct] && FD_CFX_BY_PRODUTO[currentProduct][period]) || 0,
+  };
 
   // Meta proporcional ao período (meta/mês × nº de meses)
   const months = META_MONTHS[period] || 1;
@@ -1761,6 +1901,9 @@ function sf(btn, period) {
   // conversão de clientes
   updateConversion(period, d.cli, d.cfx);
 
+  // ── Funil de Conversão · Clientes (Reunião Inicial → Proposta → Contrato) por produto ──
+  updateConversionBox();
+
   // ── Funil Receita: snapshot estático do pipeline + Fechado Ganho dinâmico ──
   const revPeriod = REV.map((s, i) =>
     i === REV.length - 1 ? {...s, cnt: d.cfx, amt: d.cfx > 0 ? d.cfx * 15 : 0} : s
@@ -1769,7 +1912,8 @@ function sf(btn, period) {
   wireFunnelTips('revFunnel', REV, NAMES_REV, STAGE_NAMES_REV, true);
 
   // ── Mini-card "Funil de Conversão · Clientes" — só Fechado Ganho é dinâmico ──
-  const fxPct = Math.round(d.cfx / 24 * 100);
+  const _convBase = currentProduct === 'todos' ? CONVERSAO_TODOS : (CONVERSAO_BY_PRODUTO[currentProduct] || CONVERSAO_TODOS);
+  const fxPct = Math.round(d.cfx / (_convBase.reuniaoInicialConc || 1) * 100);
   const fxBar = document.getElementById('cfx-bar');
   const fxCnt = document.getElementById('cfx-cnt');
   if (fxBar) {
@@ -1851,8 +1995,13 @@ function applyCustomDate() {
   document.getElementById('dateDrop').classList.remove('open');
   const lbl = `${from.slice(8,10)}/${from.slice(5,7)} → ${to.slice(8,10)}/${to.slice(5,7)}`;
   btn.textContent = '📅 '+lbl;
-  // Para período personalizado, usa dados proporcionais ao mês
-  const d = FD['mes'];
+  // Para período personalizado, usa dados proporcionais ao mês (respeitando o produto selecionado)
+  const fdBaseCustom = FD['mes'];
+  const d = currentProduct === 'todos' ? fdBaseCustom : {
+    ...fdBaseCustom,
+    cli: (FD_CLI_BY_PRODUTO[currentProduct] && FD_CLI_BY_PRODUTO[currentProduct].mes) || 0,
+    cfx: (FD_CFX_BY_PRODUTO[currentProduct] && FD_CFX_BY_PRODUTO[currentProduct].mes) || 0,
+  };
   updateMtgCard('cli', d.cli, META_CLI);
   updateMtgCard('par', d.par, META_PAR);
   const eCfx = document.getElementById('exec-cfx'); if(eCfx) eCfx.textContent = d.cfx;
@@ -1864,6 +2013,7 @@ function applyCustomDate() {
   document.getElementById('origParChip').textContent = lbl;
   renderRanking('mes');
   updateConversion(lbl, d.cli, d.cfx);
+  updateConversionBox();
   const revPeriodCustom = REV.map((s, i) =>
     i === REV.length - 1 ? {...s, cnt: d.cfx, amt: d.cfx > 0 ? d.cfx * 15 : 0} : s
   );
@@ -2001,6 +2151,31 @@ function updateConversion(period, mtg, cfx) {
 }
 
 // ════════════════════════════════════════
+// FUNIL DE CONVERSÃO · CLIENTES (card "Pipeline atual") — por produto
+// Cohort de Mês anterior (Jul/26): Reunião Inicial Conc. → Proposta Enviada →
+// Elaboração da Proposta/Contrato. O Fechado Ganho já é tratado à parte (cfx-bar).
+// ════════════════════════════════════════
+function updateConversionBox() {
+  const conv = currentProduct === 'todos' ? CONVERSAO_TODOS : (CONVERSAO_BY_PRODUTO[currentProduct] || CONVERSAO_TODOS);
+  const ri = conv.reuniaoInicialConc || 0;
+  const pr = conv.propostaEnviada || 0;
+  const ec = conv.elabContrato || 0;
+  const riBar = document.getElementById('cv-ri-bar'), riPct = document.getElementById('cv-ri-pct');
+  const prBar = document.getElementById('cv-pr-bar'), prPct = document.getElementById('cv-pr-pct');
+  const ecBar = document.getElementById('cv-ec-bar'), ecPct = document.getElementById('cv-ec-pct');
+  if (riBar) { riBar.textContent = ri; riBar.style.width = '100%'; }
+  if (riPct) riPct.textContent = '100%';
+  const prPctVal = ri > 0 ? Math.round(pr / ri * 100) : 0;
+  if (prBar) { prBar.textContent = pr || ''; prBar.style.width = (pr > 0 ? Math.max(prPctVal, 4) : 0) + '%'; }
+  if (prPct) prPct.textContent = prPctVal + '%';
+  const ecPctVal = ri > 0 ? Math.round(ec / ri * 100) : 0;
+  if (ecBar) { ecBar.textContent = ec || ''; ecBar.style.width = (ec > 0 ? Math.max(ecPctVal, 4) : 0) + '%'; }
+  if (ecPct) ecPct.textContent = ecPctVal + '%';
+  const convFunnelChip = document.getElementById('convFunnelChip');
+  if (convFunnelChip) convFunnelChip.textContent = currentProduct === 'todos' ? 'Pipeline atual' : `Pipeline atual · ${PRODUCT_LABEL[currentProduct]}`;
+}
+
+// ════════════════════════════════════════
 // RANKING DE PARCEIROS — DADOS REAIS HUBSPOT
 // Parceiros do Pipeline RECEITA que geraram reuniões com clientes
 // Campo: empresa_parceira · origem_de_negocios = Parcerias
@@ -2038,6 +2213,15 @@ const RANK_GERAL = [
 let rankTab = 'mes';
 let _rankPeriod = 'mes';  // período ativo do filtro principal
 
+// Ranking "Todo período" — todos usa o RANK_GERAL histórico consolidado;
+// por produto usa RANK_PERIODS_BY_PRODUTO[produto].tudo (calculado por
+// compute-produto-periodos.js a partir dos mesmos deals, já filtrado por produto).
+function _rankGeralData() {
+  if (currentProduct === 'todos') return RANK_GERAL;
+  const byProd = RANK_PERIODS_BY_PRODUTO[currentProduct];
+  return (byProd && byProd.tudo) || [];
+}
+
 function switchRankTab(tab) {
   rankTab = tab;
   document.querySelectorAll('.rank-tab').forEach(t => t.classList.toggle('on', t.dataset.tab === tab));
@@ -2045,7 +2229,10 @@ function switchRankTab(tab) {
     const data = RANK_PERIODS[_rankPeriod] || RANK_MES;
     _drawRanking(data, 'mes');
   } else {
-    _drawRanking(RANK_GERAL, 'geral');
+    const geralData = _rankGeralData();
+    _drawRanking(geralData, 'geral');
+    const geralBtn = document.getElementById('rankTabGeral');
+    if (geralBtn) geralBtn.textContent = `🏆 Todo período (${geralData.reduce((a,r)=>a+r.cnt,0)})`;
   }
 }
 
@@ -2061,7 +2248,10 @@ function renderRanking(period) {
   if (rankTab === 'mes') {
     _drawRanking(periodoData, 'mes');
   } else {
-    _drawRanking(RANK_GERAL, 'geral');
+    const geralData = _rankGeralData();
+    _drawRanking(geralData, 'geral');
+    const geralBtn = document.getElementById('rankTabGeral');
+    if (geralBtn) geralBtn.textContent = `🏆 Todo período (${geralData.reduce((a,r)=>a+r.cnt,0)})`;
   }
 }
 
@@ -2408,7 +2598,8 @@ if(_ctEl) new Chart(_ctEl, {
 // NOMES DOS DEALS POR ETAPA (tooltips)
 // Fonte: HubSpot 06/07/2026
 // ════════════════════════════════════════
-const NAMES_REV = {
+const NAMES_REV_BY_PRODUTO = {
+  todos: {
   '90834558': ['Regional Telhas · R$15M','Winki Comercio Exterior · R$15M','Hipervalor · R$15M','ZJM Empreendimentos LTDA · R$15M','Bom Princípio Alimentos · R$15M','Winner Brasil Indústria de Descartáveis · R$15M','Ekobé · R$15M','EletroBidu Energia Solar · R$15M','Warusky Comercio Industria · R$15M','Terra Brasil · R$15M','Transdotti Logística · R$15M','RVB Malhas · R$15M','Alto Vale Transportes · R$15M','Engecor · R$15M','Dobro · R$15M','Scapol Distribuidora · R$15M','First S.A · R$15M','DPC Distribuidor Atacadista · R$15M','Riberfoods Importadora · R$15M','Navarro Distribuidora de Medicamentos · R$15M','Multilog · R$15M','Macromaq · R$15M','Macler · R$15M','Zanca Implementos · R$15M','Berneck S.a. Paineis e Serrados · R$15M','TRATOWEL Comercio de Maquinas Agricolas · R$15M','Super Tratores · R$15M','Transportadora Boa Viagem · R$15M','O Betacem · R$15M','Renova be - Grupo Vitabe · R$15M','Adega Muf\'s · R$15M','Supermercados Boniatti · R$15M','FBS Construtora · R$15M','Supermercado Lobascz · R$15M','Kesoja · R$15M','Ideal Agro Drones · R$15M','RDR Soluções Logísticas · R$15M','Shineray do Brasil · R$15M','Insumos Agronegócios · R$15M','COPOBRAS · R$15M','Grupo Kyly · R$15M','J.André · R$15M','Inoven Indústria · R$15M','Corpal Incorporadora · R$15M'],
   '1230967392': ['Catarinaço · R$15M','Zanardi Construtora · R$15M','Transportadora Boa Viagem · R$15M'],
   '90738744': ['Transbyshop · R$15M','Manatex · R$15M','JG EMPREITEIRA E CONSTRUCOES · R$15M','Mondeo Construtora · R$15M','Rede M7 · R$15M','Arius Sistemas · R$15M','Baux Group · R$15M','Roma Fertilizantes · R$25M','Tropheus · R$15M','H Bremer & Filhos Ltda. · R$15M','Hidra · R$15M','Saintsteel · R$15M','Bourbon Hospitalidade · R$15M','Portonave · R$15M','Inoven Comércio Internacional · R$15M','Brasmaq Portuária · R$30M','Meias Loa · R$86M','Mondiana Indústria de Plásticos · R$15M','Linda Casa · R$12,5M','ZM · R$30M','Bia Enxovais · R$15M','Primaz · R$15M','Ativos Capital · R$15M','Vetor Automotivos · R$15M','Procfit · R$15M','Dynamis Importadora · R$10M','Tripla · R$15M','We Inc · R$15M','Grupo Plasnox · R$15M','Círculo · R$15M','Banana Brasil · R$15M'],
@@ -2418,7 +2609,9 @@ const NAMES_REV = {
   '90834560': ['Ambiensys · R$10M','Croques · R$10M','JG EMPREITEIRA E CONSTRUCOES · R$200K'],
   '90834561': [],
   '90834562': ['Cauzzo Mais · R$15M (Nov/25)','Kraft Logística · R$15M (Mai/25)','ADS Drones · R$25M (Set/25)','Rudnik Soluções e Tecnologia · R$6M (Jul/26)'],
+},
 };
+let NAMES_REV = NAMES_REV_BY_PRODUTO.todos;
 
 const NAMES_PAR = {
   '1185687195': ['LEGADO ASSET MANAGEMENT','Ethos Investimentos','Ex Soluções Tributárias','HAZ Invest','RP Info Sistemas','R-Dias','Planeja Tributos','Zeve Investimentos','Santos Neto','Black Investimentos (Jul/26)'],  // 10 deals — +Black Investimentos 02/Jul
@@ -2435,7 +2628,8 @@ const STAGE_NAMES_PAR = {'Cadastro de Parceiro':'1185687195','Reunião Agendada'
 
 // Nomes dos deals POR PERÍODO — usado nos tooltips do funil "Novos Negócios"
 // Períodos sem entrada aqui usam NAMES_REV / NAMES_PAR (fallback = pipeline completo)
-const NAMES_REV_PERIODS = {
+const NAMES_REV_PERIODS_BY_PRODUTO = {
+  todos: {
   hoje: {
     '90834558': [], '1230967392': [], '90738744': [],
     '1161571368': [], '90834559': [], '90738746': [], '90834560': [], '90834561': [], '90834562': [],
@@ -2460,7 +2654,12 @@ const NAMES_REV_PERIODS = {
     '90834560': ['JG EMPREITEIRA E CONSTRUCOES · R$200K'],
     '90834561': [], '90834562': [],
   },
+},
+  tax_shield: {"hoje": {"90738744": [], "90738745": [], "90738746": [], "90834558": [], "90834559": [], "90834560": [], "90834561": [], "90834562": [], "1230967392": []}, "7d": {"90738744": [], "90738745": [], "90738746": [], "90834558": [], "90834559": [], "90834560": [], "90834561": [], "90834562": [], "1230967392": ["Lixas Tatu · R$15M", "Catarinaço · R$15M"]}, "mes": {"90738744": [], "90738745": [], "90738746": [], "90834558": [], "90834559": [], "90834560": [], "90834561": [], "90834562": [], "1230967392": []}, "mes_ant": {"90738744": ["Madesa · R$15M", "Selbetti Tecnologia S.A. - 83.483.230/0001-86 · R$15M", "Daico · R$15M", "Manatex · R$15M"], "90738745": [], "90738746": [], "90834558": ["Lojas Queiroz · R$15M", "Regional Telhas · R$15M"], "90834559": [], "90834560": [], "90834561": [], "90834562": [], "1230967392": ["Lixas Tatu · R$15M", "Catarinaço · R$15M"]}, "tri": {"90738744": ["Madesa · R$15M", "Selbetti Tecnologia S.A. - 83.483.230/0001-86 · R$15M", "Daico · R$15M", "Manatex · R$15M"], "90738745": [], "90738746": [], "90834558": ["Lojas Queiroz · R$15M", "Regional Telhas · R$15M"], "90834559": [], "90834560": [], "90834561": [], "90834562": [], "1230967392": ["Lixas Tatu · R$15M", "Catarinaço · R$15M"]}, "ano": {"90738744": ["Madesa · R$15M", "Selbetti Tecnologia S.A. - 83.483.230/0001-86 · R$15M", "Daico · R$15M", "Manatex · R$15M", "Rede de Postos Luca - Neto · R$15M", "Transbyshop · R$15M", "Rede M7 · R$15M", "Grupo Plasnox · R$15M", "Círculo · R$15M", "Banana Brasil · R$15M", "Baux Group · R$15M", "Baterias ERBS · R$15M", "Roma Fertilizantes · R$25M", "Tropheus · R$15M", "Saintsteel · R$15M", "Inoven Comércio Internacional Ltda · R$15M", "Meias Loa · R$86M", "Mondiana Industria de Plasticos LTDA · R$15M", "Bia Enxovais · R$15M", "Procfit · R$15M", "Dynamis Importadora · R$10M"], "90738745": [], "90738746": ["ADS Drones Operação 3 · R$10M", "Beckhauser Malhas · R$20M", "Transben · R$24.5M", "Postos Zimmerman · R$11.5M", "TRANSJOI · R$20M"], "90834558": ["Lojas Queiroz · R$15M", "Regional Telhas · R$15M", "Grupo Klemtz · R$15M", "Grupo Bandeira · R$15M", "Winki Comercio Exterior · R$15M", "J.André · R$15M", "Inoven Industria, Comercio e Importacao Ltda · R$15M", "Hipervalor · R$15M", "Bom Princípio Alimentos · R$15M", "First S.A · R$15M", "Navarro Distribuidora de Medicamentos · R$15M", "Riberfoods Importadora e Distribuidora · R$15M", "Dobro · R$15M", "DPC Distribuidor Atacadista · R$15M", "RDR Soluções Logísticas · R$15M", "Shineray do Brasil · R$15M", "EletroBidu Energia Solar · R$15M", "Engecor · R$15M", "Winner Brasil Indústria de Descartáveis · R$15M", "Link Comercial · R$15M", "Grupo Kyly · R$15M", "Multilog · R$15M", "Macler · R$15M", "Macromaq · R$15M", "Ekobé · R$15M", "RVB Malhas · R$15M", "Warusky Comercio Industria e Representacoes · R$15M", "Terra Brasil · R$15M", "Insumos Agronegócios · R$15M", "COPOBRAS · R$15M", "Berneck S.a. Paineis e Serrados · R$15M", "Renova be - Grupo Vitabe · R$15M", "Zanca Implementos · R$15M", "Alto Vale Transportes · R$15M", "Scapol Distribuidora · R$15M", "O Betacem · R$15M", "Transdotti Logística · R$15M", "Super Tratores · R$15M", "TRATOWEL COMERCIO DE MAQUINAS AGRICOLAS LTDA · R$15M", "Ideal Agro Drones · R$15M", "Kesoja · R$15M"], "90834559": ["P&P Móveis e Madeira · R$15M"], "90834560": ["Ambiensys · R$10M", "Croques · R$10M"], "90834561": [], "90834562": ["Rudnik Soluções e Tecnologia · R$6M"], "1230967392": ["Lixas Tatu · R$15M", "Catarinaço · R$15M", "Transportadora Boa Viagem · R$15M"]}, "tudo": {"90738744": ["Madesa · R$15M", "Selbetti Tecnologia S.A. - 83.483.230/0001-86 · R$15M", "Daico · R$15M", "Manatex · R$15M", "Rede de Postos Luca - Neto · R$15M", "Transbyshop · R$15M", "Rede M7 · R$15M", "Grupo Plasnox · R$15M", "Círculo · R$15M", "Banana Brasil · R$15M", "Baux Group · R$15M", "Baterias ERBS · R$15M", "Roma Fertilizantes · R$25M", "Tropheus · R$15M", "Saintsteel · R$15M", "Inoven Comércio Internacional Ltda · R$15M", "Meias Loa · R$86M", "Mondiana Industria de Plasticos LTDA · R$15M", "Bia Enxovais · R$15M", "Procfit · R$15M", "Dynamis Importadora · R$10M", "Tripla · R$15M"], "90738745": [], "90738746": ["ADS Drones Operação 3 · R$10M", "Beckhauser Malhas · R$20M", "Transben · R$24.5M", "Postos Zimmerman · R$11.5M", "TRANSJOI · R$20M"], "90834558": ["Lojas Queiroz · R$15M", "Regional Telhas · R$15M", "Grupo Klemtz · R$15M", "Grupo Bandeira · R$15M", "Winki Comercio Exterior · R$15M", "J.André · R$15M", "Inoven Industria, Comercio e Importacao Ltda · R$15M", "Hipervalor · R$15M", "Bom Princípio Alimentos · R$15M", "First S.A · R$15M", "Navarro Distribuidora de Medicamentos · R$15M", "Riberfoods Importadora e Distribuidora · R$15M", "Dobro · R$15M", "DPC Distribuidor Atacadista · R$15M", "RDR Soluções Logísticas · R$15M", "Shineray do Brasil · R$15M", "EletroBidu Energia Solar · R$15M", "Engecor · R$15M", "Winner Brasil Indústria de Descartáveis · R$15M", "Link Comercial · R$15M", "Grupo Kyly · R$15M", "Multilog · R$15M", "Macler · R$15M", "Macromaq · R$15M", "Ekobé · R$15M", "RVB Malhas · R$15M", "Warusky Comercio Industria e Representacoes · R$15M", "Terra Brasil · R$15M", "Insumos Agronegócios · R$15M", "COPOBRAS · R$15M", "Berneck S.a. Paineis e Serrados · R$15M", "Renova be - Grupo Vitabe · R$15M", "Zanca Implementos · R$15M", "Alto Vale Transportes · R$15M", "Scapol Distribuidora · R$15M", "O Betacem · R$15M", "Transdotti Logística · R$15M", "Super Tratores · R$15M", "TRATOWEL COMERCIO DE MAQUINAS AGRICOLAS LTDA · R$15M", "Ideal Agro Drones · R$15M", "Kesoja · R$15M", "Supermercado Lobascz - Novo Negócio · R$15M", "FBS Construtora · R$15M", "Supermercados Boniatti · R$15M", "Adega Muf's · R$15M"], "90834559": ["P&P Móveis e Madeira · R$15M"], "90834560": ["Ambiensys · R$10M", "Croques · R$10M"], "90834561": [], "90834562": ["Rudnik Soluções e Tecnologia · R$6M", "Cauzzo Mais · R$15M", "ADS Drones · R$25M", "Kraft Logística · R$15M"], "1230967392": ["Lixas Tatu · R$15M", "Catarinaço · R$15M", "Transportadora Boa Viagem · R$15M"]}},
+  cap_captacao: {"hoje": {"90738744": [], "90738745": [], "90738746": [], "90834558": [], "90834559": [], "90834560": [], "90834561": [], "90834562": [], "1230967392": ["Agricopel e Rede de Postos Mime · R$15M"]}, "7d": {"90738744": [], "90738745": [], "90738746": [], "90834558": ["Feldmann Pescados · R$6M", "Agro Michalach · R$15M", "Fluair Componentes Pneumáticos · R$2M", "TOPSUN Energia Solar · R$2M"], "90834559": [], "90834560": [], "90834561": [], "90834562": [], "1230967392": ["Agricopel e Rede de Postos Mime · R$15M", "Rede M7 Postos - Captacão · R$15M"]}, "mes": {"90738744": [], "90738745": [], "90738746": [], "90834558": [], "90834559": [], "90834560": [], "90834561": [], "90834562": [], "1230967392": ["Agricopel e Rede de Postos Mime · R$15M"]}, "mes_ant": {"90738744": [], "90738745": ["Grupo Energia · R$0M", "Steel Loop - Barracão Logistico · R$6M", "BA HONG LUNG · R$108M"], "90738746": [], "90834558": ["Feldmann Pescados · R$6M", "Agro Michalach · R$15M", "Fluair Componentes Pneumáticos · R$2M", "TOPSUN Energia Solar · R$2M"], "90834559": ["We Inc · R$15M", "JG EMPREITEIRA E CONSTRUCOES · R$1M", "Steel Loop · R$15M", "BA HONG LUNG · R$1.5M", "TEX Engenharia · R$2M", "Bom Jesus · R$40M"], "90834560": [], "90834561": [], "90834562": [], "1230967392": ["Rede M7 Postos - Captacão · R$15M"]}, "tri": {"90738744": [], "90738745": ["Grupo Energia · R$0M", "Steel Loop - Barracão Logistico · R$6M", "BA HONG LUNG · R$108M"], "90738746": [], "90834558": ["Feldmann Pescados · R$6M", "Agro Michalach · R$15M", "Fluair Componentes Pneumáticos · R$2M", "TOPSUN Energia Solar · R$2M"], "90834559": ["We Inc · R$15M", "JG EMPREITEIRA E CONSTRUCOES · R$1M", "Steel Loop · R$15M", "BA HONG LUNG · R$1.5M", "TEX Engenharia · R$2M", "Bom Jesus · R$40M"], "90834560": [], "90834561": [], "90834562": [], "1230967392": ["Agricopel e Rede de Postos Mime · R$15M", "Rede M7 Postos - Captacão · R$15M"]}, "ano": {"90738744": [], "90738745": ["Grupo Energia · R$0M", "Steel Loop - Barracão Logistico · R$6M", "BA HONG LUNG · R$108M"], "90738746": [], "90834558": ["Feldmann Pescados · R$6M", "Agro Michalach · R$15M", "Fluair Componentes Pneumáticos · R$2M", "TOPSUN Energia Solar · R$2M"], "90834559": ["We Inc · R$15M", "JG EMPREITEIRA E CONSTRUCOES · R$1M", "Steel Loop · R$15M", "BA HONG LUNG · R$1.5M", "TEX Engenharia · R$2M", "Bom Jesus · R$40M"], "90834560": [], "90834561": [], "90834562": [], "1230967392": ["Agricopel e Rede de Postos Mime · R$15M", "Rede M7 Postos - Captacão · R$15M"]}, "tudo": {"90738744": [], "90738745": ["Grupo Energia · R$0M", "Steel Loop - Barracão Logistico · R$6M", "BA HONG LUNG · R$108M"], "90738746": [], "90834558": ["Feldmann Pescados · R$6M", "Agro Michalach · R$15M", "Fluair Componentes Pneumáticos · R$2M", "TOPSUN Energia Solar · R$2M"], "90834559": ["We Inc · R$15M", "JG EMPREITEIRA E CONSTRUCOES · R$1M", "Steel Loop · R$15M", "BA HONG LUNG · R$1.5M", "TEX Engenharia · R$2M", "Bom Jesus · R$40M"], "90834560": [], "90834561": [], "90834562": [], "1230967392": ["Agricopel e Rede de Postos Mime · R$15M", "Rede M7 Postos - Captacão · R$15M"]}},
+  cri_imobiliario: {"hoje": {"90738744": [], "90738745": [], "90738746": [], "90834558": [], "90834559": [], "90834560": [], "90834561": [], "90834562": [], "1230967392": []}, "7d": {"90738744": ["ArtHaus · R$15M"], "90738745": [], "90738746": [], "90834558": [], "90834559": [], "90834560": [], "90834561": [], "90834562": [], "1230967392": []}, "mes": {"90738744": [], "90738745": [], "90738746": [], "90834558": [], "90834559": [], "90834560": [], "90834561": [], "90834562": [], "1230967392": []}, "mes_ant": {"90738744": ["ArtHaus · R$15M", "Zanardi Construtora · R$15M", "Primaz - CRI · R$15M", "AVVA Empreendimentos · R$15M", "Loteadora Piauí · R$15M", "Grupo Riviera - CRI · R$15M", "GIGA4 URBANISMO · R$15M", "Tonolher Empreendimento · R$15M"], "90738745": [], "90738746": [], "90834558": [], "90834559": [], "90834560": ["JG EMPREITEIRA E CONSTRUCOES · R$0.2M"], "90834561": [], "90834562": [], "1230967392": []}, "tri": {"90738744": ["ArtHaus · R$15M", "Zanardi Construtora · R$15M", "Primaz - CRI · R$15M", "AVVA Empreendimentos · R$15M", "Loteadora Piauí · R$15M", "Grupo Riviera - CRI · R$15M", "GIGA4 URBANISMO · R$15M", "Tonolher Empreendimento · R$15M"], "90738745": [], "90738746": [], "90834558": [], "90834559": [], "90834560": ["JG EMPREITEIRA E CONSTRUCOES · R$0.2M"], "90834561": [], "90834562": [], "1230967392": []}, "ano": {"90738744": ["ArtHaus · R$15M", "Zanardi Construtora · R$15M", "Primaz - CRI · R$15M", "AVVA Empreendimentos · R$15M", "Loteadora Piauí · R$15M", "Grupo Riviera - CRI · R$15M", "GIGA4 URBANISMO · R$15M", "Tonolher Empreendimento · R$15M", "GL7 Incorporadora · R$0.1M", "We Inc - Loteadora · R$15M"], "90738745": [], "90738746": [], "90834558": ["Terraza Urbanismo · R$15M", "Profor Cosntrutora e Incorporadora · R$15M", "R Silva Empreendimentos · R$15M", "Corpal Incorporadora · R$15M", "F7 Empreendimentos · R$15M", "ZJM Empreendimentos LTDA · R$15M"], "90834559": [], "90834560": ["JG EMPREITEIRA E CONSTRUCOES · R$0.2M"], "90834561": [], "90834562": [], "1230967392": []}, "tudo": {"90738744": ["ArtHaus · R$15M", "Zanardi Construtora · R$15M", "Primaz - CRI · R$15M", "AVVA Empreendimentos · R$15M", "Loteadora Piauí · R$15M", "Grupo Riviera - CRI · R$15M", "GIGA4 URBANISMO · R$15M", "Tonolher Empreendimento · R$15M", "GL7 Incorporadora · R$0.1M", "We Inc - Loteadora · R$15M"], "90738745": [], "90738746": [], "90834558": ["Terraza Urbanismo · R$15M", "Profor Cosntrutora e Incorporadora · R$15M", "R Silva Empreendimentos · R$15M", "Corpal Incorporadora · R$15M", "F7 Empreendimentos · R$15M", "ZJM Empreendimentos LTDA · R$15M"], "90834559": [], "90834560": ["JG EMPREITEIRA E CONSTRUCOES · R$0.2M"], "90834561": [], "90834562": [], "1230967392": []}},
 };
+let NAMES_REV_PERIODS = NAMES_REV_PERIODS_BY_PRODUTO.todos;
 const NAMES_PAR_PERIODS = {
   hoje: {  // 03/Ago: sem novos parceiros hoje
     '1185687195':[],'1185687196':[],'1185687197':[],'1185687198':[],'1185687200':[]
@@ -2494,12 +2693,18 @@ const PFX_NAMES = {
 
 // Nomes das REUNIÕES REALIZADAS por período — tooltip nos cards de meta (mv-cli / mv-par)
 // FD.cli / FD.par = reuniões realizadas no período (independente de quando o deal foi criado)
-const MTG_CLI_NAMES = {
+const MTG_CLI_NAMES_BY_PRODUTO = {
+  todos: {
   hoje:    [],  // 03/Ago: sem reuniões com clientes hoje
   mes:     [],  // Ago/26: sobrescrito por _aplicarCM()
   '7d':    [],
   mes_ant: ['Transbyshop (02/Jul)','Manatex (03/Jul)','We Inc - Loteadora (06/Jul)','JG EMPREITEIRA (06/Jul)','Tonolher Empreendimento (10/Jul)','GIGA4 URBANISMO (10/Jul)','Loteadora Piauí (10/Jul)','Bom Jesus (13/Jul)','AVVA Empreendimentos (14/Jul)','Grupo Riviera - CRI (14/Jul)','Primaz - CRI (16/Jul)','Selbetti Tecnologia (16/Jul)','Daico (16/Jul)','TEX Engenharia (22/Jul)','BA HONG LUNG (22/Jul)','Steel Loop (22/Jul)','JG EMPREITEIRA (22/Jul)','We Inc (22/Jul)','Madesa (24/Jul)','BA HONG LUNG (24/Jul)','Steel Loop - Barracão Logístico (24/Jul)','Grupo Energia (24/Jul)','Zanardi Construtora (30/Jul)','ArtHaus (31/Jul — lançada com atraso em 03/Ago)'],  // Jul/26 FINAL: 24 realizadas
+},
+  tax_shield: {"hoje": [], "7d": [], "mes": [], "mes_ant": ["Transbyshop (02/Jul)", "Manatex (03/Jul)", "Selbetti Tecnologia S.A. - 83.483.230/0001-86 (16/Jul)", "Daico (16/Jul)", "Madesa (24/Jul)"], "tri": ["Transbyshop (02/Jul)", "Manatex (03/Jul)", "Selbetti Tecnologia S.A. - 83.483.230/0001-86 (16/Jul)", "Daico (16/Jul)", "Madesa (24/Jul)"], "ano": ["Skylink (22/Jan)", "Netbrokers (23/Jan)", "Procfit (30/Jan)", "Grupo Machado (03/Fev)", "Zen S/A (04/Fev)", "Digital Sat (09/Fev)", "Heli Brasil (11/Fev)", "Grupo Riviera (12/Fev)", "TRANSJOI (24/Fev)", "SCP PORTO BELO PESCADOS RS (09/Mar)", "Vetor Automotivos (11/Mar)", "Always Fit (19/Mar)", "Frigo King (24/Mar)", "Bia Enxovais (24/Mar)", "Croques (24/Mar)", "Rudnik Soluções e Tecnologia (30/Mar)", "ZM (30/Mar)", "P&P Móveis e Madeira (02/Abr)", "Grupo Pietrobon (06/Abr)", "Dynamis Importadora (06/Abr)", "Mondiana Industria de Plasticos LTDA (09/Abr)", "Meias Loa (10/Abr)", "Brasmaq Portuária (13/Abr)", "Postos Zimmerman (14/Abr)", "Linda Casa (14/Abr)", "Guabifios (16/Abr)", "Timptrade (23/Abr)", "Portonave (23/Abr)", "HUBLOG (29/Abr)", "Ceramfix (29/Abr)", "Mereo Tech S.A. (30/Abr)", "Hidra (06/Mai)", "Ativos Capital (07/Mai)", "Saintsteel (11/Mai)", "Inoven Comércio Internacional Ltda (12/Mai)", "Ambiensys (13/Mai)", "H Bremer & Filhos Ltda. (13/Mai)", "Arrazantty (14/Mai)", "Tropheus (14/Mai)", "Roma Fertilizantes (15/Mai)", "Zigma (18/Mai)", "Transben (18/Mai)", "Bourbon Hospitalidade (19/Mai)", "Baux Group (27/Mai)", "Arius Sistemas (02/Jun)", "Beckhauser Malhas (03/Jun)", "ADS Drones Operação 3 (08/Jun)", "Tripla (12/Jun)", "Primaz (15/Jun)", "Rede M7 (16/Jun)", "Banana Brasil (23/Jun)", "Grupo Plasnox (24/Jun)", "Círculo (24/Jun)", "Fibramerica Global (24/Jun)", "Baterias ERBS (24/Jun)", "Rede de Postos Luca - Neto (30/Jun)", "Transbyshop (02/Jul)", "Manatex (03/Jul)", "Selbetti Tecnologia S.A. - 83.483.230/0001-86 (16/Jul)", "Daico (16/Jul)", "Madesa (24/Jul)"], "tudo": ["Almeida Mercados (21/Set)", "ADS Drones (21/Set)", "Kraft Logística (21/Set)", "Postos Gralha Azul (22/Set)", "Grupo Fcamara (22/Set)", "Grupo Opus (22/Set)", "BWT Operadora (22/Set)", "Torriton Beauty & Hair (22/Set)", "Bender Group (22/Set)", "Gela Boca (22/Set)", "Saggezza (22/Set)", "Ritmo Logística (22/Set)", "Quality Frotas (22/Set)", "Carcereri Saneamento Básico (22/Set)", "Tintas Verginia (22/Set)", "Dalpar Supermercados (25/Set)", "Transbochnia Transportes (26/Set)", "Cromo Transfer (29/Set)", "Construtora e Incorporadora Greenwood (02/Out)", "Cauzzo Mais (04/Out)", "Serra Verde Express (04/Out)", "Rede Multishow Supermercados Associados (04/Out)", "Secret (10/Out)", "Dromos Infraestrutura (14/Out)", "Dall'Oglio (15/Out)", "Alfama Alimentos (21/Out)", "Madalosso (21/Out)", "Transpetrol (29/Out)", "Agex (29/Out)", "Carraro Logistica (29/Out)", "Uni Logistica (29/Out)", "BBM Logistica (29/Out)", "PãodeQueijoTradição - Novo negócio (29/Out)", "Beckhauser (29/Out)", "Borges Madeiras (30/Out)", "Transportadora Taborda (30/Out)", "Vólus (30/Out)", "MaxxiCase (03/Nov)", "C&S Vigilância e Segurança Patrimonial Ltda. (03/Nov)", "Supermercado Loyola (SP) (06/Nov)", "JB Supermercados (10/Nov)", "Gratt (13/Nov)", "Incomum (13/Nov)", "Grupo catarinense pharma (27/Nov)", "Cecil (27/Nov)", "Anadem (17/Dez)", "AGROSEPAC (17/Dez)", "Skylink (22/Jan)", "Netbrokers (23/Jan)", "Procfit (30/Jan)", "Grupo Machado (03/Fev)", "Zen S/A (04/Fev)", "Digital Sat (09/Fev)", "Heli Brasil (11/Fev)", "Grupo Riviera (12/Fev)", "TRANSJOI (24/Fev)", "SCP PORTO BELO PESCADOS RS (09/Mar)", "Vetor Automotivos (11/Mar)", "Always Fit (19/Mar)", "Frigo King (24/Mar)", "Bia Enxovais (24/Mar)", "Croques (24/Mar)", "Rudnik Soluções e Tecnologia (30/Mar)", "ZM (30/Mar)", "P&P Móveis e Madeira (02/Abr)", "Grupo Pietrobon (06/Abr)", "Dynamis Importadora (06/Abr)", "Mondiana Industria de Plasticos LTDA (09/Abr)", "Meias Loa (10/Abr)", "Brasmaq Portuária (13/Abr)", "Postos Zimmerman (14/Abr)", "Linda Casa (14/Abr)", "Guabifios (16/Abr)", "Timptrade (23/Abr)", "Portonave (23/Abr)", "HUBLOG (29/Abr)", "Ceramfix (29/Abr)", "Mereo Tech S.A. (30/Abr)", "Hidra (06/Mai)", "Ativos Capital (07/Mai)", "Saintsteel (11/Mai)", "Inoven Comércio Internacional Ltda (12/Mai)", "Ambiensys (13/Mai)", "H Bremer & Filhos Ltda. (13/Mai)", "Arrazantty (14/Mai)", "Tropheus (14/Mai)", "Roma Fertilizantes (15/Mai)", "Zigma (18/Mai)", "Transben (18/Mai)", "Bourbon Hospitalidade (19/Mai)", "Baux Group (27/Mai)", "Arius Sistemas (02/Jun)", "Beckhauser Malhas (03/Jun)", "ADS Drones Operação 3 (08/Jun)", "Tripla (12/Jun)", "Primaz (15/Jun)", "Rede M7 (16/Jun)", "Banana Brasil (23/Jun)", "Grupo Plasnox (24/Jun)", "Círculo (24/Jun)", "Fibramerica Global (24/Jun)", "Baterias ERBS (24/Jun)", "Rede de Postos Luca - Neto (30/Jun)", "Transbyshop (02/Jul)", "Manatex (03/Jul)", "Selbetti Tecnologia S.A. - 83.483.230/0001-86 (16/Jul)", "Daico (16/Jul)", "Madesa (24/Jul)"]},
+  cap_captacao: {"hoje": [], "7d": [], "mes": [], "mes_ant": ["Bom Jesus (13/Jul)", "We Inc (22/Jul)", "JG EMPREITEIRA E CONSTRUCOES (22/Jul)", "Steel Loop (22/Jul)", "BA HONG LUNG (22/Jul)", "TEX Engenharia (22/Jul)", "Grupo Energia (24/Jul)", "Steel Loop - Barracão Logistico (24/Jul)", "BA HONG LUNG (24/Jul)"], "tri": ["Bom Jesus (13/Jul)", "We Inc (22/Jul)", "JG EMPREITEIRA E CONSTRUCOES (22/Jul)", "Steel Loop (22/Jul)", "BA HONG LUNG (22/Jul)", "TEX Engenharia (22/Jul)", "Grupo Energia (24/Jul)", "Steel Loop - Barracão Logistico (24/Jul)", "BA HONG LUNG (24/Jul)"], "ano": ["Bom Jesus (13/Jul)", "We Inc (22/Jul)", "JG EMPREITEIRA E CONSTRUCOES (22/Jul)", "Steel Loop (22/Jul)", "BA HONG LUNG (22/Jul)", "TEX Engenharia (22/Jul)", "Grupo Energia (24/Jul)", "Steel Loop - Barracão Logistico (24/Jul)", "BA HONG LUNG (24/Jul)"], "tudo": ["Bom Jesus (13/Jul)", "We Inc (22/Jul)", "JG EMPREITEIRA E CONSTRUCOES (22/Jul)", "Steel Loop (22/Jul)", "BA HONG LUNG (22/Jul)", "TEX Engenharia (22/Jul)", "Grupo Energia (24/Jul)", "Steel Loop - Barracão Logistico (24/Jul)", "BA HONG LUNG (24/Jul)"]},
+  cri_imobiliario: {"hoje": [], "7d": ["Zanardi Construtora (30/Jul)", "ArtHaus (31/Jul)"], "mes": [], "mes_ant": ["JG EMPREITEIRA E CONSTRUCOES (06/Jul)", "We Inc - Loteadora (06/Jul)", "Loteadora Piauí (10/Jul)", "GIGA4 URBANISMO (10/Jul)", "Tonolher Empreendimento (10/Jul)", "AVVA Empreendimentos (14/Jul)", "Grupo Riviera - CRI (14/Jul)", "Primaz - CRI (16/Jul)", "Zanardi Construtora (30/Jul)", "ArtHaus (31/Jul)"], "tri": ["JG EMPREITEIRA E CONSTRUCOES (06/Jul)", "We Inc - Loteadora (06/Jul)", "Loteadora Piauí (10/Jul)", "GIGA4 URBANISMO (10/Jul)", "Tonolher Empreendimento (10/Jul)", "AVVA Empreendimentos (14/Jul)", "Grupo Riviera - CRI (14/Jul)", "Primaz - CRI (16/Jul)", "Zanardi Construtora (30/Jul)", "ArtHaus (31/Jul)"], "ano": ["Mondeo Construtora (17/Jun)", "GL7 Incorporadora (23/Jun)", "JG EMPREITEIRA E CONSTRUCOES (06/Jul)", "We Inc - Loteadora (06/Jul)", "Loteadora Piauí (10/Jul)", "GIGA4 URBANISMO (10/Jul)", "Tonolher Empreendimento (10/Jul)", "AVVA Empreendimentos (14/Jul)", "Grupo Riviera - CRI (14/Jul)", "Primaz - CRI (16/Jul)", "Zanardi Construtora (30/Jul)", "ArtHaus (31/Jul)"], "tudo": ["Mondeo Construtora (17/Jun)", "GL7 Incorporadora (23/Jun)", "JG EMPREITEIRA E CONSTRUCOES (06/Jul)", "We Inc - Loteadora (06/Jul)", "Loteadora Piauí (10/Jul)", "GIGA4 URBANISMO (10/Jul)", "Tonolher Empreendimento (10/Jul)", "AVVA Empreendimentos (14/Jul)", "Grupo Riviera - CRI (14/Jul)", "Primaz - CRI (16/Jul)", "Zanardi Construtora (30/Jul)", "ArtHaus (31/Jul)"]},
 };
+let MTG_CLI_NAMES = MTG_CLI_NAMES_BY_PRODUTO.todos;
 const MTG_PAR_NAMES = {
   hoje:    [],  // 03/Ago: sem reuniões com parceiros hoje
   mes:     [],  // Ago/26: sobrescrito por _aplicarCM()
@@ -2636,8 +2841,9 @@ function makeTip(el, html) {
 renderFunnel(REV, 'revFunnel', true);
 renderFunnel(PAR, 'parFunnel', false);
 renderInsights();
+updateParceirosNote();
 // Inicializa todos os KPIs com período padrão (mês atual)
-sf(document.querySelector('.fb.on'), 'mes');
+sf(document.querySelector('#fbar .fb.on'), 'mes');
 
 // ── Wire tooltips nos funis ──
 function wireFunnelTips(elId, stages, namesMap, stageMap, isRev) {
