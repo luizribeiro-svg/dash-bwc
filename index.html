@@ -1265,7 +1265,7 @@ const CM = {
   // ── Reuniões com CLIENTES ─────────────────────────────────────
   cli: {
     realizadas: 0,  // HubSpot "Reunião Inicial Concluída" · Ago/26 (lido 03/08/2026): nenhuma reunião realizada ainda
-    agendadas:  6,  // FONTE OFICIAL: painel HubSpot → "Reunião Inicial Agendadas - Mês" · Ago/26 = 6 (lido 04/08/2026, confere com contagem por deal) — BS Incorporadora (04/Ago), Rede M7 Postos (04/Ago), Catarinaço (06/Ago), Lixas Tatu (07/Ago), Agricopel/Rede de Postos Mime (11/Ago), TOPSUN Energia Solar (18/Ago)
+    agendadas:  8,  // FONTE OFICIAL: painel HubSpot → "Reunião Inicial Agendadas - Mês" · Ago/26 = 8 (lido 04/08/2026, confere com contagem por deal) — BS Incorporadora (04/Ago), Rede M7 Postos (04/Ago), Transportadora Boa Viagem (05/Ago), Catarinaço (06/Ago), Fluair Componentes Pneumáticos (06/Ago), Lixas Tatu (07/Ago), Agricopel/Rede de Postos Mime (11/Ago), TOPSUN Energia Solar (18/Ago)
     meta:       20,
     nomes: [],
   },
@@ -1723,8 +1723,8 @@ const AGEND_CLI_BY_PRODUTO = {
   ano:     1,
   tudo:    1,
 },
-  tax_shield: {"hoje": 0, "7d": 2, "mes": 2, "mes_ant": 7, "tri": 7, "ano": 68, "tudo": 138},  // Ago/26: Catarinaço (06/Ago) + Lixas Tatu (07/Ago) · CAVEAT: contagem deal-level via data_reuniao_agendada (ver nota no compute-produto-periodos.js)
-  cap_captacao: {"hoje": 0, "7d": 3, "mes": 3, "mes_ant": 9, "tri": 9, "ano": 9, "tudo": 11},  // Ago/26: Rede M7 Postos (04/Ago) + Agricopel/Rede de Postos Mime (11/Ago) + TOPSUN Energia Solar (18/Ago) · CAVEAT: contagem deal-level via data_reuniao_agendada (ver nota no compute-produto-periodos.js)
+  tax_shield: {"hoje": 0, "7d": 3, "mes": 3, "mes_ant": 7, "tri": 7, "ano": 68, "tudo": 138},  // Ago/26: Catarinaço (06/Ago) + Lixas Tatu (07/Ago) + Transportadora Boa Viagem (05/Ago) · CAVEAT: contagem deal-level via data_reuniao_agendada (ver nota no compute-produto-periodos.js)
+  cap_captacao: {"hoje": 0, "7d": 4, "mes": 4, "mes_ant": 9, "tri": 9, "ano": 9, "tudo": 11},  // Ago/26: Rede M7 Postos (04/Ago) + Agricopel/Rede de Postos Mime (11/Ago) + TOPSUN Energia Solar (18/Ago) + Fluair Componentes Pneumáticos (06/Ago) · CAVEAT: contagem deal-level via data_reuniao_agendada (ver nota no compute-produto-periodos.js)
   cri_imobiliario: {"hoje": 0, "7d": 1, "mes": 1, "mes_ant": 11, "tri": 11, "ano": 14, "tudo": 14},  // Ago/26: BS Incorporadora e Constroturo (04/Ago) · CAVEAT: contagem deal-level via data_reuniao_agendada (ver nota no compute-produto-periodos.js)
 };
 let AGEND_CLI = AGEND_CLI_BY_PRODUTO.todos;
