@@ -1707,9 +1707,10 @@ const AGEND_CLI_BY_PRODUTO = {
   ano:     1,
   tudo:    1,
 },
-  tax_shield: {"hoje": 0, "7d": 1, "mes": 1, "mes_ant": 7, "tri": 7, "ano": 68, "tudo": 138},  // CORRIGIDO 05/08/2026: Fertiflora (entrou no estágio "Reunião Ini. Agend." em 04/Ago). O valor anterior (3) incluía por engano Catarinaço/Lixas Tatu/Transportadora Boa Viagem, que entraram no estágio ainda em Jul/26 — recalculado via hs_v2_date_entered_1230967392 no HubSpot.
-  cap_captacao: {"hoje": 0, "7d": 4, "mes": 4, "mes_ant": 9, "tri": 9, "ano": 9, "tudo": 11},  // VERIFICADO 05/08/2026 via hs_v2_date_entered_1230967392 (entrada no estágio em Ago/26): Agricopel e Rede de Postos Mime (03/Ago) + Rede M7 Postos - Captação (03/Ago) + Fluair Componentes Pneumáticos (04/Ago) + TOPSUN Energia Solar (04/Ago)
-  cri_imobiliario: {"hoje": 0, "7d": 1, "mes": 1, "mes_ant": 11, "tri": 11, "ano": 14, "tudo": 14},  // VERIFICADO 05/08/2026 via hs_v2_date_entered_1230967392 (entrada no estágio em Ago/26): BS Incorporadora e Construtora (04/Ago)
+  tax_shield: {"hoje": 1, "7d": 4, "mes": 4, "mes_ant": 7, "tri": 7, "ano": 68, "tudo": 138},  // CORRIGIDO 10/08/2026 (refresh 3) via data_reuniao_agendada entre 01–31/Ago/26, produto = Tax Shield: Transportadora Boa Viagem (05/Ago), Fertiflora (10/Ago), Catarinaço (06/Ago), Lixas Tatu (07/Ago)
+  cap_captacao: {"hoje": 2, "7d": 6, "mes": 6, "mes_ant": 9, "tri": 9, "ano": 9, "tudo": 11},  // CORRIGIDO 10/08/2026 (refresh 3) via data_reuniao_agendada entre 01–31/Ago/26, produto = CAP - Captação: Benetex (07/Ago), Rede M7 Postos - Captação (04/Ago), TOPSUN Energia Solar (18/Ago), Fluair Componentes Pneumáticos (06/Ago), Agricopel e Rede de Postos Mime (11/Ago), Electi Solutions Group (10/Ago)
+  cri_imobiliario: {"hoje": 1, "7d": 2, "mes": 2, "mes_ant": 11, "tri": 11, "ano": 14, "tudo": 14},  // CORRIGIDO 10/08/2026 (refresh 3) via data_reuniao_agendada entre 01–31/Ago/26, produto = CRI Imobiliário: BS Incorporadora e Construtora (04/Ago), One Haus Construtora (10/Ago)
+  // Nota: 1 deal agendado em Ago/26 (FITAS DE AÇO MCM, 11/Ago) está sem campo "Produto" preenchido no HubSpot — por isso soma 4+6+2=12 e não 13 (o total de "Todos"). Preencher o produto no HubSpot corrige a soma.
 };
 let AGEND_CLI = AGEND_CLI_BY_PRODUTO.todos;
 // ════════════════════════════════════════
