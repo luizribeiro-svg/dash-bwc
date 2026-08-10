@@ -362,7 +362,7 @@ canvas{display:block}
 
   <!-- ALERTS (conteúdo atualizado via _aplicarCM() no JS) -->
   <div class="alerts">
-    <div class="alert b"><div class="aico">📅</div><div id="alert-mensal"><strong>Ago/26 — Dia 10.</strong> 6/20 reuniões realizadas com clientes (30%) · 13 agendadas no mês · 0/15 com parceiros (0%). Clientes: BS Incorporadora (04/Ago) · Rede M7 Postos (04/Ago) · Fluair Componentes Pneumáticos (06/Ago) · Transportadora Boa Viagem (06/Ago) · Catarinaço (10/Ago) · Lixas Tatu (10/Ago). Parceiros: Orion Invest AAI (12/Ago) · Capital Finanças (13/Ago).</div></div>
+    <div class="alert b"><div class="aico">📅</div><div id="alert-mensal"><strong>Ago/26 — Dia 10.</strong> 7/20 reuniões realizadas com clientes (35%) · 13 agendadas no mês · 0/15 com parceiros (0%). Clientes: BS Incorporadora (04/Ago) · Rede M7 Postos (04/Ago) · Fluair Componentes Pneumáticos (06/Ago) · Transportadora Boa Viagem (06/Ago) · Catarinaço (10/Ago) · Lixas Tatu (10/Ago) · One Haus Construtora (10/Ago). Parceiros: Orion Invest AAI (12/Ago) · Capital Finanças (13/Ago).</div></div>
     <div class="alert g"><div class="aico">✅</div><div><strong>Pipeline ativo — R$1,82B · 117 deals (excl. Perdido).</strong> 5 em Proposta (Transben R$24,5M + Beckhauser R$20M + TRANSJOI R$20M + Zimmerman R$11,5M + ADS Drones R$10M) · 2 em Elab. Contrato (Ambiensys R$10M + JG R$200K) · Croques e Timptrade viraram Fechado Perdido. Alta prob.: R$96,2M.</div></div>
     <div class="alert b"><div class="aico">🔑</div><div><strong>Descoberta estratégica:</strong> 75% dos deals de receita vêm de indicações de parceiros. Fortalecer parcerias = crescer receita.</div></div>
     <div class="alert r"><div class="aico">⚠️</div><div><strong>36 parceiros em "Reunião Realizada"</strong> sem contrato (14 novos em jul · 13 em jun). Gargalo crítico — 26 parcerias já fechadas provam o modelo. Formalizar mais 5–10 pode gerar dezenas de novos deals.</div></div>
@@ -1240,10 +1240,10 @@ const CM = {
 
   // ── Reuniões com CLIENTES ─────────────────────────────────────
   cli: {
-    realizadas: 6,  // FONTE OFICIAL: HubSpot data_reuniao_inicial_agendada ("Reunião Inicial Concluída") entre 01–31/Ago/26, pipeline Aquisição de Receita · confirmado 10/08/2026 — BS Incorporadora e Construtora (04/Ago), Rede M7 Postos - Captação (04/Ago), Fluair Componentes Pneumáticos (06/Ago), Transportadora Boa Viagem (06/Ago), Catarinaço (10/Ago), Lixas Tatu (10/Ago)
+    realizadas: 7,  // FONTE OFICIAL: HubSpot data_reuniao_inicial_agendada ("Reunião Inicial Concluída") entre 01–31/Ago/26, pipeline Aquisição de Receita · confirmado 10/08/2026 (refresh 3) — BS Incorporadora e Construtora (04/Ago), Rede M7 Postos - Captação (04/Ago), Fluair Componentes Pneumáticos (06/Ago), Transportadora Boa Viagem (06/Ago), Catarinaço (10/Ago), Lixas Tatu (10/Ago), One Haus Construtora (10/Ago — moveu para Concluída após o refresh anterior)
     agendadas:  13, // FONTE OFICIAL: HubSpot data_reuniao_agendada entre 01–31/Ago/26, pipeline Aquisição de Receita · confirmado 10/08/2026 (refresh 2) — BS Incorporadora e Construtora (04/Ago), Rede M7 Postos - Captação (04/Ago), Transportadora Boa Viagem (05/Ago), Fluair Componentes Pneumáticos (06/Ago), Catarinaço (06/Ago), Lixas Tatu (07/Ago), Benetex (07/Ago), Fertiflora (10/Ago), One Haus Construtora (10/Ago), Electi Solutions Group (10/Ago), Agricopel e Rede de Postos Mime (11/Ago), FITAS DE AÇO MCM (11/Ago), TOPSUN Energia Solar (18/Ago)
     meta:       20,
-    nomes: ['BS Incorporadora e Construtora (04/Ago)', 'Rede M7 Postos - Captacão (04/Ago)', 'Fluair Componentes Pneumáticos (06/Ago)', 'Transportadora Boa Viagem (06/Ago)', 'Catarinaço (10/Ago)', 'Lixas Tatu (10/Ago)'],
+    nomes: ['BS Incorporadora e Construtora (04/Ago)', 'Rede M7 Postos - Captacão (04/Ago)', 'Fluair Componentes Pneumáticos (06/Ago)', 'Transportadora Boa Viagem (06/Ago)', 'Catarinaço (10/Ago)', 'Lixas Tatu (10/Ago)', 'One Haus Construtora (10/Ago)'],
   },
 
   // ── Reuniões com PARCEIROS ────────────────────────────────────
@@ -1258,11 +1258,11 @@ const CM = {
   // ── Origem dos leads (reuniões iniciais · Ago/26) ─────────────
   // HubSpot "Reunião Inicial Concluída" · Mês atual (Ago/26) · confirmado 10/08/2026
   origem: {
-    total:    6,
+    total:    7,
     parCnt:   6,
-    outCnt:   0,
+    outCnt:   1,
     parNames: ['BS Incorporadora e Construtora (via Sudden Serv. Financeiros · 04/Ago)', 'Rede M7 Postos - Captacão (via Karen Costa da Silva · 04/Ago)', 'Fluair Componentes Pneumáticos (via Karen Costa da Silva · 06/Ago)', 'Transportadora Boa Viagem (via EQI · 06/Ago)', 'Catarinaço (via EQI · 10/Ago)', 'Lixas Tatu (via Sudden Serv. Financeiros · 10/Ago)'],
-    outNames: [],
+    outNames: ['One Haus Construtora (10/Ago — sem parceiro registrado no HubSpot)'],
     note: '',
   },
 
@@ -1673,9 +1673,9 @@ const FD = {
 
 // Overrides de FD.cli / FD.cfx por produto (Parceiros -- .par/.pfx/.nd -- NAO variam por produto)
 const FD_CLI_BY_PRODUTO = {
-  tax_shield: {"hoje": 0, "7d": 0, "mes": 0, "mes_ant": 5, "tri": 5, "ano": 61, "tudo": 108},
-  cap_captacao: {"hoje": 0, "7d": 0, "mes": 0, "mes_ant": 9, "tri": 9, "ano": 9, "tudo": 9},
-  cri_imobiliario: {"hoje": 0, "7d": 2, "mes": 0, "mes_ant": 10, "tri": 10, "ano": 12, "tudo": 12},
+  tax_shield: {"hoje": 2, "7d": 3, "mes": 3, "mes_ant": 5, "tri": 5, "ano": 61, "tudo": 108},  // CORRIGIDO 10/08/2026 (refresh 3) via data_reuniao_inicial_agendada ("Reunião Inicial Concluída") entre 01–31/Ago/26, produto = Tax Shield: Transportadora Boa Viagem (06/Ago), Catarinaço (10/Ago), Lixas Tatu (10/Ago)
+  cap_captacao: {"hoje": 0, "7d": 2, "mes": 2, "mes_ant": 9, "tri": 9, "ano": 9, "tudo": 9},  // CORRIGIDO 10/08/2026 (refresh 3) via data_reuniao_inicial_agendada entre 01–31/Ago/26, produto = CAP - Captação: Rede M7 Postos - Captação (04/Ago), Fluair Componentes Pneumáticos (06/Ago)
+  cri_imobiliario: {"hoje": 1, "7d": 2, "mes": 2, "mes_ant": 10, "tri": 10, "ano": 12, "tudo": 12},  // CORRIGIDO 10/08/2026 (refresh 3) via data_reuniao_inicial_agendada entre 01–31/Ago/26, produto = CRI Imobiliário: BS Incorporadora e Construtora (04/Ago), One Haus Construtora (10/Ago — moveu para Concluída neste refresh)
 };
 const FD_CFX_BY_PRODUTO = {
   tax_shield: {"hoje": 0, "7d": 0, "mes": 0, "mes_ant": 1, "tri": 1, "ano": 1, "tudo": 4},
