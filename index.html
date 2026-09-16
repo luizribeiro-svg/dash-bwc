@@ -1081,6 +1081,24 @@ canvas{display:block}
   </div>
 
 
+  <!-- ══ CONVERSÃO POR PRODUTO (cohort por data de criação) ══ -->
+  <div class="card" style="margin-top:14px">
+    <div class="card-hd">
+      <div>
+        <div class="card-t">Conversão por Produto · Reunião Realizada → Fechado Ganho</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:2px">Cohort por data de criação do negócio: dos deals criados no período que tiveram Reunião Inicial Concluída, quantos já estão em Fechado Ganho · pipeline Aquisição de Receita · deal com mais de um produto conta em cada um</div>
+      </div>
+      <span class="chip" id="convProdChip">HubSpot 16/09/2026</span>
+    </div>
+    <div style="overflow-x:auto">
+      <table id="convProdTable" style="width:100%;border-collapse:collapse;font-size:11px;margin-top:6px">
+        <thead></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div style="font-size:10px;color:var(--muted);margin-top:8px;line-height:1.5">Leitura: <strong style="color:#fff">G / R</strong> = fechados ganhos / reuniões realizadas da safra. Safras recentes (Set/26, Ago/26) ainda estão em ciclo (~66 dias) — taxa baixa é esperada. Tax Shield: em 15/09/2026 os 57 deals abertos migraram para BAAS - Empresa; a safra Tax Shield passou a refletir só histórico já encerrado.</div>
+  </div>
+
   <!-- ══ FUNIS ══ -->
   <div class="sec">Funis Comerciais</div>
   <div class="row c2">
@@ -1744,6 +1762,50 @@ const FD_CFX_BY_PRODUTO = {
   bas_fornecedores: {"hoje": 0, "7d": 0, "mes": 0, "mes_ant": 0, "tri": 0, "ano": 0, "tudo": 0},  // adicionado 24/08/2026 — sem fechamentos ainda
   bas_empresa: {"hoje": 0, "7d": 0, "mes": 0, "mes_ant": 0, "tri": 0, "ano": 0, "tudo": 0},  // adicionado 24/08/2026 — sem fechamentos ainda
 };
+// ════════════════════════════════════════
+// CONVERSÃO POR PRODUTO — Reunião Inicial Concluída → Fechado Ganho (cohort por createdate)
+// Fonte: HubSpot 16/09/2026 · pipeline 43349147 · r = deals criados no período com data_reuniao_inicial_agendada preenchida
+// g = desses, os que estão em Fechado Ganho (90834562) hoje · GROUP BY DATE_TRUNC(createdate,'MONTH') × produto
+// Períodos: mes=Set/26 · mes_ant=Ago/26 · tri=Jul–Set/26 · ano=2026 · tudo=desde Mar/25 · fuso America/Sao_Paulo
+// Refresh: substituir só os números; manter chaves/ordem.
+// ════════════════════════════════════════
+const CONV_PROD_PERIODS = [
+  {k:'mes',     l:'Mês atual (Set/26)'},
+  {k:'mes_ant', l:'Mês anterior (Ago/26)'},
+  {k:'tri',     l:'Trim. atual (Jul–Set/26)'},
+  {k:'ano',     l:'Ano 2026'},
+  {k:'tudo',    l:'Todo período'},
+];
+const CONV_PROD_COHORT = [
+  {l:'Todos os Produtos', k:'todos',            mes:{r:7,g:0},  mes_ant:{r:22,g:0}, tri:{r:58,g:1},  ano:{r:118,g:2}, tudo:{r:184,g:5}},
+  {l:'CORE (CRI Imobiliário)', k:'cri_imobiliario', mes:{r:1,g:0},  mes_ant:{r:7,g:0},  tri:{r:17,g:1},  ano:{r:20,g:1},  tudo:{r:20,g:1}},   // ganho: Construtora JG (criado Jul/26)
+  {l:'CAP - Captação',    k:'cap_captacao',     mes:{r:1,g:0},  mes_ant:{r:5,g:0},  tri:{r:19,g:0},  ano:{r:19,g:0},  tudo:{r:19,g:0}},
+  {l:'Tax Shield',        k:'tax_shield',       mes:{r:0,g:0},  mes_ant:{r:1,g:0},  tri:{r:4,g:0},   ano:{r:50,g:0},  tudo:{r:116,g:3}},  // ganhos: Cauzzo+Kraft+ADS (criados Mar/Jul/Out 25)
+  {l:'BAAS - Cliente',    k:'bancarizacao',     mes:{r:0,g:0},  mes_ant:{r:2,g:0},  tri:{r:5,g:0},   ano:{r:6,g:1},   tudo:{r:6,g:1}},    // ganho: Rudnik (criado Mar/26)
+  {l:'BAAS - Fornecedores', k:'bas_fornecedores', mes:{r:0,g:0}, mes_ant:{r:1,g:0}, tri:{r:3,g:0},   ano:{r:3,g:0},   tudo:{r:3,g:0}},
+  {l:'BAAS - Empresa',    k:'bas_empresa',      mes:{r:0,g:0},  mes_ant:{r:2,g:0},  tri:{r:4,g:0},   ano:{r:14,g:0},  tudo:{r:14,g:0}},   // 57 deals migrados de Tax Shield em 15/09/2026 já incluídos
+  {l:'Sem produto',       k:'sem_produto',      mes:{r:5,g:0},  mes_ant:{r:5,g:0},  tri:{r:10,g:0},  ano:{r:10,g:0},  tudo:{r:10,g:0}},   // deals com Produto vazio — preencher no HubSpot
+];
+function renderConvProd() {
+  const tbl = document.getElementById('convProdTable'); if (!tbl) return;
+  const th = '<tr><th style="text-align:left;padding:7px 8px;color:var(--muted);font-weight:600;font-size:9px;text-transform:uppercase;letter-spacing:.6px;border-bottom:1px solid var(--border)">Produto</th>' +
+    CONV_PROD_PERIODS.map(p => `<th style="text-align:center;padding:7px 8px;color:var(--muted);font-weight:600;font-size:9px;text-transform:uppercase;letter-spacing:.6px;border-bottom:1px solid var(--border)">${p.l}</th>`).join('') + '</tr>';
+  tbl.querySelector('thead').innerHTML = th;
+  const rows = CONV_PROD_COHORT.map((row, i) => {
+    const isTot = row.k === 'todos';
+    const sel = currentProduct !== 'todos' && row.k === currentProduct;
+    const cells = CONV_PROD_PERIODS.map(p => {
+      const c = row[p.k] || {r:0,g:0};
+      const rate = c.r > 0 ? (c.g / c.r * 100) : null;
+      const col = c.g > 0 ? 'var(--green)' : (c.r > 0 ? 'var(--muted)' : 'rgba(255,255,255,.25)');
+      const pct = rate === null ? '—' : (rate.toFixed(1).replace('.', ',') + '%');
+      return `<td style="text-align:center;padding:7px 8px;border-bottom:1px solid rgba(255,255,255,.04)"><div style="font-size:13px;font-weight:800;color:${col}">${pct}</div><div style="font-size:9px;color:var(--muted)">${c.g} / ${c.r}</div></td>`;
+    }).join('');
+    const bg = sel ? 'rgba(33,150,243,.10)' : (isTot ? 'rgba(255,255,255,.03)' : 'transparent');
+    return `<tr style="background:${bg}"><td style="padding:7px 8px;font-weight:${isTot?800:600};color:${isTot?'#fff':'var(--text)'};border-bottom:1px solid rgba(255,255,255,.04);white-space:nowrap">${row.l}</td>${cells}</tr>`;
+  }).join('');
+  tbl.querySelector('tbody').innerHTML = rows;
+}
 // Cohort mes_ant: conversao Reuniao Inicial Conc. -> Proposta -> Elab. Contrato -> Fechado Ganho
 const CONVERSAO_BY_PRODUTO = {
   tax_shield: {"reuniaoInicialConc": 5, "propostaEnviada": 0, "elabContrato": 0, "fechadoGanho": 0},
@@ -2211,6 +2273,7 @@ function updateConversion(period, mtg, cfx) {
 // Elaboração da Proposta/Contrato. O Fechado Ganho já é tratado à parte (cfx-bar).
 // ════════════════════════════════════════
 function updateConversionBox() {
+  renderConvProd();
   const conv = currentProduct === 'todos' ? CONVERSAO_TODOS : (CONVERSAO_BY_PRODUTO[currentProduct] || CONVERSAO_TODOS);
   const ri = conv.reuniaoInicialConc || 0;
   const pr = conv.propostaEnviada || 0;
