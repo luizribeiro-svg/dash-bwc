@@ -665,7 +665,7 @@ canvas{display:block}
           </div>
           <div style="margin-top:12px;padding:8px;background:rgba(33,150,243,.08);border-radius:8px;border:1px solid rgba(33,150,243,.2)">
             <div style="font-size:10px;color:var(--blue);font-weight:700">⚡ Principal insight</div>
-            <div style="font-size:10px;color:var(--muted);margin-top:3px;line-height:1.5">Set/26 recém-iniciado (dia 2): <strong style="color:#fff">1 reunião realizada</strong> até agora (Electi Solutions Group), sem parceiro identificado no HubSpot. Ago/26 fechou com 29 reuniões, 38% via EQI.</div>
+            <div style="font-size:10px;color:var(--muted);margin-top:3px;line-height:1.5">Set/26 (dia 16): <strong style="color:#fff">8 reuniões realizadas</strong> — 4 via EQI, 3 via parceria sem empresa identificada, 1 Outbound (RK Empreendimentos). Ago/26 fechou com 29 reuniões, 38% via EQI.</div>
           </div>
         </div>
       </div>
@@ -1029,7 +1029,7 @@ canvas{display:block}
       </div>
       <div style="margin-top:10px;padding:8px 10px;background:rgba(33,150,243,.06);border-radius:8px;border:1px solid rgba(33,150,243,.15);display:flex;justify-content:space-between;align-items:center">
         <div style="font-size:10px;color:var(--muted)">Histórico geral (todo período)</div>
-        <div style="font-size:13px;font-weight:700;color:var(--blue)">4 de 62 · 6,5%</div>
+        <div style="font-size:13px;font-weight:700;color:var(--blue)">5 de 184 · 2,7%</div>
       </div>
     </div>
 
@@ -1265,7 +1265,7 @@ canvas{display:block}
   <div class="card">
     <div class="card-hd">
       <div class="card-t">Problemas + Impacto + Ação</div>
-      <span class="chip">Gerado em 15/09/2026</span>
+      <span class="chip">Gerado em 16/09/2026</span>
     </div>
     <div class="ins-g" id="insG"></div>
   </div>
@@ -1277,18 +1277,18 @@ canvas{display:block}
 // DADOS REAIS — HUBSPOT BLUEWAVE CAPITAL
 // ╔══════════════════════════════════════════════════════════════════╗
 // ║   CONFIG MENSAL — editar APENAS este bloco na virada do mês    ║
-// ║   Última atualização: 15/Set/2026                              ║
+// ║   Última atualização: 16/Set/2026                              ║
 // ╚══════════════════════════════════════════════════════════════════╝
 const CM = {
   label: 'Set/26',
-  dia:   15,
+  dia:   16,
 
   // ── Reuniões com CLIENTES ─────────────────────────────────────
   cli: {
-    realizadas: 6,  // FONTE OFICIAL: HubSpot data_reuniao_inicial_agendada ("Reunião Inicial Concluída") entre 01–15/Set/26, pipeline Aquisição de Receita · refresh 15/09/2026 · reconfirmado via query CRM direta (corrige dado desatualizado de "Electi Solutions Group" — esse deal teve a reunião em 10/Ago, não em Set)
+    realizadas: 8,  // FONTE OFICIAL: HubSpot data_reuniao_inicial_agendada ("Reunião Inicial Concluída") entre 01–16/Set/26, pipeline Aquisição de Receita · refresh 16/09/2026 (apuração) — inclui Eleti Solutions Group (01/Set, deal distinto do "Electi" de Ago) e RK Empreendimentos (15/Set); Benetex conta (reunião realizada 10/Set, depois Fechado Perdido)
     agendadas:  9,  // FONTE OFICIAL: HubSpot data_reuniao_agendada entre 01–30/Set/26, pipeline Aquisição de Receita · refresh 15/09/2026
     meta:       20,
-    nomes: ['Appel Home (02/Set)', 'Benetex (10/Set)', 'IB7 Mogi das Cruzes Empreendimentos Imobiliários (10/Set)', 'Caspper distribuidora (10/Set)', 'Geniusz Engenharia Integrada (10/Set)', 'BERRYTECH Consultoria Empresarial (14/Set)'],
+    nomes: ['Eleti Solutions Group (01/Set)', 'Appel Home (02/Set)', 'Benetex (10/Set)', 'IB7 Mogi das Cruzes Empreendimentos Imobiliários (10/Set)', 'Caspper distribuidora (10/Set)', 'Geniusz Engenharia Integrada (10/Set)', 'BERRYTECH Consultoria Empresarial (14/Set)', 'RK Empreendimentos (15/Set)'],
   },
 
   // ── Reuniões com PARCEIROS ────────────────────────────────────
@@ -1301,23 +1301,23 @@ const CM = {
   },
 
   // ── Origem dos leads (reuniões iniciais · Set/26) ─────────────
-  // HubSpot "Reunião Inicial Concluída" · Mês atual (Set/26) · refresh 15/09/2026 — 6 reuniões confirmadas via query direta (campo empresa_parceira + origem_de_negocios)
+  // HubSpot "Reunião Inicial Concluída" · Mês atual (Set/26) · refresh 16/09/2026 — 8 reuniões confirmadas via query direta (campo empresa_parceira + origem_de_negocios)
   origem: {
-    total:    6,
-    parCnt:   6,
-    outCnt:   0,
-    parNames: ['Appel Home (via parceria não identificada · 02/Set)', 'IB7 Mogi das Cruzes Empreendimentos Imobiliários (via EQI · 10/Set)', 'Caspper distribuidora (via EQI · 10/Set)', 'Geniusz Engenharia Integrada (via EQI · 10/Set)', 'Benetex (via parceria não identificada · 10/Set)', 'BERRYTECH Consultoria Empresarial (via EQI · 14/Set)'],
-    outNames: [],
-    note: 'Refresh 15/09/2026 — 6 reuniões iniciais concluídas em Set/26, todas com origem_de_negocios=Parcerias (4 via EQI, 2 sem empresa_parceira preenchida). "Electi Solutions Group", registrada em refresh anterior, foi removida: sua reunião ocorreu em 10/Ago/26, não em Set.',
+    total:    8,
+    parCnt:   7,
+    outCnt:   1,
+    parNames: ['Eleti Solutions Group (via parceria não identificada · 01/Set)', 'Appel Home (via parceria não identificada · 02/Set)', 'IB7 Mogi das Cruzes Empreendimentos Imobiliários (via EQI · 10/Set)', 'Caspper distribuidora (via EQI · 10/Set)', 'Geniusz Engenharia Integrada (via EQI · 10/Set)', 'Benetex (via parceria não identificada · 10/Set)', 'BERRYTECH Consultoria Empresarial (via EQI · 14/Set)'],
+    outNames: ['RK Empreendimentos (Outbound · 15/Set)'],
+    note: 'Refresh 16/09/2026 — 8 reuniões iniciais concluídas em Set/26: 7 via Parcerias (4 EQI, 3 sem empresa_parceira preenchida) + 1 Outbound (RK Empreendimentos).',
   },
 
   // ── Reuniões Realizadas por Canal (cliente final · card "Origem") ──────
   // FONTE OFICIAL: HubSpot propriedade "Origem de Negócios" (origem_de_negocios), deals com
   // Reunião Inicial Concluída em Set/26 · refresh 15/09/2026 · d = [Parcerias, Outbound, Eventos, LinkedIn]
-  canal_realizadas_mes: { total: 6, d: [6, 0, 0, 0] },
+  canal_realizadas_mes: { total: 8, d: [7, 1, 0, 0] },
 
   // ── Ranking de parceiros do mês ───────────────────────────────
-  // Set/26 (refresh 15/09/2026): EQI gerou 4 das 6 reuniões iniciais concluídas do mês (as outras 2 são sem parceiro identificado).
+  // Set/26 (refresh 16/09/2026): EQI gerou 4 das 8 reuniões iniciais concluídas do mês (3 sem parceiro identificado + 1 Outbound).
   ranking: [
     {n:'EQI', seg:'Assessoria de Investimentos', leads:['IB7 Mogi das Cruzes Empreendimentos Imobiliários (10/Set)', 'Caspper distribuidora (10/Set)', 'Geniusz Engenharia Integrada (10/Set)', 'BERRYTECH Consultoria Empresarial (14/Set)'], cnt:4},
   ],
@@ -1335,9 +1335,10 @@ const CM = {
 
   // ── Performance individual ────────────────────────────────────
   perf: [
-    {nome:'Wilian Damas Goulart', cli:5, par:2, total:7, cf:0, pf:0, rankCls:'r1'},
-    {nome:'Luiz Ribeiro',         cli:1, par:3, total:4, cf:0, pf:0, rankCls:'r2'},
-    {nome:'Bruno Leal',           cli:0, par:0, total:0, cf:0, pf:0, rankCls:'r3'},
+    // owner confirmado via hubspot_owner_id em 16/09/2026 — cli: Luiz=Eleti+Benetex · Bruno=Caspper+IB7+BERRYTECH+RK · Wilian=Appel+Geniusz · par: Luiz=MVR+LS+Gavea · Wilian=Cedro+VETOR
+    {nome:'Luiz Ribeiro',         cli:2, par:3, total:5, cf:0, pf:0, rankCls:'r1'},
+    {nome:'Bruno Leal',           cli:4, par:0, total:4, cf:0, pf:0, rankCls:'r2'},
+    {nome:'Wilian Damas Goulart', cli:2, par:2, total:4, cf:0, pf:0, rankCls:'r3'},
     {nome:'Diego Amaral',         cli:0, par:0, total:0, cf:0, pf:0, rankCls:''},
   ],
 
@@ -1740,25 +1741,27 @@ const FD = {
   mes:     {cli:0,  par:0,  pfx:0, cfx:0, nd:0},    // Ago/26 (Dia 3): zerado até o momento
   mes_ant: {cli:29, par:6, pfx:1, cfx:1, nd:30},   // Ago/26 FINAL confirmado via HubSpot (refresh 02/09/2026) — cli/par realizadas, 1 parceiro fechado (Clodoaldo Mordegan), 1 cliente fechado (Construtora JG), 30 novos deals
   tri:     {cli:0,  par:0,  pfx:0, cfx:0, nd:0},    // Q3/26 (início do trimestre = Ago/26)
-  ano:     {cli:74, par:80, pfx:26, cfx:1, nd:216}, // Jan–Ago/26 · par via painel 04.Parceiros
-  tudo:    {cli:90, par:94, pfx:31, cfx:4, nd:314}, // todo período · par via painel 04.Parceiros (Out/25–Ago/26)
+  ano:     {cli:118, par:80, pfx:26, cfx:2, nd:216}, // cli: Jan–Set/26 = 118 reuniões iniciais concluídas (HubSpot 16/09/2026, por mês da reunião) · cfx: Rudnik (Jul) + Construtora JG (Ago) · par/pfx/nd via painel 04.Parceiros (Jan–Ago)
+  tudo:    {cli:184, par:94, pfx:31, cfx:5, nd:314}, // cli: 184 reuniões iniciais concluídas desde Mar/25 (HubSpot 16/09/2026 — corrigido, antes 90) · cfx: Cauzzo+Kraft+ADS+Rudnik+JG · par/pfx/nd via painel 04.Parceiros
 };
 
 // Overrides de FD.cli / FD.cfx por produto (Parceiros -- .par/.pfx/.nd -- NAO variam por produto)
 const FD_CLI_BY_PRODUTO = {
-  tax_shield: {"hoje": 0, "7d": 1, "mes": 0, "mes_ant": 5, "tri": 5, "ano": 61, "tudo": 108},  // refresh 6 (24/08/2026) via data_reuniao_inicial_agendada, produto = Tax Shield (GROUP BY dealstage×produto, aprox.)
-  cap_captacao: {"hoje": 0, "7d": 2, "mes": 1, "mes_ant": 9, "tri": 9, "ano": 9, "tudo": 9},  // refresh 6 (24/08/2026) via data_reuniao_inicial_agendada, produto = CAP - Captação (aprox.)
-  cri_imobiliario: {"hoje": 0, "7d": 2, "mes": 0, "mes_ant": 10, "tri": 10, "ano": 12, "tudo": 12},  // refresh 6 (24/08/2026) via data_reuniao_inicial_agendada, produto = CRI Imobiliário/CORE (aprox.)
-  bancarizacao: {"hoje": 0, "7d": 1, "mes": 0, "mes_ant": 1, "tri": 1, "ano": 4, "tudo": 4},  // adicionado 24/08/2026 via data_reuniao_inicial_agendada, produto = Bancarização
-  bas_fornecedores: {"hoje": 0, "7d": 0, "mes": 0, "mes_ant": 0, "tri": 0, "ano": 1, "tudo": 1},  // adicionado 24/08/2026, produto = BAS - Fornecedores
-  bas_empresa: {"hoje": 1, "7d": 2, "mes": 0, "mes_ant": 0, "tri": 0, "ano": 2, "tudo": 2},  // adicionado 24/08/2026, produto = BAS - Empresa
+  // Apuração 16/09/2026: GROUP BY mês(data_reuniao_inicial_agendada) × produto · mes=Set/26 · mes_ant=Ago/26 · tri=Jul–Set/26 · ano=2026 · tudo=desde Mar/25 · 7d=10–16/Set
+  tax_shield: {"hoje": 0, "7d": 0, "mes": 0, "mes_ant": 2, "tri": 4, "ano": 51, "tudo": 116},
+  cap_captacao: {"hoje": 0, "7d": 1, "mes": 2, "mes_ant": 8, "tri": 19, "ano": 19, "tudo": 19},
+  cri_imobiliario: {"hoje": 0, "7d": 1, "mes": 1, "mes_ant": 7, "tri": 18, "ano": 20, "tudo": 20},
+  bancarizacao: {"hoje": 0, "7d": 0, "mes": 0, "mes_ant": 4, "tri": 5, "ano": 6, "tudo": 6},
+  bas_fornecedores: {"hoje": 0, "7d": 0, "mes": 0, "mes_ant": 3, "tri": 3, "ano": 3, "tudo": 3},
+  bas_empresa: {"hoje": 0, "7d": 0, "mes": 0, "mes_ant": 4, "tri": 6, "ano": 13, "tudo": 14},
+  // Deals sem Produto preenchido (10: 5 em Ago, 5 em Set) não entram em nenhuma chave acima — por isso a soma por produto (mes 3) < CM.cli.realizadas (8)
   // Nota: valores por produto calculados via GROUP BY dealstage×produto no HubSpot; deals sem produto preenchido (Unassigned) ou BAS não somam nas 3 chaves acima, por isso mes aqui (5+8+7=20) é menor que CM.cli.realizadas (29). Pequenas discrepâncias residuais (±1) podem ocorrer por conta do campo "Produto" ser multi-seleção.
 };
 const FD_CFX_BY_PRODUTO = {
-  tax_shield: {"hoje": 0, "7d": 0, "mes": 0, "mes_ant": 1, "tri": 1, "ano": 1, "tudo": 4},
+  tax_shield: {"hoje": 0, "7d": 0, "mes": 0, "mes_ant": 0, "tri": 0, "ano": 0, "tudo": 3},  // corrigido 16/09/2026: Cauzzo+Kraft+ADS (2025); Rudnik é Bancarização e JG é CORE
   cap_captacao: {"hoje": 0, "7d": 0, "mes": 0, "mes_ant": 0, "tri": 0, "ano": 0, "tudo": 0},
-  cri_imobiliario: {"hoje": 0, "7d": 1, "mes": 0, "mes_ant": 0, "tri": 0, "ano": 0, "tudo": 0},  // ATUALIZADO 17/08/2026 (refresh 4): JG EMPREITEIRA E CONSTRUCOES (Construtora JG) Fechado Ganho em 13/08/2026 · R$70M · produto Core (CRI Imobiliário)
-  bancarizacao: {"hoje": 0, "7d": 0, "mes": 0, "mes_ant": 1, "tri": 1, "ano": 1, "tudo": 1},  // adicionado 24/08/2026: Rudnik Soluções e Tecnologia Fechado Ganho em 14/Jul/26 · R$6M
+  cri_imobiliario: {"hoje": 0, "7d": 0, "mes": 0, "mes_ant": 1, "tri": 1, "ano": 1, "tudo": 1},  // corrigido 16/09/2026: Construtora JG Fechado Ganho em 13/08/2026 · R$70M · CORE
+  bancarizacao: {"hoje": 0, "7d": 0, "mes": 0, "mes_ant": 0, "tri": 1, "ano": 1, "tudo": 1},  // corrigido 16/09/2026: Rudnik Fechado Ganho em 14/Jul/26 (Q3, não Ago) · R$6M
   bas_fornecedores: {"hoje": 0, "7d": 0, "mes": 0, "mes_ant": 0, "tri": 0, "ano": 0, "tudo": 0},  // adicionado 24/08/2026 — sem fechamentos ainda
   bas_empresa: {"hoje": 0, "7d": 0, "mes": 0, "mes_ant": 0, "tri": 0, "ano": 0, "tudo": 0},  // adicionado 24/08/2026 — sem fechamentos ainda
 };
@@ -2218,7 +2221,7 @@ function renderFunnel(stages, elId, isRev) {
 // ════════════════════════════════════════
 const INS = [
   {t:'g',title:'🚀 Set/26 começa forte: Wilian Damas Goulart lidera atividade comercial',body:'Nos primeiros 15 dias de Set/26: 6 reuniões iniciais concluídas com clientes e 5 reuniões realizadas com parceiros. Wilian Damas Goulart concentrou 5 das 6 reuniões de cliente (Appel Home, IB7 Mogi, Caspper, Geniusz, BERRYTECH) e 2 das 5 reuniões de parceiro (Cedro Capital, VETOR CAPITAL), tornando-se o vendedor mais ativo do mês — adicionado ao ranking de performance nesta atualização.',impact:'Já 30% da meta mensal de clientes (6/20) e 33% da meta de parceiros (5/15) atingidos em metade do mês',action:'Manter o ritmo de Wilian e replicar a cadência com Luiz Ribeiro (1 cliente + 3 parceiros no período). Bruno Leal e Diego Amaral seguem sem atividade registrada em Set/26 — verificar agenda.',prio:'b'},
-  {t:'y',title:'⚠️ Correção de integridade de dados: "Electi Solutions Group" removida de Set/26',body:'Um refresh anterior havia registrado "Electi Solutions Group" como a única reunião de cliente de Set/26. Reconsulta ao vivo mostrou que a data_reuniao_inicial_agendada desse deal é 10/Ago/26, não Set — o dado estava desatualizado. As 6 reuniões reais de Set/26 (01–15) foram reconfirmadas via query direta: Appel Home, Benetex, IB7 Mogi das Cruzes, Caspper distribuidora, Geniusz Engenharia Integrada e BERRYTECH.',impact:'Sem a correção, o dashboard mostraria 1 reunião de cliente em vez das 6 reais — subestimando a atividade do mês em 83%',action:'Sempre reconfirmar dados de meses recém-abertos com query CRM direta antes de publicar, em vez de herdar valores de refreshs anteriores.',prio:'m'},
+  {t:'y',title:'🔎 Apuração 16/09: histórico de reuniões corrigido de 90 para 184',body:'O contador "Todo período" de reuniões de clientes estava em 90 (valor manual sem atualização desde Jun/26). Reconsulta no HubSpot (data_reuniao_inicial_agendada, pipeline Receita) mostra 184 reuniões iniciais concluídas desde Mar/25 — 118 em 2026 e 61 no Q3. Também corrigidos: Set/26 tem 8 reuniões (Eleti Solutions Group em 01/Set é um deal distinto do "Electi" de Ago e conta; RK Empreendimentos em 15/Set), e a atribuição por vendedor (Bruno Leal é dono de 4 das 8, não Wilian).',impact:'Conversão histórica real é 5 de 184 (2,7%), não 4 de 62 (6,5%) — o funil é mais longo do que o dashboard sugeria',action:'Contadores de Ano/Todo período passam a ser apurados por query direta a cada refresh, não incrementados à mão.',prio:'m'},
   {t:'r',title:'🚨 Reuniões com clientes abaixo da meta em Mai/26',body:'11 de 20 reuniões realizadas em Mai/26. Meta de 20 não foi atingida. Junho começa com pipeline zerado — ação imediata necessária para recuperar ritmo.',impact:'Meta mensal não atingida → pipeline de receita não cresce no ritmo necessário',action:'Intensificar prospecção outbound nos primeiros dias de junho. Priorizar leads indicados por parceiros ativos.',prio:'a'},
   {t:'g',title:'✅ Meta de parceiros batida em Mai/26 e Jun acelera',body:'15 de 15 (100%) reuniões com parceiros em Mai/26. Em junho: 4 novos prospectos adicionados (Bruno Martini, Lucas Soares, Samuel Pereira, Moises Vaz). Rsim Tecnologia e Virtual Super fecharam parceria.',impact:'Pipeline de parceiros alimentado com constância: 33+ reuniões no trimestre (Abr–Jun)',action:'Manter o ritmo. Priorizar conversão dos 35 em Reunião Realizada para Contrato Enviado.',prio:'b'},
   {t:'b',title:'🔑 75% do pipeline vem de indicações de parceiros',body:'82 dos 109 deals analisados no pipeline de receita têm origem em "Parcerias". Cada parceiro formalizado é um gerador de leads qualificados com ticket médio de R$15M+.',impact:'Os 22 parceiros parados pós-reunião representam dezenas de deals potenciais não gerados',action:'Formalizar os 22 parceiros em "Reunião Realizada". Cada contrato assinado pode gerar 2–5 deals de receita.',prio:'a'},
@@ -2637,9 +2640,9 @@ const PERF_DATA = {
   ],
   geral: [
     // Todo período — snapshot 15/09/2026: contagem de negócios que atingiram "Reunião Inicial Concluída"/"Reunião realizada" ou etapa posterior, por dono do negócio (proxy para reuniões realizadas, mesma convenção usada no resto do dashboard) · incrementado com a atividade de Set/26 (01–15)
-    {nome:'Luiz Ribeiro',          cli:147, par:115, total:262, cf:2, pf:23, rankCls:'r1'},  // +1 cli (Benetex) / +3 par (MVR, LS Negócios, Fundo Gavea Sul) em Set/26
-    {nome:'Bruno Leal',            cli:49,  par:3,   total:52,  cf:3, pf:2,  rankCls:'r2'},
-    {nome:'Wilian Damas Goulart',  cli:5,   par:4,   total:9,   cf:0, pf:0,  rankCls:'r3'},  // +5 cli (Appel Home, IB7 Mogi, Caspper, Geniusz, BERRYTECH) / +2 par (Cedro Capital, VETOR CAPITAL) em Set/26 — adicionado ao tracking de performance, era o vendedor mais ativo do mês e estava ausente
+    {nome:'Luiz Ribeiro',          cli:148, par:115, total:263, cf:2, pf:23, rankCls:'r1'},  // +2 cli (Eleti, Benetex) / +3 par (MVR, LS Negócios, Fundo Gavea Sul) em Set/26
+    {nome:'Bruno Leal',            cli:53,  par:3,   total:56,  cf:3, pf:2,  rankCls:'r2'},  // +4 cli (Caspper, IB7 Mogi, BERRYTECH, RK Empreendimentos) em Set/26 — owner confirmado 16/09/2026
+    {nome:'Wilian Damas Goulart',  cli:2,   par:4,   total:6,   cf:0, pf:0,  rankCls:'r3'},  // +2 cli (Appel Home, Geniusz) / +2 par (Cedro Capital, VETOR CAPITAL) em Set/26 — corrigido 16/09/2026 (owner real via hubspot_owner_id)
     {nome:'Diego Amaral',          cli:1,   par:2,   total:3,   cf:0, pf:2,  rankCls:''},  // usuário inativo na HubSpot, mantido por histórico — sem atividade em Set/26
   ],
 };
