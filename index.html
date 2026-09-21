@@ -382,6 +382,7 @@ canvas{display:block}
       <div class="mtg-header">
         <div>
           <div class="mtg-label">Reuniões com Novos Clientes · Pipeline Receita</div>
+          <div class="prod-note-par">Reuniões não são filtradas por produto</div>
           <div class="mtg-big miss" id="mv-cli">6</div>
           <div class="mtg-goal" id="mgoal-cli">de <strong id="mg-cli">20</strong> reuniões / mês</div>
         </div>
@@ -425,7 +426,7 @@ canvas{display:block}
       <div class="mtg-header">
         <div>
           <div class="mtg-label">Reuniões com Novos Parceiros · Pipeline Parceiros</div>
-          <div class="prod-note-par">Produto não se aplica a Parceiros</div>
+          <div class="prod-note-par">Reuniões não são filtradas por produto</div>
           <div class="mtg-big close" id="mv-par">13</div>
           <div class="mtg-goal" id="mgoal-par">de <strong id="mg-par">15</strong> reuniões / mês</div>
         </div>
@@ -545,21 +546,23 @@ canvas{display:block}
     </div>
   </div>
 
-  <!-- ══ GRÁFICOS REUNIÕES HISTÓRICOS ══ -->
-  <div class="row c2">
-    <div class="card">
-      <div class="card-hd">
-        <div class="card-t">Reuniões com Clientes por Mês</div>
-        <span class="chip" style="border-color:rgba(244,67,54,.35);color:var(--red)">Meta: 20/mês</span>
+  <!-- ══ REUNIÕES — AGENDADAS E REALIZADAS (3 abas) ══ -->
+  <div class="card">
+    <div class="card-hd">
+      <div>
+        <div class="card-t">Reuniões — Agendadas e Realizadas</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:2px">Pipeline de Receita (clientes finais). Não filtra por produto.</div>
       </div>
-      <div class="ch-wrap"><canvas id="cCliMtg"></canvas></div>
+      <div id="mtgTabs" style="display:flex;gap:6px;flex-wrap:wrap">
+        <span class="chip mtg-tab on" data-mtgtab="cMtgMes"  onclick="setMtgTab(this)" style="cursor:pointer;border-color:rgba(33,150,243,.55);color:#fff;background:rgba(33,150,243,.18)">Mês a mês</span>
+        <span class="chip mtg-tab"    data-mtgtab="cMtgVend" onclick="setMtgTab(this)" style="cursor:pointer">Por vendedor (Set/26)</span>
+        <span class="chip mtg-tab"    data-mtgtab="cMtgParc" onclick="setMtgTab(this)" style="cursor:pointer">Por parceiro (Set/26)</span>
+      </div>
     </div>
-    <div class="card">
-      <div class="card-hd">
-        <div class="card-t">Reuniões com Parceiros por Mês</div>
-        <span class="chip" style="border-color:rgba(255,193,7,.35);color:var(--yellow)">Meta: 15/mês</span>
-      </div>
-      <div class="ch-wrap"><canvas id="cParMtg"></canvas></div>
+    <div style="height:320px;margin-top:10px;position:relative">
+      <div class="mtg-pane" data-mtgpane="cMtgMes"  style="height:100%"><canvas id="cMtgMes"></canvas></div>
+      <div class="mtg-pane" data-mtgpane="cMtgVend" style="height:100%;display:none"><canvas id="cMtgVend"></canvas></div>
+      <div class="mtg-pane" data-mtgpane="cMtgParc" style="height:100%;display:none"><canvas id="cMtgParc"></canvas></div>
     </div>
   </div>
 
@@ -1064,7 +1067,7 @@ canvas{display:block}
       </div>
       <div style="margin-top:10px;padding:8px 10px;background:rgba(33,150,243,.06);border-radius:8px;border:1px solid rgba(33,150,243,.15);display:flex;justify-content:space-between;align-items:center">
         <div style="font-size:10px;color:var(--muted)">Histórico geral (todo período)</div>
-        <div style="font-size:13px;font-weight:700;color:var(--blue)">5 de 184 · 2,7%</div>
+        <div style="font-size:13px;font-weight:700;color:var(--blue)">5 de 188 · 2,7%</div>
       </div>
     </div>
 
@@ -1116,25 +1119,7 @@ canvas{display:block}
   </div>
 
 
-  <!-- ══ CONVERSÃO POR PRODUTO (cohort por data de criação) ══ -->
-  <div class="card" style="margin-top:14px">
-    <div class="card-hd">
-      <div>
-        <div class="card-t">Conversão por Produto · Reunião Realizada → Fechado Ganho</div>
-        <div style="font-size:10px;color:var(--muted);margin-top:2px">Cohort por data de criação do negócio: dos deals criados no período que tiveram Reunião Inicial Concluída, quantos já estão em Fechado Ganho · pipeline Aquisição de Receita · deal com mais de um produto conta em cada um</div>
-      </div>
-      <span class="chip" id="convProdChip">HubSpot 21/09/2026</span>
-    </div>
-    <div style="overflow-x:auto">
-      <table id="convProdTable" style="width:100%;border-collapse:collapse;font-size:11px;margin-top:6px">
-        <thead></thead>
-        <tbody></tbody>
-      </table>
-    </div>
-    <div style="font-size:10px;color:var(--muted);margin-top:8px;line-height:1.5">Leitura: <strong style="color:#fff">G / R</strong> = fechados ganhos / reuniões realizadas da safra. Safras recentes (Set/26, Ago/26) ainda estão em ciclo (~66 dias) — taxa baixa é esperada. Tax Shield: em 15/09/2026 os 57 deals abertos migraram para BAAS - Empresa; a safra Tax Shield passou a refletir só histórico já encerrado.</div>
-  </div>
 
-  <!-- ══ FUNIS ══ -->
   <div class="sec">Funis Comerciais</div>
   <div class="row c2">
     <div class="card">
@@ -1189,23 +1174,6 @@ canvas{display:block}
   </div>
 
   <!-- ══ NOVOS NEGÓCIOS POR PERÍODO ══ -->
-  <!-- ══ PIPELINE ATIVO POR PRODUTO (barras) ══ -->
-  <div class="sec">📊 Pipeline Ativo por Produto</div>
-  <div class="card">
-    <div class="card-hd">
-      <div>
-        <div class="card-t">Valor em carteira por produto · excl. Fechado Ganho/Perdido</div>
-        <div style="font-size:10px;color:var(--muted);margin-top:2px">Snapshot atual do pipeline Aquisição de Receita. Não responde ao filtro de período (é a foto de hoje).</div>
-      </div>
-      <span class="chip" id="chProdChip">HubSpot 21/09/2026</span>
-    </div>
-    <div style="height:300px;margin-top:8px"><canvas id="cPipeProd"></canvas></div>
-    <div style="font-size:10px;color:var(--muted);margin-top:10px;line-height:1.5">
-      Um mesmo negócio pode ter mais de um produto (campo multi-seleção), então a soma das barras é maior que o pipeline total.
-      Negócios <strong style="color:#fff">sem produto preenchido</strong> não aparecem aqui — hoje são 19 deals (R$1,17B), o maior deles a Vale Empreendimentos.
-    </div>
-  </div>
-
   <div class="sec">📈 Novos Negócios Cadastrados no Período</div>
   <div style="font-size:11px;color:var(--muted);margin:-2px 0 10px">Deals criados no período selecionado, por etapa atual · Fechado Perdido excluído · muda conforme o filtro de período</div>
   <div class="row c2">
@@ -1312,15 +1280,6 @@ canvas{display:block}
     </div>
   </div>
 
-  <!-- ══ INSIGHTS ══ -->
-  <div class="sec">⚡ Insights Automáticos — Análise Executiva</div>
-  <div class="card">
-    <div class="card-hd">
-      <div class="card-t">Problemas + Impacto + Ação</div>
-      <span class="chip">Gerado em 21/09/2026</span>
-    </div>
-    <div class="ins-g" id="insG"></div>
-  </div>
 
 </div>
 
@@ -1843,26 +1802,6 @@ const CONV_PROD_COHORT = [
   {l:'BAAS - Empresa',    k:'bas_empresa',      mes:{r:0,g:0},  mes_ant:{r:2,g:0},  tri:{r:4,g:0},   ano:{r:14,g:0},  tudo:{r:14,g:0}},   // 57 deals migrados de Tax Shield em 15/09/2026 já incluídos
   {l:'Sem produto',       k:'sem_produto',      mes:{r:5,g:0},  mes_ant:{r:5,g:0},  tri:{r:10,g:0},  ano:{r:10,g:0},  tudo:{r:10,g:0}},   // deals com Produto vazio — preencher no HubSpot
 ];
-function renderConvProd() {
-  const tbl = document.getElementById('convProdTable'); if (!tbl) return;
-  const th = '<tr><th style="text-align:left;padding:7px 8px;color:var(--muted);font-weight:600;font-size:9px;text-transform:uppercase;letter-spacing:.6px;border-bottom:1px solid var(--border)">Produto</th>' +
-    CONV_PROD_PERIODS.map(p => `<th style="text-align:center;padding:7px 8px;color:var(--muted);font-weight:600;font-size:9px;text-transform:uppercase;letter-spacing:.6px;border-bottom:1px solid var(--border)">${p.l}</th>`).join('') + '</tr>';
-  tbl.querySelector('thead').innerHTML = th;
-  const rows = CONV_PROD_COHORT.map((row, i) => {
-    const isTot = row.k === 'todos';
-    const sel = currentProduct !== 'todos' && row.k === currentProduct;
-    const cells = CONV_PROD_PERIODS.map(p => {
-      const c = row[p.k] || {r:0,g:0};
-      const rate = c.r > 0 ? (c.g / c.r * 100) : null;
-      const col = c.g > 0 ? 'var(--green)' : (c.r > 0 ? 'var(--muted)' : 'rgba(255,255,255,.25)');
-      const pct = rate === null ? '—' : (rate.toFixed(1).replace('.', ',') + '%');
-      return `<td style="text-align:center;padding:7px 8px;border-bottom:1px solid rgba(255,255,255,.04)"><div style="font-size:13px;font-weight:800;color:${col}">${pct}</div><div style="font-size:9px;color:var(--muted)">${c.g} / ${c.r}</div></td>`;
-    }).join('');
-    const bg = sel ? 'rgba(33,150,243,.10)' : (isTot ? 'rgba(255,255,255,.03)' : 'transparent');
-    return `<tr style="background:${bg}"><td style="padding:7px 8px;font-weight:${isTot?800:600};color:${isTot?'#fff':'var(--text)'};border-bottom:1px solid rgba(255,255,255,.04);white-space:nowrap">${row.l}</td>${cells}</tr>`;
-  }).join('');
-  tbl.querySelector('tbody').innerHTML = rows;
-}
 // Cohort mes_ant: conversao Reuniao Inicial Conc. -> Proposta -> Elab. Contrato -> Fechado Ganho
 const CONVERSAO_BY_PRODUTO = {
   tax_shield: {"reuniaoInicialConc": 5, "propostaEnviada": 0, "elabContrato": 0, "fechadoGanho": 0},
@@ -1980,11 +1919,11 @@ function applyProductData() {
   REV_PERIODS         = REV_PERIODS_BY_PRODUTO[currentProduct]         || REV_PERIODS_BY_PRODUTO.todos;
   REV_CHIP            = REV_CHIP_BY_PRODUTO[currentProduct]            || REV_CHIP_BY_PRODUTO.todos;
   NAMES_REV_PERIODS   = NAMES_REV_PERIODS_BY_PRODUTO[currentProduct]   || NAMES_REV_PERIODS_BY_PRODUTO.todos;
-  AGEND_CLI           = AGEND_CLI_BY_PRODUTO[currentProduct]           || AGEND_CLI_BY_PRODUTO.todos;
-  MTG_CLI_NAMES       = MTG_CLI_NAMES_BY_PRODUTO[currentProduct]       || MTG_CLI_NAMES_BY_PRODUTO.todos;
-  MTG_CLI_ORIGINS     = MTG_CLI_ORIGINS_BY_PRODUTO[currentProduct]     || MTG_CLI_ORIGINS_BY_PRODUTO.todos;
-  ORIG_CLI_NEW_DEALS  = ORIG_CLI_NEW_DEALS_BY_PRODUTO[currentProduct]  || ORIG_CLI_NEW_DEALS_BY_PRODUTO.todos;
-  RANK_PERIODS        = RANK_PERIODS_BY_PRODUTO[currentProduct]        || RANK_PERIODS_BY_PRODUTO.todos;
+  AGEND_CLI           = AGEND_CLI_BY_PRODUTO.todos;  // reunioes NAO sao filtradas por produto
+  MTG_CLI_NAMES       = MTG_CLI_NAMES_BY_PRODUTO.todos;       // reunioes NAO filtram por produto
+  MTG_CLI_ORIGINS     = MTG_CLI_ORIGINS_BY_PRODUTO.todos;     // reunioes NAO filtram por produto
+  ORIG_CLI_NEW_DEALS  = ORIG_CLI_NEW_DEALS_BY_PRODUTO.todos;  // reunioes NAO filtram por produto
+  RANK_PERIODS        = RANK_PERIODS_BY_PRODUTO.todos;        // ranking de parceiros = por reuniao, NAO filtra por produto
   // NAMES_REV (tooltip do snapshot "Funil de Receita") — todos usa a lista original;
   // por produto reaproveita NAMES_REV_PERIODS[produto].tudo (mesma população que REV, já que
   // "tudo" = sem limite de data = snapshot atual do pipeline daquele produto).
@@ -2023,8 +1962,8 @@ function sf(btn, period) {
   const fdBase = FD[period]||FD['mes'];
   const d = currentProduct === 'todos' ? fdBase : {
     ...fdBase,
-    cli: (FD_CLI_BY_PRODUTO[currentProduct] && FD_CLI_BY_PRODUTO[currentProduct][period]) || 0,
-    cfx: (FD_CFX_BY_PRODUTO[currentProduct] && FD_CFX_BY_PRODUTO[currentProduct][period]) || 0,
+    cli: (FD[period] && FD[period].cli) || 0,
+    cfx: (FD[period] && FD[period].cfx) || 0,
   };
 
   // Meta proporcional ao período (meta/mês × nº de meses)
@@ -2172,8 +2111,8 @@ function applyCustomDate() {
   const fdBaseCustom = FD['mes'];
   const d = currentProduct === 'todos' ? fdBaseCustom : {
     ...fdBaseCustom,
-    cli: (FD_CLI_BY_PRODUTO[currentProduct] && FD_CLI_BY_PRODUTO[currentProduct].mes) || 0,
-    cfx: (FD_CFX_BY_PRODUTO[currentProduct] && FD_CFX_BY_PRODUTO[currentProduct].mes) || 0,
+    cli: (FD.mes && FD.mes.cli) || 0,
+    cfx: (FD.mes && FD.mes.cfx) || 0,
   };
   updateMtgCard('cli', d.cli, META_CLI);
   updateMtgCard('par', d.par, META_PAR);
@@ -2284,16 +2223,6 @@ const INS = [
   {t:'r',title:'⚠️ Dados de origem dos parceiros: 74% sem preenchimento',body:'~71 de 93 deals do pipeline de parceiros não têm a origem registrada. Isso impede análise de ROI por canal e decisões de investimento em marketing/prospecção.',impact:'Impossível saber quais canais geram mais parceiros de qualidade',action:'Obrigar preenchimento do campo "Origem de Negócios" em todos os novos deals de parceiros.',prio:'m'},
 ];
 
-function renderInsights() {
-  document.getElementById('insG').innerHTML = INS.map(i=>`
-    <div class="ins ${i.t}">
-      <div class="ins-t">${i.title}</div>
-      <div class="ins-b">${i.body}</div>
-      <div class="ins-m"><strong>💰 Impacto:</strong> ${i.impact}<br><strong>💡 Ação:</strong> ${i.action}</div>
-      <span class="prio ${i.prio}">Prioridade ${i.prio==='a'?'Alta':i.prio==='m'?'Média':'Baixa'}</span>
-    </div>`).join('');
-}
-
 // ════════════════════════════════════════
 // CONVERSÃO DE CLIENTES
 // ════════════════════════════════════════
@@ -2350,7 +2279,6 @@ function updateExecPipeline() {
 }
 
 function updateConversionBox() {
-  renderConvProd();
   updateExecPipeline();
   const conv = currentProduct === 'todos' ? CONVERSAO_TODOS : (CONVERSAO_BY_PRODUTO[currentProduct] || CONVERSAO_TODOS);
   const ri = conv.reuniaoInicialConc || 0;
@@ -2599,81 +2527,77 @@ const GY  = {beginAtZero:true, grid:{color:'rgba(28,48,80,.6)'}, ticks:{maxTicks
 const GX  = {grid:{display:false}};
 const LEG = {display:true, position:'top', labels:{boxWidth:10, padding:12, color:'#8aa4c8'}};
 
-// 1 — Reuniões clientes (mixed: bars + meta line dataset)
-new Chart(document.getElementById('cCliMtg'),{
+// 1/2 — Reuniões (Agendadas x Realizadas) — card de 3 abas
+// Dados fixos apurados (não respondem ao filtro de Produto).
+const MTG_TICKS = { color:'#8aa0bb', font:{ size:10 } };
+const MTG_GRID  = { color:'rgba(255,255,255,.06)' };
+const MTG_LEG   = { display:true, position:'top', labels:{ boxWidth:10, padding:12, color:'#c9d6e8' } };
+window._mtgCharts = {};
+
+window._mtgCharts.cMtgMes = new Chart(document.getElementById('cMtgMes'), {
   type:'bar',
   data:{
-    labels:MO,
+    labels:['Jan/26','Fev/26','Mar/26','Abr/26','Mai/26','Jun/26','Jul/26','Ago/26','Set/26'],
     datasets:[
-      {
-        label:'Reuniões c/ Clientes',
-        data:MTG_CLI,
-        backgroundColor: MTG_CLI.map(v=>v>=META_CLI?'rgba(0,200,83,.82)':v>=META_CLI*.75?'rgba(255,193,7,.8)':'rgba(244,67,54,.7)'),
-        borderRadius:6, borderSkipped:false,
-        order:2
-      },
-      {
-        label:'Meta (20)',
-        type:'line',
-        data: MO.map(()=>META_CLI),
-        borderColor:'rgba(255,80,80,.65)',
-        borderDash:[7,4],
-        borderWidth:2,
-        pointRadius:0,
-        pointHoverRadius:0,
-        fill:false,
-        tension:0,
-        order:1
-      }
+      { label:'Realizadas', data:[3,7,10,14,11,12,24,29,12], backgroundColor:'#1565c0', borderRadius:5, borderSkipped:false, order:2 },
+      { label:'Agendadas',  data:[3,7,13,14,12,15,26,30,10], backgroundColor:'#00bcd4', borderRadius:5, borderSkipped:false, order:2 },
+      { label:'Meta (20)', type:'line', data:[20,20,20,20,20,20,20,20,20], borderColor:'#f44336', borderDash:[7,4], borderWidth:2, pointRadius:0, pointHoverRadius:0, fill:false, tension:0, order:1 }
     ]
   },
   options:{
     responsive:true, maintainAspectRatio:false,
-    plugins:{
-      legend:{display:true, position:'top', labels:{boxWidth:10, padding:12, color:'#8aa4c8', filter:i=>i.text!==''}},
-      tooltip:{callbacks:{label:ctx=>ctx.dataset.type==='line'?`Meta: ${ctx.raw}`:`${ctx.raw} reuniões com clientes`}}
-    },
-    scales:{y:{...GY, max:25}, x:GX}
+    plugins:{ legend:MTG_LEG },
+    scales:{ y:{ beginAtZero:true, ticks:MTG_TICKS, grid:MTG_GRID }, x:{ ticks:MTG_TICKS, grid:{ display:false } } }
   }
 });
 
-// 2 — Reuniões parceiros (mixed: bars + meta line dataset)
-new Chart(document.getElementById('cParMtg'),{
+window._mtgCharts.cMtgVend = new Chart(document.getElementById('cMtgVend'), {
   type:'bar',
   data:{
-    labels:MO,
+    labels:['Wilian Damas Goulart','Bruno Leal','Luiz Ribeiro','Diego Amaral'],
     datasets:[
-      {
-        label:'Reuniões c/ Parceiros',
-        data:MTG_PAR,
-        backgroundColor: MTG_PAR.map(v=>v>=META_PAR?'rgba(0,200,83,.82)':v>=META_PAR*.75?'rgba(255,193,7,.8)':'rgba(156,39,176,.7)'),
-        borderRadius:6, borderSkipped:false,
-        order:2
-      },
-      {
-        label:'Meta (15)',
-        type:'line',
-        data: MO.map(()=>META_PAR),
-        borderColor:'rgba(255,80,80,.65)',
-        borderDash:[7,4],
-        borderWidth:2,
-        pointRadius:0,
-        pointHoverRadius:0,
-        fill:false,
-        tension:0,
-        order:1
-      }
+      { label:'Realizadas', data:[5,5,2,0], backgroundColor:'#1565c0', borderRadius:5, borderSkipped:false },
+      { label:'Agendadas',  data:[4,3,3,0], backgroundColor:'#00bcd4', borderRadius:5, borderSkipped:false }
     ]
   },
   options:{
     responsive:true, maintainAspectRatio:false,
-    plugins:{
-      legend:{display:true, position:'top', labels:{boxWidth:10, padding:12, color:'#8aa4c8'}},
-      tooltip:{callbacks:{label:ctx=>ctx.dataset.type==='line'?`Meta: ${ctx.raw}`:`${ctx.raw} reuniões com parceiros`}}
-    },
-    scales:{y:{...GY, max:20}, x:GX}
+    plugins:{ legend:MTG_LEG },
+    scales:{ y:{ beginAtZero:true, ticks:MTG_TICKS, grid:MTG_GRID }, x:{ ticks:MTG_TICKS, grid:{ display:false } } }
   }
 });
+
+window._mtgCharts.cMtgParc = new Chart(document.getElementById('cMtgParc'), {
+  type:'bar',
+  data:{
+    labels:['EQI','Sem parceiro identificado','SUDDEN Serviços Financeiros','Outbound (sem parceiro)'],
+    datasets:[
+      { label:'Reuniões realizadas', data:[7,3,1,1], backgroundColor:'#1565c0', borderRadius:5, borderSkipped:false }
+    ]
+  },
+  options:{
+    indexAxis:'y',
+    responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:MTG_LEG },
+    scales:{ x:{ beginAtZero:true, ticks:MTG_TICKS, grid:MTG_GRID }, y:{ ticks:{ color:'#c9d6e8', font:{ size:11 } }, grid:{ display:false } } }
+  }
+});
+
+function setMtgTab(el) {
+  const id = el.getAttribute('data-mtgtab');
+  document.querySelectorAll('.mtg-tab').forEach(t => {
+    const on = t === el;
+    t.classList.toggle('on', on);
+    t.style.borderColor = on ? 'rgba(33,150,243,.55)' : '';
+    t.style.color       = on ? '#fff' : '';
+    t.style.background  = on ? 'rgba(33,150,243,.18)' : '';
+  });
+  document.querySelectorAll('.mtg-pane').forEach(pane => {
+    pane.style.display = pane.getAttribute('data-mtgpane') === id ? 'block' : 'none';
+  });
+  const c = window._mtgCharts && window._mtgCharts[id];
+  if (c) setTimeout(() => c.resize(), 0);
+}
 
 // 3 — Origem clientes (donut) — instância salva para atualização dinâmica
 window._chartOrigCli = new Chart(document.getElementById('cOrigCli'),{
@@ -3058,7 +2982,6 @@ function makeTip(el, html) {
 // ════════════════════════════════════════
 renderFunnel(REV, 'revFunnel', true);
 renderFunnel(PAR, 'parFunnel', false);
-renderInsights();
 updateParceirosNote();
 // Inicializa todos os KPIs com período padrão (mês atual)
 sf(document.querySelector('#fbar .fb.on'), 'mes');
@@ -3099,72 +3022,6 @@ setTimeout(() => {
   if(parAtivo) makeTip(parAtivo, _tipHtml('Parceria Fechada — Ativos', NAMES_PAR['1185687200'], 'var(--green)'));
 }, 200);
 
-// ════════════════════════════════════════
-// GRÁFICO DE BARRAS — Pipeline Ativo por Produto
-// Derivado de REV_BY_PRODUTO (mesma fonte do funil), somando as etapas ativas
-// (exclui Fechado Ganho). Refresh dos dados atualiza o gráfico automaticamente.
-// ════════════════════════════════════════
-(function(){
-  const el = document.getElementById('cPipeProd');
-  if (!el || typeof Chart === 'undefined') return;
-
-  const ordem = ['cri_imobiliario','cap_captacao','bas_empresa','bancarizacao','bas_fornecedores','tax_shield'];
-  const linhas = ordem.map(k => {
-    const arr = REV_BY_PRODUTO[k] || [];
-    let amt = 0, cnt = 0;
-    arr.forEach(r => { if (r.l === 'Fechado Ganho') return; amt += r.amt || 0; cnt += r.cnt || 0; });
-    return { k, label: (typeof PRODUCT_LABEL !== 'undefined' && PRODUCT_LABEL[k]) || k, amt, cnt };
-  }).filter(x => x.amt > 0 || x.cnt > 0)
-    .sort((a,b) => b.amt - a.amt);
-
-  const cores = ['#1565c0','#00796b','#7e57c2','#0288d1','#00acc1','#546e7a'];
-
-  new Chart(el, {
-    type: 'bar',
-    data: {
-      labels: linhas.map(l => l.label),
-      datasets: [{
-        label: 'Pipeline ativo (R$ milhões)',
-        data: linhas.map(l => Math.round(l.amt)),
-        backgroundColor: linhas.map((_,i) => cores[i % cores.length]),
-        borderRadius: 5,
-        borderSkipped: false
-      }]
-    },
-    options: {
-      indexAxis: 'y',
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          callbacks: {
-            label: c => {
-              const l = linhas[c.dataIndex];
-              const v = l.amt >= 1000
-                ? 'R$' + (l.amt/1000).toFixed(2).replace('.',',') + 'B'
-                : 'R$' + Math.round(l.amt) + 'M';
-              return v + ' · ' + l.cnt + ' deal' + (l.cnt === 1 ? '' : 's');
-            }
-          }
-        }
-      },
-      scales: {
-        x: {
-          ticks: {
-            color: '#8aa0bb', font: { size: 10 },
-            callback: v => v >= 1000 ? 'R$' + (v/1000).toFixed(1).replace('.',',') + 'B' : 'R$' + v + 'M'
-          },
-          grid: { color: 'rgba(255,255,255,.06)' }
-        },
-        y: {
-          ticks: { color: '#c9d6e8', font: { size: 11 } },
-          grid: { display: false }
-        }
-      }
-    }
-  });
-})();
 </script>
 </body>
 </html>
