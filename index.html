@@ -382,7 +382,6 @@ canvas{display:block}
       <div class="mtg-header">
         <div>
           <div class="mtg-label">Reuniões com Novos Clientes · Pipeline Receita</div>
-          <div class="prod-note-par">Reuniões não são filtradas por produto</div>
           <div class="mtg-big miss" id="mv-cli">6</div>
           <div class="mtg-goal" id="mgoal-cli">de <strong id="mg-cli">20</strong> reuniões / mês</div>
         </div>
@@ -426,7 +425,6 @@ canvas{display:block}
       <div class="mtg-header">
         <div>
           <div class="mtg-label">Reuniões com Novos Parceiros · Pipeline Parceiros</div>
-          <div class="prod-note-par">Reuniões não são filtradas por produto</div>
           <div class="mtg-big close" id="mv-par">13</div>
           <div class="mtg-goal" id="mgoal-par">de <strong id="mg-par">15</strong> reuniões / mês</div>
         </div>
@@ -551,18 +549,19 @@ canvas{display:block}
     <div class="card-hd">
       <div>
         <div class="card-t">Reuniões — Agendadas e Realizadas</div>
-        <div style="font-size:10px;color:var(--muted);margin-top:2px">Pipeline de Receita (clientes finais). Não filtra por produto.</div>
       </div>
       <div id="mtgTabs" style="display:flex;gap:6px;flex-wrap:wrap">
         <span class="chip mtg-tab on" data-mtgtab="cMtgMes"  onclick="setMtgTab(this)" style="cursor:pointer;border-color:rgba(33,150,243,.55);color:#fff;background:rgba(33,150,243,.18)">Mês a mês</span>
         <span class="chip mtg-tab"    data-mtgtab="cMtgVend" onclick="setMtgTab(this)" style="cursor:pointer">Por vendedor (Set/26)</span>
         <span class="chip mtg-tab"    data-mtgtab="cMtgParc" onclick="setMtgTab(this)" style="cursor:pointer">Por parceiro (Set/26)</span>
+        <span class="chip mtg-tab"    data-mtgtab="cMtgProd" onclick="setMtgTab(this)" style="cursor:pointer">Por produto (Set/26)</span>
       </div>
     </div>
     <div style="height:320px;margin-top:10px;position:relative">
       <div class="mtg-pane" data-mtgpane="cMtgMes"  style="height:100%"><canvas id="cMtgMes"></canvas></div>
       <div class="mtg-pane" data-mtgpane="cMtgVend" style="height:100%;display:none"><canvas id="cMtgVend"></canvas></div>
       <div class="mtg-pane" data-mtgpane="cMtgParc" style="height:100%;display:none"><canvas id="cMtgParc"></canvas></div>
+      <div class="mtg-pane" data-mtgpane="cMtgProd" style="height:100%;display:none"><canvas id="cMtgProd"></canvas></div>
     </div>
   </div>
 
@@ -676,18 +675,8 @@ canvas{display:block}
   </div>
 
   <!-- ══ RANKING DE PARCEIROS ══ -->
-  <div class="sec">🏆 Parceiros que Geraram Reuniões Iniciais Concluídas · Pipeline Receita</div>
-  <div class="row c2">
-    <div class="rank-card">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-        <div class="card-t">Parceiros · Reunião Inicial Concluída com Clientes</div>
-        <div class="rank-tabs">
-          <button id="rankTabPeriod" class="rank-tab on" data-tab="mes" onclick="switchRankTab('mes')">🗓 Mês atual (1)</button>
-          <button id="rankTabGeral" class="rank-tab" data-tab="geral" onclick="switchRankTab('geral')">🏆 Todo período (103)</button>
-        </div>
-      </div>
-      <div class="rank-list" id="rankList"></div>
-    </div>
+  <div class="sec">🏆 Origem das Reuniões Iniciais Concluídas · Pipeline Receita</div>
+  <div class="row">
     <div class="rank-card" id="rankOriginBody"></div>
   </div>
 
@@ -1173,43 +1162,6 @@ canvas{display:block}
     </div>
   </div>
 
-  <!-- ══ NOVOS NEGÓCIOS POR PERÍODO ══ -->
-  <div class="sec">📈 Novos Negócios Cadastrados no Período</div>
-  <div style="font-size:11px;color:var(--muted);margin:-2px 0 10px">Deals criados no período selecionado, por etapa atual · Fechado Perdido excluído · muda conforme o filtro de período</div>
-  <div class="row c2">
-    <div class="card">
-      <div class="card-hd">
-        <div class="card-t">Funil Receita · Novos Clientes no Período</div>
-        <span class="chip" id="nbRevChip">—</span>
-      </div>
-      <div class="fn-hd rv">
-        <div class="fn-col">Etapa</div><div class="fn-col">Volume</div>
-        <div class="fn-col" style="text-align:right">Valor</div>
-        <div class="fn-col" style="text-align:right">Qtd.</div>
-        <div class="fn-col" style="text-align:center">Prob.</div>
-      </div>
-      <div id="nbRevFunnel"></div>
-      <div style="margin-top:12px;padding:9px 12px;background:rgba(33,150,243,.06);border-radius:9px;border:1px solid rgba(33,150,243,.15);font-size:11px;color:var(--muted)">
-        💡 Deals <strong style="color:#fff">criados</strong> no período → etapa em que estão <strong style="color:#fff">hoje</strong>. O funil acima ("Funis Comerciais") mostra o pipeline completo atual.
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-hd">
-        <div class="card-t">Funil Parceiros · Novos Parceiros no Período</div>
-        <span class="chip" id="nbParChip">—</span>
-      </div>
-      <div class="fn-hd pr">
-        <div class="fn-col">Etapa</div><div class="fn-col">Volume</div>
-        <div class="fn-col" style="text-align:right">Qtd.</div>
-        <div class="fn-col" style="text-align:center">Prob.</div>
-      </div>
-      <div id="nbParFunnel"></div>
-      <div style="margin-top:12px;padding:9px 12px;background:rgba(156,39,176,.06);border-radius:9px;border:1px solid rgba(156,39,176,.2);font-size:11px;color:var(--muted)">
-        💡 Parceiros <strong style="color:#fff">cadastrados</strong> no período → em qual etapa estão hoje. A progressão natural: Cadastro → Reunião → Contrato → Fechado.
-      </div>
-    </div>
-  </div>
-
   <!-- ══ NOVOS DEALS + EQUIPE ══ -->
   <div class="row c2">
     <div class="card">
@@ -1226,7 +1178,7 @@ canvas{display:block}
           <div class="prod-note-par">Produto não se aplica a Parceiros (coluna Reun. Parceiros)</div>
         </div>
         <div class="rank-tabs">
-          <button class="rank-tab on" id="perfTabMes" onclick="switchPerfTab('mes')">🗓 Ago/26</button>
+          <button class="rank-tab on" id="perfTabMes" onclick="switchPerfTab('mes')">🗓 Set/26</button>
           <button class="rank-tab" id="perfTabGeral" onclick="switchPerfTab('geral')">🏆 Todo período</button>
         </div>
       </div>
@@ -2182,8 +2134,10 @@ function updateMtgCard(type, val, meta, months) {
 // FUNNELS
 // ════════════════════════════════════════
 function renderFunnel(stages, elId, isRev) {
+  const _fEl = document.getElementById(elId);
+  if (!_fEl) return;
   const mx = Math.max(...stages.map(s=>s.cnt), 1);
-  document.getElementById(elId).innerHTML = stages.map(s=>{
+  _fEl.innerHTML = stages.map(s=>{
     const w  = s.cnt>0 ? Math.max(8, s.cnt/mx*100) : 3;
     const cc = s.prob>=70?'var(--green)':s.prob>=40?'var(--yellow)':'rgba(90,114,153,.6)';
     if(isRev) {
@@ -2485,7 +2439,9 @@ function _drawRanking(data, tab) {
   const icons  = ['rk1','rk2','rk3'];
   const maxCnt = Math.max(...data.map(d => d.cnt), 1);
 
-  document.getElementById('rankList').innerHTML = data.map((r, i) => {
+  const _rl = document.getElementById('rankList');
+  if (!_rl) return;
+  _rl.innerHTML = data.map((r, i) => {
     const ic  = icons[i] || 'rk-n';
     const pct = Math.round(r.cnt / maxCnt * 100);
     const leadsHtml = r.leads.map(l =>
@@ -2583,6 +2539,28 @@ window._mtgCharts.cMtgParc = new Chart(document.getElementById('cMtgParc'), {
   }
 });
 
+// ── Aba 4: reuniões por PRODUTO · Set/26 ─────────────────────────────────────
+// FONTE OFICIAL: HubSpot 21/09/2026, pipeline Aquisição de Receita.
+// realizadas = data_reuniao_inicial_agendada em Set/26 (12 reuniões)
+// agendadas  = data_reuniao_agendada em Set/26 (10 reuniões)
+// Podium Pneus tem 2 produtos (BAAS-Fornecedores + BAAS-Empresa) e aparece nos dois.
+window._mtgCharts.cMtgProd = new Chart(document.getElementById('cMtgProd'), {
+  type:'bar',
+  data:{
+    labels:['Sem produto definido','CAP - Captação','CORE (CRI Imob.)','BAAS - Empresa','BAAS - Fornecedores','BAAS - Cliente'],
+    datasets:[
+      { label:'Realizadas', data:[7,2,1,2,1,0], backgroundColor:'#1565c0', borderRadius:5, borderSkipped:false },
+      { label:'Agendadas',  data:[6,2,1,0,0,1], backgroundColor:'#00bcd4', borderRadius:5, borderSkipped:false }
+    ]
+  },
+  options:{
+    indexAxis:'y',
+    responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:MTG_LEG },
+    scales:{ x:{ beginAtZero:true, ticks:MTG_TICKS, grid:MTG_GRID }, y:{ ticks:{ color:'#c9d6e8', font:{ size:11 } }, grid:{ display:false } } }
+  }
+});
+
 function setMtgTab(el) {
   const id = el.getAttribute('data-mtgtab');
   document.querySelectorAll('.mtg-tab').forEach(t => {
@@ -2638,11 +2616,13 @@ const PERF_DATA = {
     {nome:'Bruno Leal',            cli:0,  par:0, total:0,  cf:0, pf:0, rankCls:'r3'},
   ],
   geral: [
-    // Todo período — snapshot 15/09/2026: contagem de negócios que atingiram "Reunião Inicial Concluída"/"Reunião realizada" ou etapa posterior, por dono do negócio (proxy para reuniões realizadas, mesma convenção usada no resto do dashboard) · incrementado com a atividade de Set/26 (01–15)
-    {nome:'Luiz Ribeiro',          cli:148, par:115, total:263, cf:2, pf:23, rankCls:'r1'},  // +2 cli (Eleti, Benetex) / +3 par (MVR, LS Negócios, Fundo Gavea Sul) em Set/26
-    {nome:'Bruno Leal',            cli:53,  par:3,   total:56,  cf:3, pf:2,  rankCls:'r2'},  // +4 cli (Caspper, IB7 Mogi, BERRYTECH, RK Empreendimentos) em Set/26 — owner confirmado 16/09/2026
-    {nome:'Wilian Damas Goulart',  cli:2,   par:4,   total:6,   cf:0, pf:0,  rankCls:'r3'},  // +2 cli (Appel Home, Geniusz) / +2 par (Cedro Capital, VETOR CAPITAL) em Set/26 — corrigido 16/09/2026 (owner real via hubspot_owner_id)
-    {nome:'Diego Amaral',          cli:1,   par:2,   total:3,   cf:0, pf:2,  rankCls:''},  // usuário inativo na HubSpot, mantido por histórico — sem atividade em Set/26
+    // Todo período — apurado 21/09/2026 via query CRM por hubspot_owner_id.
+    // cli = deals do pipeline Receita com data_reuniao_inicial_agendada preenchida (188 no total; 4 sem dono, não exibidos)
+    // par = deals do pipeline Parceiros que entraram em "Reunião realizada" (104 no total)
+    {nome:'Luiz Ribeiro',          cli:99, par:95, total:194, cf:2, pf:23, rankCls:'r1'},
+    {nome:'Bruno Leal',            cli:74, par:3,  total:77,  cf:3, pf:2,  rankCls:'r2'},
+    {nome:'Wilian Damas Goulart',  cli:10, par:4,  total:14,  cf:0, pf:0,  rankCls:'r3'},
+    {nome:'Diego Amaral',          cli:1,  par:2,  total:3,   cf:0, pf:1,  rankCls:''},
   ],
 };
 
