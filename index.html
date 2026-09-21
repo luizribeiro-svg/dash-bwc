@@ -325,18 +325,18 @@ canvas{display:block}
   <div class="exec-strip">
     <div class="exec-kpi cy">
       <div class="exec-lbl">💼 Pipeline Total</div>
-      <div class="exec-val">R$2,80B</div>
-      <div class="exec-sub">112 oportunidades ativas</div>
+      <div class="exec-val" id="exec-pipe-total">R$2,80B</div>
+      <div class="exec-sub" id="exec-pipe-sub">112 oportunidades ativas</div>
     </div>
     <div class="exec-kpi pu">
       <div class="exec-lbl">⚖️ Pipeline Ponderado</div>
-      <div class="exec-val">R$973M</div>
+      <div class="exec-val" id="exec-pond">R$973M</div>
       <div class="exec-sub">prob. ponderada por etapa</div>
     </div>
     <div class="exec-kpi or">
       <div class="exec-lbl">🎯 Ticket Médio</div>
-      <div class="exec-val">R$25,0M</div>
-      <div class="exec-sub">112 deals ativos</div>
+      <div class="exec-val" id="exec-ticket">R$25,0M</div>
+      <div class="exec-sub" id="exec-ticket-sub">112 deals ativos</div>
     </div>
     <div class="exec-kpi rd">
       <div class="exec-lbl">🏆 Clientes Fechados</div>
@@ -741,19 +741,6 @@ canvas{display:block}
       <span class="chip" style="background:rgba(0,200,83,.12);border-color:rgba(0,200,83,.3);color:var(--green)">12 oportunidades · R$555,8M</span>
     </div>
 
-    <!-- GRUPO 0: FECHADOS RECENTEMENTE (mais recente primeiro) -->
-    <div style="margin-top:16px;padding:12px 14px;background:rgba(0,200,83,.06);border:1px solid rgba(0,200,83,.35);border-radius:10px;display:flex;align-items:center;gap:12px">
-      <div style="font-size:22px">🏆</div>
-      <div style="flex:1">
-        <div style="font-size:13px;font-weight:700;color:var(--green)">Construtora JG (JG Empreiteira e Construções) — FECHADO ✅</div>
-        <div style="font-size:11px;color:var(--muted);margin-top:2px">Fechado Ganho · 13/Ago/2026 · Ciclo de vendas: 38 dias (06/Jul Reunião Inicial Concluída → 13/Ago)</div>
-      </div>
-      <div style="text-align:right">
-        <div style="font-size:22px;font-weight:800;color:var(--green)">R$70M</div>
-        <div style="font-size:10px;color:var(--green)">Maior fechamento de 2026</div>
-      </div>
-    </div>
-    <div style="margin-top:8px;padding:12px 14px;background:rgba(0,200,83,.06);border:1px solid rgba(0,200,83,.35);border-radius:10px;display:flex;align-items:center;gap:12px">
     <!-- GRUPO 1: 90% (Contrato Enviado) — refresh 21/09/2026 -->
     <div style="margin-top:16px">
       <div style="font-size:9px;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);margin-bottom:10px;padding-bottom:7px;border-bottom:1px solid var(--border)">📤 Contrato Enviado · 90% · R$128M em carteira · 2 deals</div>
@@ -1202,6 +1189,23 @@ canvas{display:block}
   </div>
 
   <!-- ══ NOVOS NEGÓCIOS POR PERÍODO ══ -->
+  <!-- ══ PIPELINE ATIVO POR PRODUTO (barras) ══ -->
+  <div class="sec">📊 Pipeline Ativo por Produto</div>
+  <div class="card">
+    <div class="card-hd">
+      <div>
+        <div class="card-t">Valor em carteira por produto · excl. Fechado Ganho/Perdido</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:2px">Snapshot atual do pipeline Aquisição de Receita. Não responde ao filtro de período (é a foto de hoje).</div>
+      </div>
+      <span class="chip" id="chProdChip">HubSpot 21/09/2026</span>
+    </div>
+    <div style="height:300px;margin-top:8px"><canvas id="cPipeProd"></canvas></div>
+    <div style="font-size:10px;color:var(--muted);margin-top:10px;line-height:1.5">
+      Um mesmo negócio pode ter mais de um produto (campo multi-seleção), então a soma das barras é maior que o pipeline total.
+      Negócios <strong style="color:#fff">sem produto preenchido</strong> não aparecem aqui — hoje são 19 deals (R$1,17B), o maior deles a Vale Empreendimentos.
+    </div>
+  </div>
+
   <div class="sec">📈 Novos Negócios Cadastrados no Período</div>
   <div style="font-size:11px;color:var(--muted);margin:-2px 0 10px">Deals criados no período selecionado, por etapa atual · Fechado Perdido excluído · muda conforme o filtro de período</div>
   <div class="row c2">
@@ -2325,8 +2329,29 @@ function updateConversion(period, mtg, cfx) {
 // Cohort de Mês anterior (Jul/26): Reunião Inicial Conc. → Proposta Enviada →
 // Elaboração da Proposta/Contrato. O Fechado Ganho já é tratado à parte (cfx-bar).
 // ════════════════════════════════════════
+function updateExecPipeline() {
+  const src = (typeof REV !== 'undefined' && REV) ? REV : REV_BY_PRODUTO.todos;
+  let tot = 0, cnt = 0, pond = 0;
+  src.forEach(r => {
+    if (r.l === 'Fechado Ganho') return;          // pipeline ativo exclui ganhos
+    tot  += r.amt || 0;
+    cnt  += r.cnt || 0;
+    pond += (r.amt || 0) * ((r.prob || 0) / 100);
+  });
+  const fmt = m => m >= 1000
+    ? 'R$' + (m / 1000).toFixed(2).replace('.', ',') + 'B'
+    : 'R$' + Math.round(m) + 'M';
+  const set = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
+  set('exec-pipe-total', fmt(tot));
+  set('exec-pipe-sub',   cnt + ' oportunidades ativas');
+  set('exec-pond',       fmt(pond));
+  set('exec-ticket',     cnt > 0 ? 'R$' + (tot / cnt).toFixed(1).replace('.', ',') + 'M' : '—');
+  set('exec-ticket-sub', cnt + ' deals ativos');
+}
+
 function updateConversionBox() {
   renderConvProd();
+  updateExecPipeline();
   const conv = currentProduct === 'todos' ? CONVERSAO_TODOS : (CONVERSAO_BY_PRODUTO[currentProduct] || CONVERSAO_TODOS);
   const ri = conv.reuniaoInicialConc || 0;
   const pr = conv.propostaEnviada || 0;
@@ -3073,6 +3098,73 @@ setTimeout(() => {
   const parAtivo = document.querySelector('.card [style*="font-size:26px"][style*="font-weight:800"][style*="var(--green)"]');
   if(parAtivo) makeTip(parAtivo, _tipHtml('Parceria Fechada — Ativos', NAMES_PAR['1185687200'], 'var(--green)'));
 }, 200);
+
+// ════════════════════════════════════════
+// GRÁFICO DE BARRAS — Pipeline Ativo por Produto
+// Derivado de REV_BY_PRODUTO (mesma fonte do funil), somando as etapas ativas
+// (exclui Fechado Ganho). Refresh dos dados atualiza o gráfico automaticamente.
+// ════════════════════════════════════════
+(function(){
+  const el = document.getElementById('cPipeProd');
+  if (!el || typeof Chart === 'undefined') return;
+
+  const ordem = ['cri_imobiliario','cap_captacao','bas_empresa','bancarizacao','bas_fornecedores','tax_shield'];
+  const linhas = ordem.map(k => {
+    const arr = REV_BY_PRODUTO[k] || [];
+    let amt = 0, cnt = 0;
+    arr.forEach(r => { if (r.l === 'Fechado Ganho') return; amt += r.amt || 0; cnt += r.cnt || 0; });
+    return { k, label: (typeof PRODUCT_LABEL !== 'undefined' && PRODUCT_LABEL[k]) || k, amt, cnt };
+  }).filter(x => x.amt > 0 || x.cnt > 0)
+    .sort((a,b) => b.amt - a.amt);
+
+  const cores = ['#1565c0','#00796b','#7e57c2','#0288d1','#00acc1','#546e7a'];
+
+  new Chart(el, {
+    type: 'bar',
+    data: {
+      labels: linhas.map(l => l.label),
+      datasets: [{
+        label: 'Pipeline ativo (R$ milhões)',
+        data: linhas.map(l => Math.round(l.amt)),
+        backgroundColor: linhas.map((_,i) => cores[i % cores.length]),
+        borderRadius: 5,
+        borderSkipped: false
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: c => {
+              const l = linhas[c.dataIndex];
+              const v = l.amt >= 1000
+                ? 'R$' + (l.amt/1000).toFixed(2).replace('.',',') + 'B'
+                : 'R$' + Math.round(l.amt) + 'M';
+              return v + ' · ' + l.cnt + ' deal' + (l.cnt === 1 ? '' : 's');
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          ticks: {
+            color: '#8aa0bb', font: { size: 10 },
+            callback: v => v >= 1000 ? 'R$' + (v/1000).toFixed(1).replace('.',',') + 'B' : 'R$' + v + 'M'
+          },
+          grid: { color: 'rgba(255,255,255,.06)' }
+        },
+        y: {
+          ticks: { color: '#c9d6e8', font: { size: 11 } },
+          grid: { display: false }
+        }
+      }
+    }
+  });
+})();
 </script>
 </body>
 </html>
