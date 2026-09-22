@@ -559,7 +559,7 @@ canvas{display:block}
         <div class="card-t">Reuniões por Produto — Agendadas e Realizadas</div>
         <div style="font-size:10px;color:var(--muted);margin-top:2px">Somente pipeline Aquisição de Receita · Set/26 · exclui reuniões do pipeline de Parceiros</div>
       </div>
-      <span class="chip">13 realizadas · 15 agendadas</span>
+      <span class="chip">15 realizadas · 16 agendadas</span>
     </div>
     <div style="height:260px;margin-top:10px"><canvas id="cProdMtg"></canvas></div>
   </div>
@@ -1029,10 +1029,6 @@ canvas{display:block}
           <tbody id="perfTbody"></tbody>
         </table>
       </div>
-      <div style="margin-top:13px;padding-top:13px;border-top:1px solid var(--border)">
-        <div class="card-t" style="margin-bottom:10px" id="perfChartTitle">Reuniões Set/26 por Responsável (Clientes / Parceiros)</div>
-        <div class="ch-wrap-sm"><canvas id="cTeam"></canvas></div>
-      </div>
     </div>
   </div>
 
@@ -1089,43 +1085,47 @@ const CM = {
 
   // ── Reuniões com CLIENTES ─────────────────────────────────────
   cli: {
-    realizadas: 12,  // FONTE OFICIAL: HubSpot data_reuniao_inicial_agendada ("Reunião Inicial Concluída") entre 01–21/Set/26, pipeline Aquisição de Receita · refresh 21/09/2026 (apuração) — 12 reuniões confirmadas; Benetex conta (reunião realizada 10/Set, depois Fechado Perdido)
-    agendadas:  10,  // FONTE OFICIAL: HubSpot data_reuniao_agendada entre 01–30/Set/26, pipeline Aquisição de Receita · refresh 21/09/2026
+    realizadas: 15,  // FONTE OFICIAL: HubSpot data_reuniao_inicial_agendada entre 01–30/Set/26, pipeline Aquisição de Receita · refresh 22/09/2026
+    agendadas:  16,  // FONTE OFICIAL: HubSpot data_reuniao_agendada entre 01–30/Set/26, pipeline Aquisição de Receita · refresh 22/09/2026
     meta:       20,
-    nomes: ['Electi Solutions Group (01/Set)', 'Appel Home (02/Set)', 'Caspper distribuidora (10/Set)', 'Benetex (10/Set)', 'Geniusz Engenharia Integrada (10/Set)', 'IB7 Mogi das Cruzes Empreendimentos Imobiliários (10/Set)', 'BERRYTECH Consultoria Empresarial (14/Set)', 'RK Empreendimentos (15/Set)', 'Podium Pneus (16/Set)', 'Mix Farma (17/Set)', 'Quanta Empreendimentos (17/Set)', 'Tecnoflora Serviços e Locação Florestal (18/Set)'],
+    nomes: ['Electi Solutions Group (01/Set)', 'Appel Home (02/Set)', 'Caspper distribuidora (10/Set)', 'Benetex (10/Set)', 'Geniusz Engenharia Integrada (10/Set)', 'IB7 Mogi das Cruzes Empreendimentos Imobiliários (10/Set)', 'BERRYTECH Consultoria Empresarial (14/Set)', 'RK Empreendimentos (15/Set)', 'Podium Pneus (16/Set)', 'Mix Farma (17/Set)', 'Quanta Empreendimentos (17/Set)', 'Tecnoflora Serviços e Locação Florestal (18/Set)', 'Vici Incorporadora (22/Set)', 'Grupo Copobras (22/Set)', 'Amazon Motors (22/Set)'],
   },
 
   // ── Reuniões com PARCEIROS ────────────────────────────────────
   par: {
-    realizadas:   5,  // FONTE OFICIAL: HubSpot pipeline Aquisição de Parceiros, hs_v2_date_entered_1185687197 ("Reunião realizada") entre 01–21/Set/26 · refresh 21/09/2026 — inclui 2 deals que depois foram perdidos (Cedro Capital, VETOR CAPITAL), contam pois a reunião foi realizada
+    realizadas:   7,  // FONTE OFICIAL: HubSpot pipeline Aquisição de Parceiros, hs_v2_date_entered_1185687197 ("Reunião realizada") entre 01–30/Set/26 · refresh 22/09/2026 — inclui deals que depois foram perdidos (Cedro Capital, VETOR CAPITAL), contam pois a reunião foi realizada
     agendadas:    3,  // FONTE OFICIAL: HubSpot data_reuniao_agendada entre 01–30/Set/26, pipeline Aquisição de Parceiros · refresh 21/09/2026 — MVR Consultoria (01/Set), VETOR CAPITAL (01/Set), Cedro Capital (11/Set)
     meta:         15,
     nomes_agend:  ['MVR Consultoria (01/Set)', 'VETOR CAPITAL (01/Set)', 'Cedro Capital (11/Set)'],
-    nomes_real:   ['MVR Consultoria (01/Set)', 'Cedro Capital (11/Set)', 'LS Negócios - Soluções Financeiras (11/Set)', 'VETOR CAPITAL (14/Set)', 'Fundo Gavea Sul (14/Set)'],
+    nomes_real:   ['MVR Consultoria (01/Set)', 'Cedro Capital (11/Set)', 'LS Negócios - Soluções Financeiras (11/Set)', 'VETOR CAPITAL (14/Set)', 'Fundo Gavea Sul (14/Set)', 'Seven Credit (22/Set)', 'Brand Experts (22/Set)'],
   },
 
   // ── Origem dos leads (reuniões iniciais · Set/26) ─────────────
   // HubSpot "Reunião Inicial Concluída" · Mês atual (Set/26) · refresh 21/09/2026 — 12 reuniões confirmadas via query direta (campo empresa_parceira + origem_de_negocios)
   origem: {
-    total:    12,
-    parCnt:   11,
-    outCnt:   1,
-    parNames: ['Electi Solutions Group (sem parceiro · 01/Set)', 'Appel Home (sem parceiro · 02/Set)', 'Caspper distribuidora (via EQI · 10/Set)', 'Benetex (sem parceiro · 10/Set)', 'Geniusz Engenharia Integrada (via EQI · 10/Set)', 'IB7 Mogi das Cruzes (via EQI · 10/Set)', 'BERRYTECH Consultoria Empresarial (via EQI · 14/Set)', 'Podium Pneus (via SUDDEN Serviços Financeiros · 16/Set)', 'Mix Farma (via EQI · 17/Set)', 'Quanta Empreendimentos (via EQI · 17/Set)', 'Tecnoflora Serviços e Locação Florestal (via EQI · 18/Set)'],
-    outNames: ['RK Empreendimentos (Outbound · 15/Set)'],
-    note: 'Refresh 21/09/2026 — 12 reuniões iniciais concluídas em Set/26: 11 via Parcerias (7 via EQI, 1 via SUDDEN, 3 sem empresa_parceira preenchida) + 1 Outbound.',
+    total:    15,
+    parCnt:   13,
+    outCnt:   2,
+    parNames: ['Electi Solutions Group (via ERIKA GODOY · 01/Set)', 'Appel Home (via EQI · 02/Set)', 'Caspper distribuidora (via EQI · 10/Set)', 'Benetex (via Clodoaldo Mordegan · 10/Set)', 'Geniusz Engenharia Integrada (via EQI · 10/Set)', 'IB7 Mogi das Cruzes (via EQI · 10/Set)', 'BERRYTECH Consultoria Empresarial (via EQI · 14/Set)', 'Podium Pneus (via SUDDEN · 16/Set)', 'Mix Farma (via EQI · 17/Set)', 'Quanta Empreendimentos (via EQI · 17/Set)', 'Tecnoflora Serviços e Locação Florestal (via EQI · 18/Set)', 'Grupo Copobras (via SUDDEN · 22/Set)', 'Amazon Motors (via EQI · 22/Set)'],
+    outNames: ['RK Empreendimentos (Outbound · 15/Set)', 'Vici Incorporadora (Eventos · 22/Set)'],
+    note: 'Refresh 22/09/2026 — 15 reuniões iniciais concluídas em Set/26: 13 via Parcerias (9 EQI, 2 SUDDEN, 1 Erika Godoy, 1 Clodoaldo Mordegan) + 1 Outbound + 1 Evento.',
   },
+
 
   // ── Reuniões Realizadas por Canal (cliente final · card "Origem") ──────
   // FONTE OFICIAL: HubSpot propriedade "Origem de Negócios" (origem_de_negocios), deals com
   // Reunião Inicial Concluída em Set/26 · refresh 21/09/2026 · d = [Parcerias, Outbound, Eventos, LinkedIn]
-  canal_realizadas_mes: { total: 12, d: [11, 1, 0, 0] },
+  canal_realizadas_mes: { total: 15, d: [13, 1, 1, 0] },
 
   // ── Ranking de parceiros do mês ───────────────────────────────
   // Set/26 (refresh 21/09/2026): EQI gerou 7 e SUDDEN 1 das 12 reuniões iniciais concluídas do mês (3 sem parceiro identificado + 1 Outbound).
   ranking: [
-    {n:'EQI', seg:'Assessoria de Investimentos', leads:['Caspper distribuidora (10/Set)', 'Geniusz Engenharia Integrada (10/Set)', 'IB7 Mogi das Cruzes (10/Set)', 'BERRYTECH Consultoria Empresarial (14/Set)', 'Mix Farma (17/Set)', 'Quanta Empreendimentos (17/Set)', 'Tecnoflora Serviços e Locação Florestal (18/Set)'], cnt:7},
-    {n:'SUDDEN Serviços Financeiros', seg:'Corretora de Seguros', leads:['Podium Pneus (16/Set)'], cnt:1},
+    {n:'EQI', seg:'Assessoria de Investimentos', leads:['Appel Home (02/Set)', 'Caspper distribuidora (10/Set)', 'Geniusz Engenharia Integrada (10/Set)', 'IB7 Mogi das Cruzes (10/Set)', 'BERRYTECH Consultoria Empresarial (14/Set)', 'Mix Farma (17/Set)', 'Quanta Empreendimentos (17/Set)', 'Tecnoflora Serviços e Locação Florestal (18/Set)', 'Amazon Motors (22/Set)'], cnt:9},
+    {n:'SUDDEN Serviços Financeiros', seg:'Corretora de Seguros', leads:['Podium Pneus (16/Set)', 'Grupo Copobras (22/Set)'], cnt:2},
+    {n:'Erika Godoy', seg:'Parceiro individual', leads:['Electi Solutions Group (01/Set)'], cnt:1},
+    {n:'Clodoaldo Mordegan', seg:'Parceiro individual', leads:['Benetex (10/Set)'], cnt:1},
   ],
+
 
   // ── Novos deals no mês ────────────────────────────────────────
   nd:    16,   // HubSpot confirmado 21/09/2026: 16 novos deals de Receita criados em Set/26 (createdate, 01–21/Set)
@@ -2343,12 +2343,12 @@ window._mtgCharts.cMtgParc = new Chart(document.getElementById('cMtgParc'), {
 
 // ── Reuniões por PRODUTO · Set/26 ───────────────────────────────────────────
 // FONTE: HubSpot 22/09/2026 · SOMENTE pipeline Aquisição de Receita (43349147).
-// realizadas = data_reuniao_inicial_agendada em Set/26 · 13 no funil de receita
-// agendadas  = data_reuniao_agendada em Set/26 · 15 no funil de receita
+// realizadas = data_reuniao_inicial_agendada em Set/26 · 15 no funil de receita
+// agendadas  = data_reuniao_agendada em Set/26 · 16 no funil de receita
 //              (3 agendadas do mês são do pipeline de Parceiros e ficam fora: MVR Consultoria, Cedro Capital, VETOR CAPITAL)
 const PROD_MTG_LBL = ['BAAS','CORE (CRI Imob.)','CAP - Captação','Sem produto'];
-const PROD_MTG_REA = [5,4,2,2];   // total 13
-const PROD_MTG_AGE = [7,4,2,2];   // total 15
+const PROD_MTG_REA = [6,4,2,3];   // total 15
+const PROD_MTG_AGE = [7,4,2,3];   // total 16
 const PROD_MTG_TOT_REA = PROD_MTG_REA.reduce((a,b)=>a+b,0);
 const PROD_MTG_TOT_AGE = PROD_MTG_AGE.reduce((a,b)=>a+b,0);
 const prodMtgLabels = {
@@ -2422,10 +2422,11 @@ window._chartOrigCli = new Chart(document.getElementById('cOrigCli'),{
 // Recalculado via query CRM direta por hubspot_owner_id em 24/08/2026.
 const PERF_DATA = {
   mes: [
-    // Set/26 (refresh 02/09/2026, dia 2) — mês recém-aberto, só 1 reunião de cliente concluída até agora
-    {nome:'Luiz Ribeiro',          cli:1,  par:0, total:1,  cf:0, pf:0, rankCls:'r1'},  // Electi Solutions Group (01/Set)
-    {nome:'Wilian Damas Goulart',  cli:0,  par:0, total:0,  cf:0, pf:0, rankCls:'r2'},
-    {nome:'Bruno Leal',            cli:0,  par:0, total:0,  cf:0, pf:0, rankCls:'r3'},
+    // Set/26 — refresh 22/09/2026 via query CRM por hubspot_owner_id
+    // cli = data_reuniao_inicial_agendada em Set/26 (pipeline Receita) · par = entrada em "Reunião realizada" (pipeline Parceiros)
+    {nome:'Wilian Damas Goulart',  cli:6,  par:3, total:9,  cf:0, pf:0, rankCls:'r1'},
+    {nome:'Luiz Ribeiro',          cli:3,  par:4, total:7,  cf:0, pf:0, rankCls:'r2'},
+    {nome:'Bruno Leal',            cli:6,  par:0, total:6,  cf:0, pf:0, rankCls:'r3'},
   ],
   geral: [
     // Todo período — apurado 21/09/2026 via query CRM por hubspot_owner_id.
@@ -2439,7 +2440,6 @@ const PERF_DATA = {
 };
 
 let perfTabActive = 'mes';
-let cTeamChart = null;
 
 function switchPerfTab(tab) {
   perfTabActive = tab;
@@ -2464,27 +2464,6 @@ function switchPerfTab(tab) {
     </tr>`;
   }).join('');
 
-  document.getElementById('perfChartTitle').textContent =
-    tab === 'mes'
-      ? 'Reuniões Set/26 por Responsável (Clientes / Parceiros)'
-      : 'Reuniões (Todo período) por Responsável (Clientes / Parceiros)';
-
-  const cliData = rows.map(r => parseInt(String(r.cli).replace('~',''), 10));
-  const parData = rows.map(r => parseInt(String(r.par).replace('~',''), 10));
-  const labels  = rows.map(r => r.nome.split(' ')[0]);
-  const maxVal  = Math.max(...rows.map(r => parseInt(String(r.total).replace('~',''), 10)));
-
-  if (cTeamChart) cTeamChart.destroy();
-  cTeamChart = new Chart(document.getElementById('cTeam'),{
-    type:'bar',
-    data:{labels, datasets:[
-      {label:'c/ Clientes', data:cliData, backgroundColor:'rgba(33,150,243,.8)',  borderRadius:4, stack:'s'},
-      {label:'c/ Parceiros',data:parData, backgroundColor:'rgba(156,39,176,.72)', borderRadius:4, stack:'s'}
-    ]},
-    options:{indexAxis:'y', responsive:true, maintainAspectRatio:false,
-      plugins:{legend:LEG},
-      scales:{x:{...GY,stacked:true,max:Math.ceil(maxVal*1.15)}, y:{grid:{display:false},stacked:true}}}
-  });
 }
 
 // 6 — Team (initial render)
