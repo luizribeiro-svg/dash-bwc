@@ -307,13 +307,6 @@ canvas{display:block}
       </div>
     </div>
   </div>
-  <div class="fbars" id="fbarProduct" style="margin-top:6px">
-    <span style="font-size:10px;color:var(--muted);align-self:center;margin-right:2px">Produto:</span>
-    <button class="fb-prod on" onclick="setProduct(this,'todos')">Todos</button>
-    <button class="fb-prod" onclick="setProduct(this,'cap_captacao')">CAP - Captação</button>
-    <button class="fb-prod" onclick="setProduct(this,'cri_imobiliario')">CRI Imobiliário</button>
-    <button class="fb-prod" onclick="setProduct(this,'baas')">BAAS</button>
-  </div>
 </div>
 
 <div class="main">
@@ -344,7 +337,6 @@ canvas{display:block}
       <div class="exec-lbl">🤝 Parceiros Fechados</div>
       <div class="exec-val" id="exec-pfx">1</div>
       <div class="exec-sub" id="exec-pfx-sub">no período · meta 3/mês</div>
-      <div class="prod-note-par">Produto não se aplica a Parceiros</div>
     </div>
     <div class="exec-kpi te">
       <div class="exec-lbl">📊 Novos Deals · Pipeline</div>
@@ -551,15 +543,25 @@ canvas{display:block}
         <span class="chip mtg-tab on" data-mtgtab="cMtgMes"  onclick="setMtgTab(this)" style="cursor:pointer;border-color:rgba(33,150,243,.55);color:#fff;background:rgba(33,150,243,.18)">Mês a mês</span>
         <span class="chip mtg-tab"    data-mtgtab="cMtgVend" onclick="setMtgTab(this)" style="cursor:pointer">Por vendedor (Set/26)</span>
         <span class="chip mtg-tab"    data-mtgtab="cMtgParc" onclick="setMtgTab(this)" style="cursor:pointer">Por parceiro (Set/26)</span>
-        <span class="chip mtg-tab"    data-mtgtab="cMtgProd" onclick="setMtgTab(this)" style="cursor:pointer">Por produto (Set/26)</span>
       </div>
     </div>
     <div style="height:320px;margin-top:10px;position:relative">
       <div class="mtg-pane" data-mtgpane="cMtgMes"  style="height:100%"><canvas id="cMtgMes"></canvas></div>
       <div class="mtg-pane" data-mtgpane="cMtgVend" style="height:100%;display:none"><canvas id="cMtgVend"></canvas></div>
       <div class="mtg-pane" data-mtgpane="cMtgParc" style="height:100%;display:none"><canvas id="cMtgParc"></canvas></div>
-      <div class="mtg-pane" data-mtgpane="cMtgProd" style="height:100%;display:none"><canvas id="cMtgProd"></canvas></div>
     </div>
+  </div>
+
+  <!-- ══ REUNIÕES POR PRODUTO ══ -->
+  <div class="card">
+    <div class="card-hd">
+      <div>
+        <div class="card-t">Reuniões por Produto — Agendadas e Realizadas</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:2px">Pipeline Aquisição de Receita · Set/26</div>
+      </div>
+      <span class="chip">12 realizadas · 15 agendadas</span>
+    </div>
+    <div style="height:260px;margin-top:10px"><canvas id="cProdMtg"></canvas></div>
   </div>
 
   <!-- ══ INSIGHT ESTRATÉGICO ══ -->
@@ -572,8 +574,8 @@ canvas{display:block}
   </div>
 
   <!-- ══ ORIGEM DOS LEADS ══ -->
-  <div class="sec">📊 Origem dos Leads — Clientes Finais vs Parceiros</div>
-  <div class="row c2">
+  <div class="sec">📊 Origem dos Leads — Clientes Finais</div>
+  <div class="row">
 
     <!-- RECEITA / CLIENTES -->
     <div class="orig-card">
@@ -620,62 +622,9 @@ canvas{display:block}
       </div>
     </div>
 
-    <!-- PARCEIROS -->
-    <div class="orig-card">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-        <div class="orig-title" style="margin-bottom:0">🤝 Parceiros · Reuniões Realizadas com Clientes</div>
-        <span class="chip" id="origParChip">Mês atual</span>
-      </div>
-      <div style="display:flex;gap:16px;align-items:center;">
-        <div style="flex:0 0 160px;height:160px;position:relative">
-          <canvas id="cOrigPar"></canvas>
-          <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;">
-            <div style="font-size:20px;font-weight:900;color:#fff">1</div>
-            <div style="font-size:9px;color:var(--muted)">reuniões</div>
-          </div>
-        </div>
-        <div style="flex:1">
-          <div class="orig-list">
-            <div class="orig-row">
-              <div class="orig-lbl">🥇 EQI</div>
-              <div class="orig-bw"><div class="orig-bf" style="width:0%;background:#2196f3"></div></div>
-              <div class="orig-pct" style="color:var(--blue)">0%</div>
-            </div>
-            <div class="orig-row">
-              <div class="orig-lbl">Karen Costa da Silva</div>
-              <div class="orig-bw"><div class="orig-bf" style="width:0%;background:#00bcd4"></div></div>
-              <div class="orig-pct">0%</div>
-            </div>
-            <div class="orig-row">
-              <div class="orig-lbl">Sudden Serv. Financeiros</div>
-              <div class="orig-bw"><div class="orig-bf" style="width:0%;background:#9c27b0"></div></div>
-              <div class="orig-pct">0%</div>
-            </div>
-            <div class="orig-row">
-              <div class="orig-lbl">Outros parceiros</div>
-              <div class="orig-bw"><div class="orig-bf" style="width:0%;background:#4caf50"></div></div>
-              <div class="orig-pct">0%</div>
-            </div>
-            <div class="orig-row">
-              <div class="orig-lbl" style="color:var(--red)">❓ Sem parceiro atribuído</div>
-              <div class="orig-bw"><div class="orig-bf" style="width:100%;background:rgba(244,67,54,.6)"></div></div>
-              <div class="orig-pct" style="color:var(--red)">100%</div>
-            </div>
-          </div>
-          <div style="margin-top:12px;padding:8px;background:rgba(33,150,243,.08);border-radius:8px;border:1px solid rgba(33,150,243,.2)">
-            <div style="font-size:10px;color:var(--blue);font-weight:700">⚡ Principal insight</div>
-            <div style="font-size:10px;color:var(--muted);margin-top:3px;line-height:1.5">Set/26 (dia 21): <strong style="color:#fff">12 reuniões realizadas</strong> — 7 via EQI, 1 via SUDDEN Serviços Financeiros, 3 sem parceiro identificado, 1 Outbound (RK Empreendimentos). Ago/26 fechou com 29 reuniões, 38% via EQI.</div>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 
   <!-- ══ RANKING DE PARCEIROS ══ -->
-  <div class="sec">🏆 Origem das Reuniões Iniciais Concluídas · Pipeline Receita</div>
-  <div class="row">
-    <div class="rank-card" id="rankOriginBody"></div>
-  </div>
 
   <!-- ══ BALANÇO DO MÊS ══ -->
   <div id="balanco-titulo" class="sec">📋 Balanço de Jul/26 — O Que Aconteceu no Mês</div>
@@ -1026,7 +975,7 @@ canvas{display:block}
 
   <!-- ══ CONVERSÃO E CICLO DE VENDAS ══ -->
   <div class="sec">📈 Conversão de Clientes — Reunião Inicial → Fechado Ganho</div>
-  <div class="row c2">
+  <div class="row">
 
     <!-- Taxa de Conversão -->
     <div class="card" style="position:relative">
@@ -1057,122 +1006,17 @@ canvas{display:block}
       </div>
     </div>
 
-    <!-- Pipeline em Progresso -->
-    <div class="card">
-      <div class="card-hd">
-        <div class="card-t">Funil de Conversão · Clientes</div>
-        <span class="chip" id="convFunnelChip">Pipeline atual</span>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:6px;margin-top:4px">
-        <div style="display:flex;align-items:center;gap:8px">
-          <div style="font-size:10px;color:var(--muted);width:130px">Reunião Inicial Conc.</div>
-          <div style="flex:1;background:rgba(255,255,255,.05);border-radius:4px;height:20px;overflow:hidden;position:relative">
-            <div id="cv-ri-bar" style="height:100%;width:100%;background:#1565c0;border-radius:4px;display:flex;align-items:center;padding-left:8px;font-size:11px;font-weight:700;color:#fff">24</div>
-          </div>
-          <div id="cv-ri-pct" style="font-size:11px;color:var(--muted);min-width:30px;text-align:right">100%</div>
-        </div>
-        <div style="display:flex;align-items:center;gap:8px">
-          <div style="font-size:10px;color:var(--muted);width:130px">Proposta Enviada</div>
-          <div style="flex:1;background:rgba(255,255,255,.05);border-radius:4px;height:20px;overflow:hidden">
-            <div id="cv-pr-bar" style="height:100%;width:33%;background:#00796b;border-radius:4px;display:flex;align-items:center;padding-left:8px;font-size:11px;font-weight:700;color:#fff">8</div>
-          </div>
-          <div id="cv-pr-pct" style="font-size:11px;color:var(--green);min-width:30px;text-align:right">33%</div>
-        </div>
-        <div style="display:flex;align-items:center;gap:8px">
-          <div style="font-size:10px;color:var(--muted);width:130px">Elab. Contrato</div>
-          <div style="flex:1;background:rgba(255,255,255,.05);border-radius:4px;height:20px;overflow:hidden">
-            <div id="cv-ec-bar" style="height:100%;width:8%;background:#388e3c;border-radius:4px;display:flex;align-items:center;padding-left:8px;font-size:11px;font-weight:700;color:#fff">2</div>
-          </div>
-          <div id="cv-ec-pct" style="font-size:11px;color:var(--yellow);min-width:30px;text-align:right">8%</div>
-        </div>
-        <div style="display:flex;align-items:center;gap:8px">
-          <div style="font-size:10px;color:var(--muted);width:130px">Fechado Ganho</div>
-          <div style="flex:1;background:rgba(255,255,255,.05);border-radius:4px;height:20px;overflow:hidden">
-            <div id="cfx-bar" style="height:100%;width:0%;background:var(--green);border-radius:4px;display:flex;align-items:center;padding-left:8px;font-size:11px;font-weight:700;color:#fff"></div>
-          </div>
-          <div id="cfx-cnt" style="font-size:11px;color:var(--muted);min-width:30px;text-align:right">0</div>
-        </div>
-      </div>
-      <div style="margin-top:14px;padding:10px;border-radius:9px;background:rgba(0,200,83,.07);border:1px solid rgba(0,200,83,.2)">
-        <div style="font-size:10px;color:var(--green);font-weight:700;margin-bottom:3px">📈 Funil em expansão</div>
-        <div style="font-size:10px;color:var(--muted);line-height:1.5"><strong style="color:#fff">33%</strong> das reuniões avança para Proposta (8/24). Construtora JG FECHADA em Ago/26 — R$70M, ciclo de 38 dias. Com ciclo médio de <strong style="color:#fff">66 dias</strong>, espera-se <strong style="color:#fff">2–3 fechamentos</strong> nos próximos 60–90 dias.</div>
-      </div>
-      <div style="margin-top:10px;padding:8px 10px;background:rgba(0,200,83,.06);border-radius:8px;border:1px solid rgba(0,200,83,.15);display:flex;justify-content:space-between;align-items:center">
-        <div style="font-size:10px;color:var(--muted)">Valor potencial (Proposta+Contrato)</div>
-        <div style="font-size:13px;font-weight:700;color:var(--green)">R$205,0M</div>
-      </div>
-    </div>
   </div>
 
 
 
-  <div class="sec">Funis Comerciais</div>
-  <div class="row c2">
-    <div class="card">
-      <div class="card-hd">
-        <div class="card-t">Funil de Receita — Clientes Finais</div>
-        <span class="chip">112 ativos · R$2,80B</span>
-      </div>
-      <div class="fn-hd rv">
-        <div class="fn-col">Etapa</div><div class="fn-col">Volume</div>
-        <div class="fn-col" style="text-align:right">Valor</div>
-        <div class="fn-col" style="text-align:right">Qtd.</div>
-        <div class="fn-col" style="text-align:center">Prob.</div>
-      </div>
-      <div id="revFunnel"></div>
-      <div style="border-top:1px solid var(--border);margin-top:12px;padding-top:12px">
-        <div style="font-size:9px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:8px">Conversão entre Etapas</div>
-        <div class="cv-row"><span class="cv-l">Entrada → Reunião Inicial Concluída</span><span class="cv-p w">43%</span></div>
-        <div class="cv-row"><span class="cv-l">Reunião Inicial → Proposta Enviada</span><span class="cv-p w">28%</span></div>
-        <div class="cv-row"><span class="cv-l">Proposta → Elaboração de Contrato</span><span class="cv-p g">25%</span></div>
-        <div class="cv-row"><span class="cv-l">Taxa de perda (Fechado Perdido)</span><span class="cv-p r">43%</span></div>
-        <div class="cv-row"><span class="cv-l">Em proposta/contrato (≥70% prob.)</span><span class="cv-p g">R$555,8M</span></div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-hd">
-        <div>
-          <div class="card-t">Funil de Parceiros</div>
-          <div class="prod-note-par">Produto não se aplica a Parceiros</div>
-        </div>
-        <span class="chip">67 ativos · 73 perdidos · 26 fechados · 140 total</span>
-      </div>
-      <div class="fn-hd pr">
-        <div class="fn-col">Etapa</div><div class="fn-col">Volume</div>
-        <div class="fn-col" style="text-align:right">Qtd.</div>
-        <div class="fn-col" style="text-align:center">Prob.</div>
-      </div>
-      <div id="parFunnel"></div>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;border-top:1px solid var(--border);margin-top:12px;padding-top:12px">
-        <div style="text-align:center"><div style="font-size:9px;color:var(--muted);margin-bottom:2px;text-transform:uppercase">Total</div><div style="font-size:20px;font-weight:800">140</div></div>
-        <div style="text-align:center"><div style="font-size:9px;color:var(--muted);margin-bottom:2px;text-transform:uppercase">Fechados</div><div style="font-size:20px;font-weight:800;color:var(--green)">26</div></div>
-        <div style="text-align:center"><div style="font-size:9px;color:var(--muted);margin-bottom:2px;text-transform:uppercase">Perdidos</div><div style="font-size:20px;font-weight:800;color:var(--red)">73</div></div>
-        <div style="text-align:center"><div style="font-size:9px;color:var(--muted);margin-bottom:2px;text-transform:uppercase">Conversão</div><div style="font-size:20px;font-weight:800;color:var(--blue)">18,6%</div></div>
-      </div>
-      <div style="border-top:1px solid var(--border);margin-top:12px;padding-top:12px">
-        <div style="font-size:9px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:8px">Conversão entre Etapas</div>
-        <div class="cv-row"><span class="cv-l">Cadastro → Reunião Agendada</span><span class="cv-p w">67%</span></div>
-        <div class="cv-row"><span class="cv-l">Reunião Agendada → Realizada</span><span class="cv-p g">94%</span></div>
-        <div class="cv-row"><span class="cv-l">Reunião Realizada → Contrato <span style="color:var(--red)">⚠ Gargalo</span></span><span class="cv-p r">10%</span></div>
-        <div class="cv-row"><span class="cv-l">Contrato Enviado → Parceria Fechada</span><span class="cv-p g">85%</span></div>
-      </div>
-    </div>
-  </div>
 
-  <!-- ══ NOVOS DEALS + EQUIPE ══ -->
-  <div class="row c2">
-    <div class="card">
-      <div class="card-hd">
-        <div class="card-t">Novos Leads por Mês — Receita vs Parceiros</div>
-        <span class="chip">Empilhado por pipeline</span>
-      </div>
-      <div class="ch-wrap"><canvas id="cNewDeals"></canvas></div>
-    </div>
+  <!-- ══ EQUIPE ══ -->
+  <div class="row">
     <div class="card">
       <div class="card-hd">
         <div>
           <div class="card-t">Performance Individual</div>
-          <div class="prod-note-par">Produto não se aplica a Parceiros (coluna Reun. Parceiros)</div>
         </div>
         <div class="rank-tabs">
           <button class="rank-tab on" id="perfTabMes" onclick="switchPerfTab('mes')">🗓 Set/26</button>
@@ -1844,7 +1688,7 @@ function applyProductData() {
 
 function setProduct(btn, product) {
   currentProduct = product;
-  document.querySelectorAll('.fb-prod').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('.fb-prod').forEach(b=>b.classList.remove('on'));  // filtro removido do layout
   if(btn) btn.classList.add('on');
   applyProductData();
   const activePeriodBtn = document.querySelector('#fbar .fb.on');
@@ -2502,7 +2346,7 @@ window._mtgCharts.cMtgParc = new Chart(document.getElementById('cMtgParc'), {
 // realizadas = data_reuniao_inicial_agendada em Set/26 (12 reuniões)
 // agendadas  = data_reuniao_agendada em Set/26 (15 reuniões)
 // Reapurado 22/09/2026 apos unificacao do produto BAAS. Total: 12 realizadas / 15 agendadas em Set/26.
-window._mtgCharts.cMtgProd = new Chart(document.getElementById('cMtgProd'), {
+new Chart(document.getElementById('cProdMtg'), {
   type:'bar',
   data:{
     labels:['Sem produto definido','BAAS','CORE (CRI Imob.)','CAP - Captação'],
@@ -2543,25 +2387,7 @@ window._chartOrigCli = new Chart(document.getElementById('cOrigCli'),{
     plugins:{legend:{display:false}, tooltip:{callbacks:{label:ctx=>{const tot=ctx.chart.data.datasets[0].data.reduce((a,b)=>a+b,0); return `${ctx.label}: ${ctx.raw} reuniões (${tot>0?Math.round(ctx.raw/tot*100):0}%)`;}}}}}
 });
 
-// 4 — Origem parceiros (donut)
-new Chart(document.getElementById('cOrigPar'),{
-  type:'doughnut',
-  data:{labels:ORIG_PAR_LABELS, datasets:[{data:ORIG_PAR_DATA, backgroundColor:ORIG_PAR_COLORS, borderColor:'#0f1f35', borderWidth:3}]},
-  options:{responsive:true, maintainAspectRatio:false, cutout:'68%',
-    plugins:{legend:{display:false}, tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${ctx.raw} reuniões (${Math.round(ctx.raw/ORIG_PAR_TOTAL_MES*100)}%)`}}}}
-});
 
-// 5 — Novos deals
-new Chart(document.getElementById('cNewDeals'),{
-  type:'bar',
-  data:{labels:MO, datasets:[
-    {label:'Clientes (Receita)', data:ND_CLI, backgroundColor:'rgba(33,150,243,.78)', borderRadius:5, stack:'s'},
-    {label:'Parceiros',          data:ND_PAR, backgroundColor:'rgba(156,39,176,.72)',  borderRadius:5, stack:'s'}
-  ]},
-  options:{responsive:true, maintainAspectRatio:false,
-    plugins:{legend:LEG, tooltip:{mode:'index', callbacks:{footer:items=>`Total: ${items.reduce((a,b)=>a+b.raw,0)} deals`}}},
-    scales:{y:{...GY,stacked:true}, x:{...GX,stacked:true}}}
-});
 
 // ── Performance Individual data ──────────────────────────────────────────────
 // CORRIGIDO 24/08/2026: tabela estava travada em dado de Jul/26 (Dia 6) e não incluía Wilian Damas Goulart.
