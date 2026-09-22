@@ -557,7 +557,7 @@ canvas{display:block}
     <div class="card-hd">
       <div>
         <div class="card-t">Reuniões por Produto — Agendadas e Realizadas</div>
-        <div style="font-size:10px;color:var(--muted);margin-top:2px">Somente pipeline Aquisição de Receita · Set/26 · exclui reuniões do pipeline de Parceiros</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:2px">Somente pipeline Aquisição de Receita · Set/26 · exclui reuniões do pipeline de Parceiros · atualizado 22/09</div>
       </div>
       <span class="chip">15 realizadas · 16 agendadas</span>
     </div>
@@ -1097,7 +1097,7 @@ const CM = {
     agendadas:    7,  // FONTE OFICIAL: HubSpot pipeline Aquisição de Parceiros, entrada na etapa "Reunião Agendada" (hs_v2_date_entered_1185687196) entre 01–30/Set/26 · refresh 22/09/2026 — bate com o relatório 166130780. O campo data_reuniao_agendada só tem 3 preenchidos e subcontava.
     meta:         15,
     nomes_agend:  ['MVR Consultoria (01/Set)', 'LS Negócios - Soluções Financeiras (09/Set)', 'Cedro Capital (11/Set)', 'Fundo Gavea Sul (14/Set)', 'L. Fernando Imobiliária (14/Set)', 'Brand Experts (16/Set)', 'Seven Credit (22/Set)'],
-    nomes_real:   ['MVR Consultoria (01/Set)', 'Cedro Capital (11/Set)', 'LS Negócios - Soluções Financeiras (11/Set)', 'VETOR CAPITAL (14/Set)', 'Fundo Gavea Sul (14/Set)', 'Seven Credit (22/Set)', 'Brand Experts (22/Set)'],
+    nomes_real:   ['MVR Consultoria (01/Set)', 'Cedro Capital (11/Set)', 'LS Negócios - Soluções Financeiras (11/Set)', 'VETOR CAPITAL (14/Set)', 'Fundo Gavea Sul (14/Set)', 'Seven Credit (22/Set)', 'Brand Experts (22/Set)'],  // refresh 22/09/2026
   },
 
   // ── Origem dos leads (reuniões iniciais · Set/26) ─────────────
@@ -2347,8 +2347,8 @@ window._mtgCharts.cMtgParc = new Chart(document.getElementById('cMtgParc'), {
 // agendadas  = data_reuniao_agendada em Set/26 · 16 no funil de receita
 //              (3 agendadas do mês são do pipeline de Parceiros e ficam fora: MVR Consultoria, Cedro Capital, VETOR CAPITAL)
 const PROD_MTG_LBL = ['BAAS','CORE (CRI Imob.)','CAP - Captação','Sem produto'];
-const PROD_MTG_REA = [6,4,2,3];   // total 15
-const PROD_MTG_AGE = [7,4,2,3];   // total 16
+const PROD_MTG_REA = [7,5,2,1];   // total 15
+const PROD_MTG_AGE = [8,5,2,1];   // total 16
 const PROD_MTG_TOT_REA = PROD_MTG_REA.reduce((a,b)=>a+b,0);
 const PROD_MTG_TOT_AGE = PROD_MTG_AGE.reduce((a,b)=>a+b,0);
 const prodMtgLabels = {
