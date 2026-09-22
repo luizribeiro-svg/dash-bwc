@@ -557,9 +557,9 @@ canvas{display:block}
     <div class="card-hd">
       <div>
         <div class="card-t">Reuniões por Produto — Agendadas e Realizadas</div>
-        <div style="font-size:10px;color:var(--muted);margin-top:2px">Pipeline Aquisição de Receita · Set/26</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:2px">Somente pipeline Aquisição de Receita · Set/26 · exclui reuniões do pipeline de Parceiros</div>
       </div>
-      <span class="chip">12 realizadas · 15 agendadas</span>
+      <span class="chip">13 realizadas · 15 agendadas</span>
     </div>
     <div style="height:260px;margin-top:10px"><canvas id="cProdMtg"></canvas></div>
   </div>
@@ -2341,26 +2341,54 @@ window._mtgCharts.cMtgParc = new Chart(document.getElementById('cMtgParc'), {
   }
 });
 
-// ── Aba 4: reuniões por PRODUTO · Set/26 ─────────────────────────────────────
-// FONTE OFICIAL: HubSpot 21/09/2026, pipeline Aquisição de Receita.
-// realizadas = data_reuniao_inicial_agendada em Set/26 (12 reuniões)
-// agendadas  = data_reuniao_agendada em Set/26 (15 reuniões)
-// Reapurado 22/09/2026 apos unificacao do produto BAAS. Total: 12 realizadas / 15 agendadas em Set/26.
+// ── Reuniões por PRODUTO · Set/26 ───────────────────────────────────────────
+// FONTE: HubSpot 22/09/2026 · SOMENTE pipeline Aquisição de Receita (43349147).
+// realizadas = data_reuniao_inicial_agendada em Set/26 · 13 no funil de receita
+// agendadas  = data_reuniao_agendada em Set/26 · 15 no funil de receita
+//              (3 agendadas do mês são do pipeline de Parceiros e ficam fora: MVR Consultoria, Cedro Capital, VETOR CAPITAL)
+const PROD_MTG_LBL = ['BAAS','CORE (CRI Imob.)','CAP - Captação','Sem produto'];
+const PROD_MTG_REA = [5,4,2,2];   // total 13
+const PROD_MTG_AGE = [7,4,2,2];   // total 15
+const PROD_MTG_TOT_REA = PROD_MTG_REA.reduce((a,b)=>a+b,0);
+const PROD_MTG_TOT_AGE = PROD_MTG_AGE.reduce((a,b)=>a+b,0);
+const prodMtgLabels = {
+  id:'prodMtgLabels',
+  afterDatasetsDraw(c){
+    const ctx=c.ctx;
+    c.data.datasets.forEach((ds,di)=>{
+      const tot = di===0?PROD_MTG_TOT_REA:PROD_MTG_TOT_AGE;
+      c.getDatasetMeta(di).data.forEach((bar,i)=>{
+        const v=ds.data[i]; if(!v) return;
+        const pct=Math.round(v/tot*100);
+        ctx.save();
+        ctx.fillStyle='#fff'; ctx.font='700 11px Inter, system-ui, sans-serif';
+        ctx.textAlign='left'; ctx.textBaseline='middle';
+        ctx.fillText(`${v} · ${pct}%`, bar.x+8, bar.y);
+        ctx.restore();
+      });
+    });
+  }
+};
 new Chart(document.getElementById('cProdMtg'), {
   type:'bar',
   data:{
-    labels:['Sem produto definido','BAAS','CORE (CRI Imob.)','CAP - Captação'],
+    labels:PROD_MTG_LBL,
     datasets:[
-      { label:'Realizadas', data:[4,4,2,2], backgroundColor:'#1565c0', borderRadius:5, borderSkipped:false },
-      { label:'Agendadas',  data:[6,5,2,2], backgroundColor:'#00bcd4', borderRadius:5, borderSkipped:false }
+      { label:`Realizadas (${PROD_MTG_TOT_REA})`, data:PROD_MTG_REA, backgroundColor:'#1565c0', borderRadius:5, borderSkipped:false },
+      { label:`Agendadas (${PROD_MTG_TOT_AGE})`,  data:PROD_MTG_AGE, backgroundColor:'#00bcd4', borderRadius:5, borderSkipped:false }
     ]
   },
   options:{
     indexAxis:'y',
     responsive:true, maintainAspectRatio:false,
-    plugins:{ legend:MTG_LEG },
+    layout:{padding:{right:46}},
+    plugins:{ legend:MTG_LEG, tooltip:{callbacks:{label:ctx=>{
+      const tot = ctx.datasetIndex===0?PROD_MTG_TOT_REA:PROD_MTG_TOT_AGE;
+      return `${ctx.dataset.label.split(' (')[0]}: ${ctx.raw} (${Math.round(ctx.raw/tot*100)}%)`;
+    }}} },
     scales:{ x:{ beginAtZero:true, ticks:MTG_TICKS, grid:MTG_GRID }, y:{ ticks:{ color:'#c9d6e8', font:{ size:11 } }, grid:{ display:false } } }
-  }
+  },
+  plugins:[prodMtgLabels]
 });
 
 function setMtgTab(el) {
