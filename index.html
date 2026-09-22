@@ -386,17 +386,17 @@ canvas{display:block}
       <div class="mtg-breakdown">
         <div class="mtg-bk-item">
           <div class="mtg-bk-lbl">Luiz Ribeiro</div>
-          <div class="mtg-bk-val" id="mbk-luiz-cli">~7</div>
-          <div class="mtg-bk-sub">estimado</div>
+          <div class="mtg-bk-val" id="mbk-luiz-cli">3</div>
+          <div class="mtg-bk-sub">HubSpot</div>
         </div>
         <div class="mtg-bk-item" style="border-left:1px solid var(--border)">
           <div class="mtg-bk-lbl">Bruno Leal</div>
-          <div class="mtg-bk-val" id="mbk-bruno-cli">~3</div>
-          <div class="mtg-bk-sub">estimado</div>
+          <div class="mtg-bk-val" id="mbk-bruno-cli">6</div>
+          <div class="mtg-bk-sub">HubSpot</div>
         </div>
         <div class="mtg-bk-item" style="border-left:1px solid var(--border)">
-          <div class="mtg-bk-lbl">Diego Amaral</div>
-          <div class="mtg-bk-val" id="mbk-diego-cli">0</div>
+          <div class="mtg-bk-lbl">Wilian Damas</div>
+          <div class="mtg-bk-val" id="mbk-diego-cli">6</div>
           <div class="mtg-bk-sub">HubSpot</div>
         </div>
         <div class="mtg-bk-item" style="border-left:1px solid var(--border)">
@@ -429,17 +429,17 @@ canvas{display:block}
       <div class="mtg-breakdown">
         <div class="mtg-bk-item">
           <div class="mtg-bk-lbl">Luiz Ribeiro</div>
-          <div class="mtg-bk-val" id="mbk-luiz-par">~2</div>
-          <div class="mtg-bk-sub">estimado</div>
+          <div class="mtg-bk-val" id="mbk-luiz-par">4</div>
+          <div class="mtg-bk-sub">HubSpot</div>
         </div>
         <div class="mtg-bk-item" style="border-left:1px solid var(--border)">
           <div class="mtg-bk-lbl">Bruno Leal</div>
-          <div class="mtg-bk-val" id="mbk-bruno-par">~2</div>
-          <div class="mtg-bk-sub">estimado</div>
+          <div class="mtg-bk-val" id="mbk-bruno-par">0</div>
+          <div class="mtg-bk-sub">HubSpot</div>
         </div>
         <div class="mtg-bk-item" style="border-left:1px solid var(--border)">
-          <div class="mtg-bk-lbl">Diego Amaral</div>
-          <div class="mtg-bk-val" id="mbk-diego-par">2</div>
+          <div class="mtg-bk-lbl">Wilian Damas</div>
+          <div class="mtg-bk-val" id="mbk-diego-par">3</div>
           <div class="mtg-bk-sub">HubSpot</div>
         </div>
         <div class="mtg-bk-item" style="border-left:1px solid var(--border)">
@@ -1140,10 +1140,10 @@ const CM = {
 
   // ── Performance individual ────────────────────────────────────
   perf: [
-    // owner confirmado via hubspot_owner_id em 21/09/2026 — 12 reuniões de cliente + 5 de parceiro no mês
-    {nome:'Wilian Damas Goulart', cli:5, par:2, total:7, cf:0, pf:0, rankCls:'r1'},
-    {nome:'Bruno Leal',           cli:5, par:0, total:5, cf:0, pf:0, rankCls:'r2'},
-    {nome:'Luiz Ribeiro',         cli:2, par:3, total:5, cf:0, pf:0, rankCls:'r3'},
+    // owner confirmado via hubspot_owner_id em 22/09/2026 — 15 reuniões de cliente + 7 de parceiro no mês
+    {nome:'Wilian Damas Goulart', cli:6, par:3, total:9, cf:0, pf:0, rankCls:'r1'},
+    {nome:'Luiz Ribeiro',         cli:3, par:4, total:7, cf:0, pf:0, rankCls:'r2'},
+    {nome:'Bruno Leal',           cli:6, par:0, total:6, cf:0, pf:0, rankCls:'r3'},
     {nome:'Diego Amaral',         cli:0, par:0, total:0, cf:0, pf:0, rankCls:''},
   ],
 
@@ -2314,8 +2314,8 @@ window._mtgCharts.cMtgVend = new Chart(document.getElementById('cMtgVend'), {
   data:{
     labels:['Wilian Damas Goulart','Bruno Leal','Luiz Ribeiro','Diego Amaral'],
     datasets:[
-      { label:'Realizadas', data:[5,5,2,0], backgroundColor:'#1565c0', borderRadius:5, borderSkipped:false },
-      { label:'Agendadas',  data:[4,3,3,0], backgroundColor:'#00bcd4', borderRadius:5, borderSkipped:false }
+      { label:'Realizadas', data:[6,6,3,0], backgroundColor:'#1565c0', borderRadius:5, borderSkipped:false },
+      { label:'Agendadas',  data:[7,6,3,0], backgroundColor:'#00bcd4', borderRadius:5, borderSkipped:false }
     ]
   },
   options:{
@@ -2328,9 +2328,9 @@ window._mtgCharts.cMtgVend = new Chart(document.getElementById('cMtgVend'), {
 window._mtgCharts.cMtgParc = new Chart(document.getElementById('cMtgParc'), {
   type:'bar',
   data:{
-    labels:['EQI','Sem parceiro identificado','SUDDEN Serviços Financeiros','Outbound (sem parceiro)'],
+    labels:['EQI','SUDDEN Serviços Financeiros','Erika Godoy','Clodoaldo Mordegan','Outbound','Eventos'],
     datasets:[
-      { label:'Reuniões realizadas', data:[7,3,1,1], backgroundColor:'#1565c0', borderRadius:5, borderSkipped:false }
+      { label:'Reuniões realizadas', data:[9,2,1,1,1,1], backgroundColor:'#1565c0', borderRadius:5, borderSkipped:false }
     ]
   },
   options:{
