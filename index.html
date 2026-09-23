@@ -515,9 +515,9 @@ canvas{display:block}
     <div class="card-hd">
       <div>
         <div class="card-t">Reuniões por Produto — Agendadas e Realizadas</div>
-        <div style="font-size:10px;color:var(--muted);margin-top:2px">Somente pipeline Aquisição de Receita · Set/26 · exclui reuniões do pipeline de Parceiros · 100% dos negócios com produto</div>
+        <div id="prodMtgSub" style="font-size:10px;color:var(--muted);margin-top:2px">Somente pipeline Aquisição de Receita · Mês atual (Set/26) · exclui reuniões do pipeline de Parceiros</div>
       </div>
-      <span class="chip">15 realizadas · 16 agendadas</span>
+      <span class="chip" id="prodMtgChip">15 realizadas · 17 agendadas</span>
     </div>
     <div style="height:260px;margin-top:10px"><canvas id="cProdMtg"></canvas></div>
   </div>
@@ -990,42 +990,6 @@ canvas{display:block}
     </div>
   </div>
 
-  <!-- ══ FORECAST ══ -->
-  <div class="sec">Forecast</div>
-  <div class="card">
-    <div class="card-hd">
-      <div class="card-t">Previsão — Pipeline + Taxas Históricas de Conversão</div>
-      <span class="chip">21/09/2026</span>
-    </div>
-    <div class="fc-g">
-      <div class="fc-c">
-        <div class="fc-p">Parceiros · 30 dias</div>
-        <div class="fc-i"><div class="fc-t">Conservador</div><div class="fc-v c">1–2 fechamentos</div></div>
-        <div class="fc-i"><div class="fc-t">Provável</div><div class="fc-v l">2–3 fechamentos</div></div>
-        <div class="fc-i"><div class="fc-t">Otimista</div><div class="fc-v o">4–5 fechamentos</div></div>
-        <div class="fc-h">67 parceiros ativos no pipeline (excl. perdidos) · ciclo médio histórico ~60 dias</div>
-      </div>
-      <div class="fc-c">
-        <div class="fc-p">Clientes Receita · 30 dias</div>
-        <div class="fc-i"><div class="fc-t">✅ Fechado</div><div class="fc-v o">Construtora JG R$70M</div></div>
-        <div class="fc-i"><div class="fc-t">Ciclo de vendas</div><div class="fc-v l">38 dias</div></div>
-        <div class="fc-h">06/Jul → 13/Ago · sem novo fechamento desde então · 1 deal em Elaboração do Contrato (80%) R$301,3M + 9 em Elaboração de Proposta (70%) R$126,5M</div>
-      </div>
-      <div class="fc-c">
-        <div class="fc-p">Pipeline Receita · 90d</div>
-        <div class="fc-i"><div class="fc-t">Conservador</div><div class="fc-v c">R$1,10B</div></div>
-        <div class="fc-i"><div class="fc-t">Provável</div><div class="fc-v l">R$2,80B</div></div>
-        <div class="fc-i"><div class="fc-t">Otimista</div><div class="fc-v o">R$3,39B</div></div>
-        <div class="fc-h">112 deals ativos · 16 novos em Set/26 (Receita) + 6 novos em Parceiros · 0 fechamentos no mês</div>
-      </div>
-      <div class="fc-c" style="border:1px solid rgba(33,150,243,.3);background:rgba(33,150,243,.04)">
-        <div class="fc-p" style="color:var(--blue)">Alta Probabilidade</div>
-        <div class="fc-i"><div class="fc-t">Prob. ≥70%</div><div class="fc-v o" style="font-size:17px">R$555,8M</div></div>
-        <div class="fc-i"><div class="fc-t">Deals em fila</div><div class="fc-v l">12 deals</div></div>
-        <div class="fc-h">Vale Empreendimentos R$301,3M · BA HONG LUNG R$108M · Transben R$24,5M · TRANSJOI R$20M · Bom Jesus - Sergio Paim R$20M · Selbetti Tecnologia R$15M · FITAS DE AÇO MCM R$15M · Zanardi Construtora R$15M · Saintsteel R$15M · Transbyshop R$10M · Mondeo Construtora R$10M · Primaz - CRI R$2M</div>
-      </div>
-    </div>
-  </div>
 
 
 </div>
@@ -1201,21 +1165,10 @@ let MTG_CLI_ORIGINS = MTG_CLI_ORIGINS_BY_PRODUTO.todos;
 
 // Origem dos NOVOS DEALS CRIADOS por período (d:[par, out, evt, li])
 // Fonte: HubSpot · pipeline receita · excl. Fechado Perdido · 06/07/2026
-const ORIG_CLI_NEW_DEALS_BY_PRODUTO = {
-  todos: {
-  hoje:    {total:0,   d:[0,0,0,0]},   // 03/Ago: nenhum deal novo ainda hoje
-  mes:     {total:0,   d:[0,0,0,0]},   // Ago/26 · sobrescrito por _aplicarCM()
-  '7d':    {total:9,   d:[9,0,0,0]},   // 28/Jul–03/Ago: Catarinaço, FITAS DE AÇO MCM, ArtHaus, Rede M7 Postos-Captação, Lixas Tatu, Feldmann Pescados, Agro Michalach, Fluair, TOPSUN — todos Parcerias
-  mes_ant: {total:30,  d:[19,4,0,7]},   // Ago/26 FINAL · HubSpot 02/09/2026: 19 Parcerias · 4 Outbound · 7 Unassigned (sem origem)
-  tri:     {total:30,  d:[19,4,0,7]},   // Q3/26: Ago/26 (final) + Set/26 (1 até agora)
-  ano:     {total:99,  d:[78,17,1,3]},
-  tudo:    {total:126, d:[96,21,6,3]},
-},
-  cap_captacao: {"hoje": {"total": 0, "d": [0, 0, 0, 0]}, "7d": {"total": 6, "d": [6, 0, 0, 0]}, "mes": {"total": 1, "d": [1, 0, 0, 0]}, "mes_ant": {"total": 14, "d": [14, 0, 0, 0]}, "tri": {"total": 15, "d": [15, 0, 0, 0]}, "ano": {"total": 15, "d": [15, 0, 0, 0]}, "tudo": {"total": 15, "d": [15, 0, 0, 0]}},
-  cri_imobiliario: {"hoje": {"total": 1, "d": [1, 0, 0, 0]}, "7d": {"total": 2, "d": [2, 0, 0, 0]}, "mes": {"total": 1, "d": [1, 0, 0, 0]}, "mes_ant": {"total": 9, "d": [5, 4, 0, 0]}, "tri": {"total": 9, "d": [5, 4, 0, 0]}, "ano": {"total": 17, "d": [6, 10, 0, 0]}, "tudo": {"total": 17, "d": [6, 10, 0, 0]}},
-  // Bancarização/BAS: novos deals CRIADOS por período (24/08/2026) — d=[Parcerias,Outbound,Eventos,LinkedIn]
-  baas: {"hoje": {"total": 1, "d": [1, 0, 0, 0]}, "7d": {"total": 5, "d": [5, 0, 0, 0]}, "mes": {"total": 6, "d": [5, 1, 0, 0]}, "mes_ant": {"total": 9, "d": [9, 0, 0, 0]}, "tri": {"total": 9, "d": [9, 0, 0, 0]}, "ano": {"total": 78, "d": [62, 12, 4, 0]}, "tudo": {"total": 86, "d": [64, 18, 4, 0]}},
-};
+// Reunioes realizadas por CANAL, POR PERIODO — relatorio B + origem_de_negocios
+// d = [Parcerias, Outbound, Eventos, LinkedIn] · apurado 23/09/2026
+const ORIG_CLI_NEW_DEALS_BY_PRODUTO = { todos: {"hoje": {"total": 0, "d": [0, 0, 0, 0]}, "7d": {"total": 6, "d": [6, 0, 0, 0]}, "mes": {"total": 15, "d": [14, 1, 0, 0]}, "mes_ant": {"total": 29, "d": [25, 4, 0, 0]}, "tri": {"total": 68, "d": [59, 9, 0, 0]}, "ano": {"total": 125, "d": [108, 16, 1, 0]}, "tudo": {"total": 192, "d": [130, 61, 1, 0]}} };
+
 let ORIG_CLI_NEW_DEALS = ORIG_CLI_NEW_DEALS_BY_PRODUTO.todos;
 
 // Ranking por período — parceiros que geraram reuniões com clientes (ReunIniConc)
@@ -1727,6 +1680,7 @@ function sf(btn, period) {
 
   // reuniões realizadas por canal (donut + barras) — sempre mês atual, ver renderOriginCli()
   renderOriginCli(period);
+  if (typeof renderProdMtg === 'function') renderProdMtg(period);
 
   // conversão de clientes
   updateConversion(period, d.cli, d.cfx);
@@ -2167,7 +2121,9 @@ function renderOriginMtg(period) {
 // Card fixo em "Mês atual" (não responde ao filtro de período global — ver chamada em applyPeriod)
 // ════════════════════════════════════════
 function renderOriginCli(period) {
-  const o = ORIG_CLI_NEW_DEALS['mes'] || ORIG_CLI_NEW_DEALS['tudo'];
+  const o = ORIG_CLI_NEW_DEALS[period] || ORIG_CLI_NEW_DEALS['mes'] || ORIG_CLI_NEW_DEALS['tudo'];
+  const _chip = document.getElementById('origCliChip');
+  if (_chip) _chip.textContent = PERIOD_LABEL[period] || period;
   const t = o.total;
   const [par, out, evt, li] = o.d;
   // Atualiza centro do donut
@@ -2196,7 +2152,7 @@ function renderOriginCli(period) {
       ins.innerHTML = 'Nenhuma reunião realizada neste mês.';
     } else {
       const pPct = Math.round(par/t*100);
-      ins.innerHTML = `Parcerias = <strong style="color:#fff">${par} reunião${par!==1?'ões':''} realizada${par!==1?'s':''}</strong> (${pPct}% do total no mês). ${pPct>=70?'Canal de parceiros dominante.':'Mês com mix mais equilibrado entre canais.'}`;
+      ins.innerHTML = `Parcerias = <strong style="color:#fff">${par} reunião${par!==1?'ões':''} realizada${par!==1?'s':''}</strong> (${pPct}% do total no período). ${pPct>=70?'Canal de parceiros dominante.':'Mês com mix mais equilibrado entre canais.'}`;
     }
   }
 }
@@ -2310,20 +2266,24 @@ window._mtgCharts.cMtgParc = new Chart(document.getElementById('cMtgParc'), {
 // realizadas = data_reuniao_inicial_agendada em Set/26 · 15 no funil de receita
 // agendadas  = data_reuniao_agendada em Set/26 · 16 no funil de receita
 //              (3 agendadas do mês são do pipeline de Parceiros e ficam fora: MVR Consultoria, Cedro Capital, VETOR CAPITAL)
-const PROD_MTG_LBL = ['BAAS','CORE (CRI Imob.)','CAP - Captação'];
-const PROD_MTG_REA = [7,5,3];   // total 15 · 100% classificado
-const PROD_MTG_AGE = [8,5,3];   // total 16 · 100% classificado
-const PROD_MTG_TOT_REA = PROD_MTG_REA.reduce((a,b)=>a+b,0);
-const PROD_MTG_TOT_AGE = PROD_MTG_AGE.reduce((a,b)=>a+b,0);
+// Reunioes por PRODUTO, POR PERIODO — mesmas definicoes dos relatorios A e B
+// (pipeline Aquisicao de Receita; exclui pipeline de Parceiros) · apurado 23/09/2026
+const PROD_MTG_LBL = ['BAAS','CORE (CRI Imob.)','CAP - Captação','Sem produto'];
+const PROD_MTG = {"hoje": {"rea": [0, 0, 0], "age": [0, 0, 0], "semRea": 0, "semAge": 0}, "7d": {"rea": [3, 2, 1], "age": [3, 2, 1], "semRea": 0, "semAge": 1}, "mes": {"rea": [7, 5, 3], "age": [8, 5, 3], "semRea": 0, "semAge": 1}, "mes_ant": {"rea": [10, 9, 10], "age": [10, 9, 11], "semRea": 0, "semAge": 0}, "tri": {"rea": [22, 24, 22], "age": [24, 25, 23], "semRea": 0, "semAge": 1}, "ano": {"rea": [77, 26, 22], "age": [85, 28, 23], "semRea": 0, "semAge": 1}, "tudo": {"rea": [144, 26, 22], "age": [153, 28, 23], "semRea": 0, "semAge": 1}};
+function _pm(period){
+  const o = PROD_MTG[period] || PROD_MTG.mes;
+  return { rea:[...o.rea, o.semRea], age:[...o.age, o.semAge] };
+}
+let _pmCur = _pm('mes');
 const prodMtgLabels = {
   id:'prodMtgLabels',
   afterDatasetsDraw(c){
     const ctx=c.ctx;
     c.data.datasets.forEach((ds,di)=>{
-      const tot = di===0?PROD_MTG_TOT_REA:PROD_MTG_TOT_AGE;
+      const tot = ds.data.reduce((a,b)=>a+b,0);
       c.getDatasetMeta(di).data.forEach((bar,i)=>{
         const v=ds.data[i]; if(!v) return;
-        const pct=Math.round(v/tot*100);
+        const pct = tot>0 ? Math.round(v/tot*100) : 0;
         ctx.save();
         ctx.fillStyle='#fff'; ctx.font='700 11px Inter, system-ui, sans-serif';
         ctx.textAlign='left'; ctx.textBaseline='middle';
@@ -2333,27 +2293,35 @@ const prodMtgLabels = {
     });
   }
 };
-new Chart(document.getElementById('cProdMtg'), {
+window._chartProdMtg = new Chart(document.getElementById('cProdMtg'), {
   type:'bar',
-  data:{
-    labels:PROD_MTG_LBL,
-    datasets:[
-      { label:`Realizadas (${PROD_MTG_TOT_REA})`, data:PROD_MTG_REA, backgroundColor:'#1565c0', borderRadius:5, borderSkipped:false },
-      { label:`Agendadas (${PROD_MTG_TOT_AGE})`,  data:PROD_MTG_AGE, backgroundColor:'#00bcd4', borderRadius:5, borderSkipped:false }
-    ]
-  },
-  options:{
-    indexAxis:'y',
-    responsive:true, maintainAspectRatio:false,
-    layout:{padding:{right:46}},
+  data:{ labels:PROD_MTG_LBL, datasets:[
+      { label:`Realizadas (${_pmCur.rea.reduce((a,b)=>a+b,0)})`, data:_pmCur.rea, backgroundColor:'#1565c0', borderRadius:5, borderSkipped:false },
+      { label:`Agendadas (${_pmCur.age.reduce((a,b)=>a+b,0)})`,  data:_pmCur.age, backgroundColor:'#00bcd4', borderRadius:5, borderSkipped:false }
+  ]},
+  options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false,
+    layout:{padding:{right:52}},
     plugins:{ legend:MTG_LEG, tooltip:{callbacks:{label:ctx=>{
-      const tot = ctx.datasetIndex===0?PROD_MTG_TOT_REA:PROD_MTG_TOT_AGE;
-      return `${ctx.dataset.label.split(' (')[0]}: ${ctx.raw} (${Math.round(ctx.raw/tot*100)}%)`;
+      const tot=ctx.dataset.data.reduce((a,b)=>a+b,0);
+      return `${ctx.dataset.label.split(' (')[0]}: ${ctx.raw} (${tot>0?Math.round(ctx.raw/tot*100):0}%)`;
     }}} },
     scales:{ x:{ beginAtZero:true, ticks:MTG_TICKS, grid:MTG_GRID }, y:{ ticks:{ color:'#c9d6e8', font:{ size:11 } }, grid:{ display:false } } }
   },
   plugins:[prodMtgLabels]
 });
+function renderProdMtg(period){
+  const c = window._chartProdMtg; if(!c) return;
+  const o = _pm(period);
+  c.data.datasets[0].data = o.rea;
+  c.data.datasets[1].data = o.age;
+  c.data.datasets[0].label = `Realizadas (${o.rea.reduce((a,b)=>a+b,0)})`;
+  c.data.datasets[1].label = `Agendadas (${o.age.reduce((a,b)=>a+b,0)})`;
+  c.update('none');
+  const chip = document.getElementById('prodMtgChip');
+  if(chip) chip.textContent = `${o.rea.reduce((a,b)=>a+b,0)} realizadas · ${o.age.reduce((a,b)=>a+b,0)} agendadas`;
+  const sub = document.getElementById('prodMtgSub');
+  if(sub) sub.textContent = `Somente pipeline Aquisição de Receita · ${PERIOD_LABEL[period]||period} · exclui reuniões do pipeline de Parceiros`;
+}
 
 function setMtgTab(el) {
   const id = el.getAttribute('data-mtgtab');
@@ -2610,8 +2578,7 @@ const MTG_PAR_NAMES = {
   MTG_CLI_ORIGINS.mes = CM.origem;
 
   // Reuniões realizadas por canal (cliente final) — card "Origem" · SEMPRE mês atual (ver renderOriginCli)
-  ORIG_CLI_NEW_DEALS.mes   = CM.canal_realizadas_mes;
-  ORIG_CLI_NEW_DEALS['7d'] = CM.canal_realizadas_mes;
+  // canal por periodo vem de ORIG_CLI_NEW_DEALS (apurado por bucket) — nao sobrescrever
 
   // Ranking de parceiros
   RANK_PERIODS.mes   = CM.ranking;
