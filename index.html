@@ -491,6 +491,18 @@ canvas{display:block}
     </div>
   </div>
 
+  <!-- ══ CICLO MÉDIO POR PRODUTO ══ -->
+  <div class="card" style="margin-top:14px">
+    <div class="card-hd">
+      <div class="card-t">Ciclo Médio por Produto · Reunião Inicial → Fechado Ganho</div>
+      <span class="chip" id="cicloProdChip">Todo período</span>
+    </div>
+    <div id="cicloProdBody" style="padding:4px 0"></div>
+    <div style="margin-top:10px;padding:8px 10px;background:rgba(33,150,243,.06);border-radius:8px;border:1px solid rgba(33,150,243,.15);font-size:10px;color:var(--muted)">
+      Média dos dias entre a reunião inicial e o Fechado Ganho, dos deals fechados no período. Base pequena: 5 fechamentos em todo o histórico.
+    </div>
+  </div>
+
   <!-- ══ REUNIÕES — AGENDADAS E REALIZADAS (3 abas) ══ -->
   <div class="card">
     <div class="card-hd">
@@ -961,6 +973,18 @@ canvas{display:block}
       <div style="margin-top:10px;padding:8px 10px;background:rgba(33,150,243,.06);border-radius:8px;border:1px solid rgba(33,150,243,.15);display:flex;justify-content:space-between;align-items:center">
         <div style="font-size:10px;color:var(--muted)">Histórico geral (todo período)</div>
         <div style="font-size:13px;font-weight:700;color:var(--blue)">5 de 188 · 2,7%</div>
+      </div>
+    </div>
+
+    <!-- Conversão por Produto -->
+    <div class="card">
+      <div class="card-hd">
+        <div class="card-t">Conversão por Produto · Clientes</div>
+        <span class="chip" id="convProdChip">Mês atual</span>
+      </div>
+      <div id="convProdBody" style="padding:4px 0"></div>
+      <div style="margin-top:10px;padding:8px 10px;background:rgba(33,150,243,.06);border-radius:8px;border:1px solid rgba(33,150,243,.15);font-size:10px;color:var(--muted)">
+        Coorte por data de criação do negócio: dos deals criados no período que chegaram a ter reunião inicial, quantos estão hoje em Fechado Ganho.
       </div>
     </div>
 
@@ -1489,6 +1513,122 @@ const CONVERSAO_BY_PRODUTO = {
   cri_imobiliario: {"reuniaoInicialConc": 10, "propostaEnviada": 2, "elabContrato": 1, "fechadoGanho": 0},  // CORRIGIDO 24/08/2026: +1 Zanardi Construtora avançou p/ Elaboração de Proposta
   baas: {"reuniaoInicialConc": 141, "propostaEnviada": 6, "elabContrato": 1, "fechadoGanho": 4},  // reapurado 22/09/2026 — 219 negócios (Tax Shield migrado)
 };
+// ════════════════════════════════════════
+// CONVERSÃO POR PRODUTO — apurado 23/09/2026 · pipeline 43349147 (279 deals)
+// r = deals criados no bucket que tiveram reunião inicial (data_reuniao_inicial_agendada preenchida)
+// g = desses, os que estão hoje em Fechado Ganho (90834562) · fuso America/Sao_Paulo
+// Refresh: trocar só os números, manter chaves e ordem.
+// ════════════════════════════════════════
+const CONV_PROD = {
+  todos:           {hoje:{r:0,g:0}, '7d':{r:4,g:0},  mes:{r:13,g:0}, mes_ant:{r:21,g:0}, tri:{r:62,g:1}, ano:{r:123,g:2}, tudo:{r:190,g:5}},
+  cri_imobiliario: {hoje:{r:0,g:0}, '7d':{r:1,g:0},  mes:{r:5,g:0},  mes_ant:{r:8,g:0},  tri:{r:21,g:1}, ano:{r:24,g:1},  tudo:{r:24,g:1}},
+  cap_captacao:    {hoje:{r:0,g:0}, '7d':{r:1,g:0},  mes:{r:2,g:0},  mes_ant:{r:7,g:0},  tri:{r:23,g:0}, ano:{r:23,g:0},  tudo:{r:23,g:0}},
+  baas:            {hoje:{r:0,g:0}, '7d':{r:2,g:0},  mes:{r:6,g:0},  mes_ant:{r:6,g:0},  tri:{r:18,g:0}, ano:{r:76,g:1},  tudo:{r:143,g:4}},
+};
+const CONV_PROD_ROWS = [
+  {k:'cri_imobiliario', l:'CORE (CRI Imob.)', c:'#2196f3'},
+  {k:'cap_captacao',    l:'CAP - Captação',   c:'#ffc107'},
+  {k:'baas',            l:'BAAS',             c:'#00bcd4'},
+];
+// ════════════════════════════════════════
+// CICLO POR PRODUTO — 5 deals Fechados Ganhos do pipeline de Receita
+// dias = reunião inicial → Fechado Ganho (mesma base do card "Ciclo Médio" acima)
+// ════════════════════════════════════════
+const CICLO_DEALS = [
+  {n:'Cauzzo Mais',     p:'baas',            dias:34,  fg:'2025-11-07'},
+  {n:'Kraft Logística', p:'baas',            dias:60,  fg:'2025-09-21'},
+  {n:'ADS Drones',      p:'baas',            dias:87,  fg:'2025-09-26'},
+  {n:'Rudnik Soluções', p:'baas',            dias:111, fg:'2026-07-14'},
+  {n:'Construtora JG',  p:'cri_imobiliario', dias:38,  fg:'2026-08-13'},
+];
+const CICLO_PROD_LABEL = {cri_imobiliario:'CORE (CRI Imob.)', cap_captacao:'CAP - Captação', baas:'BAAS'};
+function _cicloRange(period){
+  // devolve [inicio, fim] em YYYY-MM-DD ou null para "tudo"
+  const T='2026-09-23';
+  if(period==='hoje')    return [T,T];
+  if(period==='7d')      return ['2026-09-17',T];
+  if(period==='mes')     return ['2026-09-01',T];
+  if(period==='mes_ant') return ['2026-08-01','2026-08-31'];
+  if(period==='tri')     return ['2026-07-01',T];
+  if(period==='ano')     return ['2026-01-01',T];
+  return null;
+}
+function renderConvProd(period){
+  const body=document.getElementById('convProdBody'); if(!body) return;
+  const chip=document.getElementById('convProdChip');
+  if(chip) chip.textContent = (typeof PERIOD_LABEL!=='undefined' && PERIOD_LABEL[period]) || period;
+  const rows=CONV_PROD_ROWS.map(x=>{
+    const o=(CONV_PROD[x.k]&&CONV_PROD[x.k][period])||{r:0,g:0};
+    return {...x, r:o.r, g:o.g, pct: o.r>0 ? (o.g/o.r*100) : 0};
+  });
+  const maxR=Math.max(1,...rows.map(x=>x.r));
+  const tot=(CONV_PROD.todos&&CONV_PROD.todos[period])||{r:0,g:0};
+  let h='';
+  if(tot.r===0){
+    h='<div style="padding:18px 6px;text-align:center;color:var(--muted);font-size:11px">Nenhum negócio criado com reunião inicial neste período</div>';
+  } else {
+    h='<div style="display:flex;flex-direction:column;gap:9px">';
+    rows.forEach(x=>{
+      const w=Math.round(x.r/maxR*100);
+      const pctStr = x.r>0 ? (x.pct>0 ? x.pct.toFixed(1)+'%' : '0%') : '—';
+      const pctCol = x.g>0 ? 'var(--green)' : 'var(--muted)';
+      h+='<div>'
+       + '<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:3px">'
+       +   '<span style="font-size:10px;color:var(--text);font-weight:600">'+x.l+'</span>'
+       +   '<span style="font-size:10px;color:var(--muted)">'+x.g+' de '+x.r+' · <b style="color:'+pctCol+';font-size:11px">'+pctStr+'</b></span>'
+       + '</div>'
+       + '<div style="height:9px;background:rgba(255,255,255,.06);border-radius:5px;overflow:hidden">'
+       +   '<div style="height:100%;width:'+w+'%;background:'+x.c+';opacity:.55;border-radius:5px"></div>'
+       + '</div></div>';
+    });
+    h+='</div>';
+    const totPct = tot.r>0 ? (tot.g/tot.r*100) : 0;
+    h+='<div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">'
+     + '<span style="font-size:10px;color:var(--muted)">Total no período</span>'
+     + '<span style="font-size:13px;font-weight:700;color:'+(tot.g>0?'var(--green)':'var(--text)')+'">'+tot.g+' de '+tot.r+' · '+(totPct>0?totPct.toFixed(1)+'%':'0%')+'</span></div>';
+  }
+  body.innerHTML=h;
+}
+function renderCicloProd(period){
+  const body=document.getElementById('cicloProdBody'); if(!body) return;
+  const chip=document.getElementById('cicloProdChip');
+  if(chip) chip.textContent = (typeof PERIOD_LABEL!=='undefined' && PERIOD_LABEL[period]) || period;
+  const rg=_cicloRange(period);
+  const sel=CICLO_DEALS.filter(d=>!rg || (d.fg>=rg[0] && d.fg<=rg[1]));
+  if(sel.length===0){
+    body.innerHTML='<div style="padding:18px 6px;text-align:center;color:var(--muted);font-size:11px">Nenhum fechamento neste período</div>';
+    return;
+  }
+  const byP={};
+  sel.forEach(d=>{ (byP[d.p]=byP[d.p]||[]).push(d); });
+  const grupos=Object.keys(byP).map(k=>{
+    const arr=byP[k]; const med=Math.round(arr.reduce((a,b)=>a+b.dias,0)/arr.length);
+    return {k,l:CICLO_PROD_LABEL[k]||k,n:arr.length,med,deals:arr};
+  }).sort((a,b)=>a.med-b.med);
+  const maxM=Math.max(1,...grupos.map(g=>g.med));
+  const cor=m=>m<=45?'var(--green)':m<=90?'var(--blue)':'var(--red)';
+  const grad=m=>m<=45?'linear-gradient(90deg,#00c853,#4caf50)':m<=90?'linear-gradient(90deg,#1976d2,#2196f3)':'linear-gradient(90deg,#c62828,#f44336)';
+  let h='<div style="display:flex;flex-direction:column;gap:9px">';
+  grupos.forEach(g=>{
+    const w=Math.round(g.med/maxM*100);
+    h+='<div>'
+     + '<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:3px">'
+     +   '<span style="font-size:10px;color:var(--text);font-weight:600">'+g.l+'</span>'
+     +   '<span style="font-size:10px;color:var(--muted)">'+g.n+(g.n>1?' deals':' deal')+' · <b style="color:'+cor(g.med)+';font-size:12px">'+g.med+'d</b></span>'
+     + '</div>'
+     + '<div style="height:10px;background:rgba(255,255,255,.06);border-radius:5px;overflow:hidden">'
+     +   '<div style="height:100%;width:'+w+'%;background:'+grad(g.med)+';border-radius:5px"></div>'
+     + '</div>'
+     + '<div style="font-size:9px;color:var(--muted);margin-top:3px">'+g.deals.map(d=>d.n+' '+d.dias+'d').join(' · ')+'</div>'
+     + '</div>';
+  });
+  h+='</div>';
+  const medGeral=Math.round(sel.reduce((a,b)=>a+b.dias,0)/sel.length);
+  h+='<div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">'
+   + '<span style="font-size:10px;color:var(--muted)">Média no período</span>'
+   + '<span style="font-size:13px;font-weight:700;color:'+cor(medGeral)+'">'+medGeral+' dias · '+sel.length+(sel.length>1?' fechamentos':' fechamento')+'</span></div>';
+  body.innerHTML=h;
+}
 const CONVERSAO_TODOS = {reuniaoInicialConc:24, propostaEnviada:8, elabContrato:2};
 
 // ════════════════════════════════════════
@@ -1681,6 +1821,8 @@ function sf(btn, period) {
   // reuniões realizadas por canal (donut + barras) — sempre mês atual, ver renderOriginCli()
   renderOriginCli(period);
   if (typeof renderProdMtg === 'function') renderProdMtg(period);
+  if (typeof renderConvProd === 'function') renderConvProd(period);
+  if (typeof renderCicloProd === 'function') renderCicloProd(period);
 
   // conversão de clientes
   updateConversion(period, d.cli, d.cfx);
@@ -2711,6 +2853,10 @@ setTimeout(() => {
   const parAtivo = document.querySelector('.card [style*="font-size:26px"][style*="font-weight:800"][style*="var(--green)"]');
   if(parAtivo) makeTip(parAtivo, _tipHtml('Parceria Fechada — Ativos', NAMES_PAR['1185687200'], 'var(--green)'));
 }, 200);
+
+// ── render inicial dos cards por produto (Conversão e Ciclo) ──
+renderConvProd(typeof _lastPeriod !== 'undefined' ? _lastPeriod : 'mes');
+renderCicloProd(typeof _lastPeriod !== 'undefined' ? _lastPeriod : 'mes');
 
 </script>
 </body>
