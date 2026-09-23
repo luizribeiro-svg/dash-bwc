@@ -383,28 +383,7 @@ canvas{display:block}
         <span style="font-size:10px;color:var(--muted)">Faltam <strong id="mf-cli" style="color:var(--red)">9 reuniões</strong> para a meta</span>
         <span class="mtg-pct miss" id="mpct-cli">55%</span>
       </div>
-      <div class="mtg-breakdown">
-        <div class="mtg-bk-item">
-          <div class="mtg-bk-lbl">Luiz Ribeiro</div>
-          <div class="mtg-bk-val" id="mbk-luiz-cli">3</div>
-          <div class="mtg-bk-sub">HubSpot</div>
-        </div>
-        <div class="mtg-bk-item" style="border-left:1px solid var(--border)">
-          <div class="mtg-bk-lbl">Bruno Leal</div>
-          <div class="mtg-bk-val" id="mbk-bruno-cli">6</div>
-          <div class="mtg-bk-sub">HubSpot</div>
-        </div>
-        <div class="mtg-bk-item" style="border-left:1px solid var(--border)">
-          <div class="mtg-bk-lbl">Wilian Damas</div>
-          <div class="mtg-bk-val" id="mbk-diego-cli">6</div>
-          <div class="mtg-bk-sub">HubSpot</div>
-        </div>
-        <div class="mtg-bk-item" style="border-left:1px solid var(--border)">
-          <div class="mtg-bk-lbl">Melhor mês</div>
-          <div class="mtg-bk-val" style="color:var(--green)">14</div>
-          <div class="mtg-bk-sub">Abr/26</div>
-        </div>
-      </div>
+      
     </div>
 
     <!-- PARCEIROS -->
@@ -426,28 +405,7 @@ canvas{display:block}
         <span style="font-size:10px;color:var(--muted)"><strong id="mf-par" style="color:var(--green)">Meta batida!</strong></span>
         <span class="mtg-pct hit" id="mpct-par">100%</span>
       </div>
-      <div class="mtg-breakdown">
-        <div class="mtg-bk-item">
-          <div class="mtg-bk-lbl">Luiz Ribeiro</div>
-          <div class="mtg-bk-val" id="mbk-luiz-par">4</div>
-          <div class="mtg-bk-sub">HubSpot</div>
-        </div>
-        <div class="mtg-bk-item" style="border-left:1px solid var(--border)">
-          <div class="mtg-bk-lbl">Bruno Leal</div>
-          <div class="mtg-bk-val" id="mbk-bruno-par">0</div>
-          <div class="mtg-bk-sub">HubSpot</div>
-        </div>
-        <div class="mtg-bk-item" style="border-left:1px solid var(--border)">
-          <div class="mtg-bk-lbl">Wilian Damas</div>
-          <div class="mtg-bk-val" id="mbk-diego-par">3</div>
-          <div class="mtg-bk-sub">HubSpot</div>
-        </div>
-        <div class="mtg-bk-item" style="border-left:1px solid var(--border)">
-          <div class="mtg-bk-lbl">Melhor mês</div>
-          <div class="mtg-bk-val" style="color:var(--green)">18</div>
-          <div class="mtg-bk-sub">Abr/26</div>
-        </div>
-      </div>
+      
     </div>
   </div>
 
@@ -1081,12 +1039,12 @@ canvas{display:block}
 // ╚══════════════════════════════════════════════════════════════════╝
 const CM = {
   label: 'Set/26',
-  dia:   21,
+  dia:   23,
 
   // ── Reuniões com CLIENTES ─────────────────────────────────────
   cli: {
     realizadas: 15,  // FONTE OFICIAL: HubSpot data_reuniao_inicial_agendada entre 01–30/Set/26, pipeline Aquisição de Receita · refresh 22/09/2026
-    agendadas:  16,  // FONTE OFICIAL: HubSpot data_reuniao_agendada entre 01–30/Set/26, pipeline Aquisição de Receita · refresh 22/09/2026
+    agendadas:  17,  // FONTE OFICIAL: HubSpot data_reuniao_agendada entre 01–30/Set/26, pipeline Aquisição de Receita · refresh 22/09/2026
     meta:       20,
     nomes: ['Electi Solutions Group (01/Set)', 'Appel Home (02/Set)', 'Caspper distribuidora (10/Set)', 'Benetex (10/Set)', 'Geniusz Engenharia Integrada (10/Set)', 'IB7 Mogi das Cruzes Empreendimentos Imobiliários (10/Set)', 'BERRYTECH Consultoria Empresarial (14/Set)', 'RK Empreendimentos (15/Set)', 'Podium Pneus (16/Set)', 'Mix Farma (17/Set)', 'Quanta Empreendimentos (17/Set)', 'Tecnoflora Serviços e Locação Florestal (18/Set)', 'Vici Incorporadora (22/Set)', 'Grupo Copobras (22/Set)', 'Amazon Motors (22/Set)'],
   },
@@ -1168,7 +1126,7 @@ const CM = {
 
 // ════════════════════════════════════════
 // ── 9 meses: Dez/25 → Ago/26 (janela deslizante, atualizado 03/08/2026 — rollover Jul→Ago)
-const MO = ['Dez/25','Jan/26','Fev/26','Mar/26','Abr/26','Mai/26','Jun/26','Jul/26','Ago/26'];
+const MO = ['Out/25','Nov/25','Dez/25','Jan/26','Fev/26','Mar/26','Abr/26','Mai/26','Jun/26','Jul/26','Ago/26','Set/26'];
 
 // Metas separadas
 const META_CLI = 20;
@@ -1176,22 +1134,22 @@ const META_PAR = 15;
 
 // Reuniões com CLIENTES por mês (pipeline receita)
 // Jul/26 FINAL: 24 realizadas (painel "Reunião Inicial Realizadas - Mês" mostrava 23 em 03/08; +ArtHaus lançada com atraso, reunião real em 31/Jul)
-const MTG_CLI = [2, 3, 6, 12, 14, 11, 11, 24, 0];  // Ago/26: 0 até o momento — sobrescrito por _aplicarCM()
-MTG_CLI[8] = CM.cli.realizadas;  // FIX 17/08/2026: precisa ser aplicado ANTES da criação do Chart.js (linha ~2385), senão o gráfico "Reuniões com Clientes por Mês" renderiza o mês atual como 0 (a atribuição de _aplicarCM() só roda depois que o canvas já foi desenhado)
+const MTG_CLI = [16, 8, 3, 3, 7, 10, 14, 11, 12, 24, 29, 15];  // relatorio B  // Ago/26: 0 até o momento — sobrescrito por _aplicarCM()
+MTG_CLI[11] = CM.cli.realizadas;  // FIX 17/08/2026: precisa ser aplicado ANTES da criação do Chart.js (linha ~2385), senão o gráfico "Reuniões com Clientes por Mês" renderiza o mês atual como 0 (a atribuição de _aplicarCM() só roda depois que o canvas já foi desenhado)
 // Reuniões com PARCEIROS por mês
 // FONTE OFICIAL: painel "04. Parceiros" → "Reunião Realizadas Novos Parceiros - Mês"
 // métrica: Date entered "Reunião realizada (Aquisição de Parceiros)" · lido em 03/08/2026
 // Dez/25:8 Jan/26:0 Fev/26:6 Mar/26:19 Abr/26:10 Mai/26:19 Jun/26:13 Jul/26:13(final, +Liberta Wealth 31/Jul) Ago/26:0
-const MTG_PAR = [8, 0, 6, 19, 10, 19, 13, 13, 0]; // sobrescrito no mês corrente por _aplicarCM()
-MTG_PAR[8] = CM.par.realizadas;  // FIX 17/08/2026: mesma correção — precisa ser aplicado antes do Chart.js "Reuniões com Parceiros por Mês" ser criado
+const MTG_PAR = [3, 3, 8, 0, 6, 18, 10, 19, 13, 13, 6, 7];  // relatorio D // sobrescrito no mês corrente por _aplicarCM()
+MTG_PAR[11] = CM.par.realizadas;  // FIX 17/08/2026: mesma correção — precisa ser aplicado antes do Chart.js "Reuniões com Parceiros por Mês" ser criado
 // Reuniões AGENDADAS com parceiros por mês — mesmo painel, relatório "Reunião Agendadas Novos Parceiros - Mês"
 // Série lida em 03/08/2026: Dez/25:6 Jan/26:1 Fev/26:8 Mar/26:17 Abr/26:10 Mai/26:19 Jun/26:14 Jul/26:13(final) Ago/26:0
-const AGD_PAR_MES = [6, 1, 8, 17, 10, 19, 14, 13, 0];
+const AGD_PAR_MES = [2, 4, 6, 1, 8, 16, 10, 19, 14, 13, 8, 7];  // relatorio C
 
 // Parceiros fechados por mês — closedate · stage 1185687200 (Parceria Fechada) · pipeline 805183641
 // FONTE OFICIAL: painel "04. Parceiros" → "Quantidade de parceiros fechados por mês" (lido 03/08/2026)
 // Dez/25:1 Jan/26:0 Fev/26:2 Mar/26:9 Abr/26:2 Mai/26:2 Jun/26:5 Jul/26:5(final) Ago/26:0
-const PAR_FCH = [1, 0, 2, 9, 2, 2, 5, 5, 0];  // Jul/26 final: Paulo Roberto + Grupo Harp + CIFRA + Gilberto Lenzi + Cordier Investimentos
+const PAR_FCH = [1, 1, 1, 0, 2, 9, 2, 2, 6, 5, 1, 0];  // Jul/26 final: Paulo Roberto + Grupo Harp + CIFRA + Gilberto Lenzi + Cordier Investimentos
 
 // Novos deals por pipeline · createdate agrupado por mês · fonte HubSpot 03/08/2026
 const ND_CLI = [3,13, 5,23,29,20,18,32,0];  // Jul/26 FINAL: 32 deals (R$483,7M) — confirmado via HubSpot 03/08
@@ -1523,14 +1481,20 @@ const PAR_NB_CHIP = {
 // Dados por filtro — atualizado 03/08/2026 (rollover Jul→Ago)
 // pfx = parcerias fechadas no período · nd = novos deals receita criados no período
 // hoje/7d/mes/tri são derivados de CM em tempo real via _aplicarCM() — valores abaixo são apenas o seed inicial
+// FONTE OFICIAL E UNICA (travada 23/09/2026) - relatorios HubSpot:
+//   A AGENDADAS Clientes  = 'Reuniao Inicial Agendadas - Mes'  (data_reuniao_agendada, pipeline Receita) ......... 205
+//   B REALIZADAS Clientes = 'Reuniao Inicial Realizadas - Mes' (data_reuniao_inicial_agendada, pipeline Receita) . 192
+//   C AGENDADAS Parceiros = 'Reuniao Agendadas Novos Parceiros - Mes'  (entrada na etapa Reuniao agendada) ....... 108
+//   D REALIZADAS Parceiros= 'Reuniao Realizadas Novos Parceiros - Mes' (entrada na etapa Reuniao realizada) ...... 106
+// Todos os buckets de periodo saem dessas 4 definicoes. Nao usar outra fonte.
 const FD = {
-  hoje:    {cli:0,  par:0,  pfx:0, cfx:0, nd:0},    // 03/Ago: nada ainda hoje
-  '7d':    {cli:0,  par:0,  pfx:0, cfx:0, nd:0},    // espelha "mes" (lógica existente do dashboard) — Ago/26 zerado
-  mes:     {cli:0,  par:0,  pfx:0, cfx:0, nd:0},    // Ago/26 (Dia 3): zerado até o momento
-  mes_ant: {cli:29, par:6, pfx:1, cfx:1, nd:30},   // Ago/26 FINAL confirmado via HubSpot (refresh 02/09/2026) — cli/par realizadas, 1 parceiro fechado (Clodoaldo Mordegan), 1 cliente fechado (Construtora JG), 30 novos deals
-  tri:     {cli:65, par:0,  pfx:0, cfx:0, nd:0},    // Q3/26 (Jul+Ago+Set = 24+29+12 = 65 reuniões de cliente · apurado 21/09/2026) — seed: _aplicarCM() sobrescreve tri com os valores do mês corrente
-  ano:     {cli:122, par:80, pfx:26, cfx:2, nd:216}, // cli: Jan–Set/26 = 122 reuniões iniciais concluídas (HubSpot 21/09/2026, por mês da reunião) · cfx: Rudnik (Jul) + Construtora JG (Ago) · par/pfx/nd via painel 04.Parceiros (Jan–Ago)
-  tudo:    {cli:188, par:94, pfx:31, cfx:5, nd:314}, // cli: 188 reuniões iniciais concluídas desde Mar/25 (HubSpot 21/09/2026 — 66 em 2025 + 122 em 2026) · cfx: Cauzzo+Kraft+ADS+Rudnik+JG · par/pfx/nd via painel 04.Parceiros
+  hoje:    {cli:0,   par:0,   pfx:0,  cfx:0, nd:0},
+  '7d':    {cli:6,   par:2,   pfx:0,  cfx:0, nd:3},
+  mes:     {cli:15,  par:7,   pfx:0,  cfx:0, nd:7},
+  mes_ant: {cli:29,  par:6,   pfx:1,  cfx:1, nd:30},
+  tri:     {cli:68,  par:26,  pfx:6,  cfx:1, nd:30},
+  ano:     {cli:125, par:92,  pfx:27, cfx:2, nd:216},
+  tudo:    {cli:192, par:106, pfx:30, cfx:5, nd:314},
 };
 
 // Overrides de FD.cli / FD.cfx por produto (Parceiros -- .par/.pfx/.nd -- NAO variam por produto)
@@ -1584,12 +1548,12 @@ const CONVERSAO_TODOS = {reuniaoInicialConc:24, propostaEnviada:8, elabContrato:
 const AGEND_CLI_BY_PRODUTO = {
   todos: {
   hoje:    0,
-  '7d':    0,
-  mes:     0,
-  mes_ant: 30,  // Ago/26 FINAL confirmado: painel "Reunião Inicial Agendadas - Mês" (refresh 02/09/2026)
-  tri:     0,
-  ano:     1,
-  tudo:    1,
+  '7d':    8,
+  mes:     17,
+  mes_ant: 30,
+  tri:     73,
+  ano:     137,
+  tudo:    205,   // relatorio A
 },
   cap_captacao: {"hoje": 0, "7d": 2, "mes": 1, "mes_ant": 9, "tri": 9, "ano": 9, "tudo": 11},  // refresh 6 (24/08/2026) via data_reuniao_agendada, produto = CAP - Captação (aprox.)
   cri_imobiliario: {"hoje": 0, "7d": 2, "mes": 1, "mes_ant": 11, "tri": 11, "ano": 14, "tudo": 14},  // refresh 6 (24/08/2026) via data_reuniao_agendada, produto = CRI Imobiliário/CORE (aprox.)
@@ -1610,12 +1574,12 @@ let AGEND_CLI = AGEND_CLI_BY_PRODUTO.todos;
 // ════════════════════════════════════════
 const AGEND_PAR = {
   hoje:    0,
-  '7d':    0,    // Ago/26 · o relatório é agregado por MÊS
-  mes:     0,    // Ago/26
-  mes_ant: 8,    // Ago/26 FINAL (refresh 02/09/2026)
-  tri:     0,    // Q3/26 (início do trimestre)
-  ano:     82,   // Jan–Ago/26: 1+8+17+10+19+14+13+0
-  tudo:    94,   // Out/25–Ago/26
+  '7d':    1,
+  mes:     7,
+  mes_ant: 8,
+  tri:     28,
+  ano:     96,
+  tudo:    108,   // relatorio C
 };
 
 // ════════════════════════════════════════
@@ -2626,31 +2590,24 @@ const MTG_PAR_NAMES = {
 // ╚══════════════════════════════════════════════════════════════════╝
 (function _aplicarCM() {
   // Arrays de histórico (índice 8 = mês mais recente)
-  MTG_CLI[8] = CM.cli.realizadas;
-  MTG_PAR[8] = CM.par.realizadas;
+  MTG_CLI[11] = CM.cli.realizadas;
+  MTG_PAR[11] = CM.par.realizadas;
 
-  // Agendadas
-  AGEND_CLI.mes   = CM.cli.agendadas;
-  AGEND_CLI['7d'] = CM.cli.agendadas;
-  AGEND_PAR.mes   = CM.par.agendadas;
-  AGEND_PAR['7d'] = CM.par.agendadas;
+  // Agendadas — SOMENTE o bucket "mes". 7d/tri/ano/tudo vem dos relatorios A/C
+  // (bug corrigido 23/09/2026: antes o valor do mes era copiado para 7d e tri,
+  //  por isso os filtros de periodo nao batiam com o HubSpot)
+  AGEND_CLI.mes = CM.cli.agendadas;
+  AGEND_PAR.mes = CM.par.agendadas;
 
-  // FD — contadores full data
-  const _fd = {cli: CM.cli.realizadas, par: CM.par.realizadas, pfx: CM.pfx_mes, cfx: CM.cfx_mes, nd: CM.nd};
-  FD.hoje  = {cli:0, par:0, pfx:0, cfx:0, nd:0};
-  FD['7d'] = _fd;
-  FD.mes   = _fd;
-  FD.tri   = _fd;  // início do trimestre: Q3 = só julho por enquanto
+  // FD — so o mes corrente; os demais buckets ficam como apurados nos relatorios B/D
+  FD.mes = {cli: CM.cli.realizadas, par: CM.par.realizadas, pfx: CM.pfx_mes, cfx: CM.cfx_mes, nd: CM.nd};
 
   // Nomes das reuniões
-  MTG_CLI_NAMES.mes   = CM.cli.nomes;
-  MTG_CLI_NAMES['7d'] = CM.cli.nomes;
-  MTG_PAR_NAMES.mes   = CM.par.nomes_real;
-  MTG_PAR_NAMES['7d'] = CM.par.nomes_real;
+  MTG_CLI_NAMES.mes = CM.cli.nomes;
+  MTG_PAR_NAMES.mes = CM.par.nomes_real;
 
   // Origem dos leads
-  MTG_CLI_ORIGINS.mes   = CM.origem;
-  MTG_CLI_ORIGINS['7d'] = CM.origem;
+  MTG_CLI_ORIGINS.mes = CM.origem;
 
   // Reuniões realizadas por canal (cliente final) — card "Origem" · SEMPRE mês atual (ver renderOriginCli)
   ORIG_CLI_NEW_DEALS.mes   = CM.canal_realizadas_mes;
